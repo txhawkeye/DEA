@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Discord;
+using Discord.WebSocket;
+using Discord.Commands;
+using Settings;
 
 namespace DEA
 {
@@ -19,8 +20,6 @@ namespace DEA
         {
             // Define the DiscordSocketClient
             client = new DiscordSocketClient();
-
-            var token = "token here";
 
             // Login and connect to Discord.
             await client.LoginAsync(TokenType.Bot, token);
