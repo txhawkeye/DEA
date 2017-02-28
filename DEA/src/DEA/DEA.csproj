@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp1.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="**\*.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Google.Apis.YouTube.v3" Version="1.21.0.760" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DEA.Core\DEA.Core.csproj" />
+    <ProjectReference Include="..\DEA.SQLite\DEA.SQLite.csproj" />
+  </ItemGroup>
+</Project>

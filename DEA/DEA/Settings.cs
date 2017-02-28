@@ -1,1 +1,0 @@
-﻿public static sealed string token = "MjgwMjAxNzUwMjQ0MzYwMTk0.C5aDzA.aQiKSa1G65fbQuN-3bzZD_0TCcs";
