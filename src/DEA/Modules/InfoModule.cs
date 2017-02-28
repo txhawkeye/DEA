@@ -1,13 +1,14 @@
 ﻿using Discord;
+using Discord.WebSocket;
 using Discord.Commands;
 using System;
+using System.Linq;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace DEA.Modules
 {
-    [Group("info")]
     public class InfoModule : ModuleBase<SocketCommandContext>
     {
         private CommandService _service;
@@ -24,40 +25,29 @@ namespace DEA.Modules
 
         }
 
-        [Command]
-        public Task BaseAsync()
-            => new HelpModule(_service).HelpAsync(Context, "info");
-
-        [Command("summary")]
-        public Task SummaryAsync()
+        [Command("stats")]
+        [Alias("data")]
+        [Summary("testing 123 123")]
+        public async Task Info()
         {
-            return Task.CompletedTask;
+            var application = await Context.Client.GetApplicationInfoAsync();
+            await ReplyAsync(
+                $"{Format.Bold("Info")}\n" +
+                $"- Author: {application.Owner.Username} (ID {application.Owner.Id})\n" +
+                $"- Library: Discord.Net ({DiscordConfig.Version})\n" +
+                $"- Runtime: {RuntimeInformation.FrameworkDescription} {RuntimeInformation.OSArchitecture}\n" +
+                $"- Uptime: {GetUptime()}\n\n" +
+
+                $"{Format.Bold("Stats")}\n" +
+                $"- Heap Size: {GetHeapSize()} MB\n" +
+                $"- Guilds: {(Context.Client as DiscordSocketClient).Guilds.Count}\n" +
+                $"- Channels: {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Channels.Count)}" +
+                $"- Users: {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Users.Count)}"
+            );
         }
 
-        [Command("performance")]
-        public Task PerformanceAsync()
-        {
-            var builder = new EmbedBuilder();
-            builder.ThumbnailUrl = Context.Client.CurrentUser.GetAvatarUrl();
-            builder.Title = "Performance Information for DEA";
-
-            var uptime = (DateTime.Now - _process.StartTime);
-
-            var desc = $"**Uptime:** {uptime.Days} day {uptime.Hours} hr {uptime.Minutes} min {uptime.Seconds} sec\n" +
-                       $"**Library:** Discord.Net ({DiscordConfig.Version})\n" +
-                       $"**OS:** {RuntimeInformation.OSDescription} {RuntimeInformation.OSArchitecture}\n" +
-                       $"**Framework:** {RuntimeInformation.FrameworkDescription}\n" +
-                       $"**Memory Usage:** {Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2)}mb\n" +
-                       $"**Latency:** {Context.Client.Latency}ms\n";
-
-            builder.Description = desc;
-            return ReplyAsync("", embed: builder);
-        }
-
-        [Command("activity")]
-        public Task ActivityAsync()
-        {
-            return Task.CompletedTask;
-        }
+        private static string GetUptime()
+            => (DateTime.Now - Process.GetCurrentProcess().StartTime).ToString(@"dd\.hh\:mm\:ss");
+        private static string GetHeapSize() => Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2).ToString();
     }
 }
