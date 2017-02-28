@@ -1,0 +1,7 @@
+D:\Discord Bot\src\Dogey.Core\bin\Debug\netstandard1.5\Dogey.Core.deps.json
+D:\Discord Bot\src\Dogey.Core\bin\Debug\netstandard1.5\Dogey.Core.dll
+D:\Discord Bot\src\Dogey.Core\bin\Debug\netstandard1.5\Dogey.Core.pdb
+D:\Discord Bot\src\Dogey.Core\obj\Debug\netstandard1.5\Dogey.Core.csprojResolveAssemblyReference.cache
+D:\Discord Bot\src\Dogey.Core\obj\Debug\netstandard1.5\Dogey.Core.AssemblyInfo.cs
+D:\Discord Bot\src\Dogey.Core\obj\Debug\netstandard1.5\Dogey.Core.dll
+D:\Discord Bot\src\Dogey.Core\obj\Debug\netstandard1.5\Dogey.Core.pdb

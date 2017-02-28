@@ -1,0 +1,7 @@
+D:\Discord Bot\src\DEA.Core\bin\Debug\netstandard1.5\DEA.Core.deps.json
+D:\Discord Bot\src\DEA.Core\bin\Debug\netstandard1.5\DEA.Core.dll
+D:\Discord Bot\src\DEA.Core\bin\Debug\netstandard1.5\DEA.Core.pdb
+D:\Discord Bot\src\DEA.Core\obj\Debug\netstandard1.5\DEA.Core.csprojResolveAssemblyReference.cache
+D:\Discord Bot\src\DEA.Core\obj\Debug\netstandard1.5\DEA.Core.AssemblyInfo.cs
+D:\Discord Bot\src\DEA.Core\obj\Debug\netstandard1.5\DEA.Core.dll
+D:\Discord Bot\src\DEA.Core\obj\Debug\netstandard1.5\DEA.Core.pdb

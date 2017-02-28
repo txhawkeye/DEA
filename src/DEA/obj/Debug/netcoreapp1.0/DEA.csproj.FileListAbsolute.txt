@@ -1,0 +1,13 @@
+D:\Discord Bot\src\DEA\bin\Debug\netcoreapp1.0\DEA.deps.json
+D:\Discord Bot\src\DEA\bin\Debug\netcoreapp1.0\DEA.runtimeconfig.json
+D:\Discord Bot\src\DEA\bin\Debug\netcoreapp1.0\DEA.runtimeconfig.dev.json
+D:\Discord Bot\src\DEA\bin\Debug\netcoreapp1.0\DEA.dll
+D:\Discord Bot\src\DEA\bin\Debug\netcoreapp1.0\DEA.pdb
+D:\Discord Bot\src\DEA\bin\Debug\netcoreapp1.0\DEA.Core.dll
+D:\Discord Bot\src\DEA\bin\Debug\netcoreapp1.0\DEA.SQLite.dll
+D:\Discord Bot\src\DEA\bin\Debug\netcoreapp1.0\DEA.Core.pdb
+D:\Discord Bot\src\DEA\bin\Debug\netcoreapp1.0\DEA.SQLite.pdb
+D:\Discord Bot\src\DEA\obj\Debug\netcoreapp1.0\DEA.csprojResolveAssemblyReference.cache
+D:\Discord Bot\src\DEA\obj\Debug\netcoreapp1.0\DEA.AssemblyInfo.cs
+D:\Discord Bot\src\DEA\obj\Debug\netcoreapp1.0\DEA.dll
+D:\Discord Bot\src\DEA\obj\Debug\netcoreapp1.0\DEA.pdb

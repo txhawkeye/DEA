@@ -1,0 +1,9 @@
+D:\Discord Bot\src\DEA.SQLite\bin\Debug\netstandard1.5\DEA.SQLite.deps.json
+D:\Discord Bot\src\DEA.SQLite\bin\Debug\netstandard1.5\DEA.SQLite.dll
+D:\Discord Bot\src\DEA.SQLite\bin\Debug\netstandard1.5\DEA.SQLite.pdb
+D:\Discord Bot\src\DEA.SQLite\bin\Debug\netstandard1.5\DEA.Core.dll
+D:\Discord Bot\src\DEA.SQLite\bin\Debug\netstandard1.5\DEA.Core.pdb
+D:\Discord Bot\src\DEA.SQLite\obj\Debug\netstandard1.5\DEA.SQLite.csprojResolveAssemblyReference.cache
+D:\Discord Bot\src\DEA.SQLite\obj\Debug\netstandard1.5\DEA.SQLite.AssemblyInfo.cs
+D:\Discord Bot\src\DEA.SQLite\obj\Debug\netstandard1.5\DEA.SQLite.dll
+D:\Discord Bot\src\DEA.SQLite\obj\Debug\netstandard1.5\DEA.SQLite.pdb
