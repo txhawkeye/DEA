@@ -30,22 +30,9 @@ namespace DEA.Services
             await _service.AddModulesAsync(Assembly.GetEntryAssembly());
 
             var config = Configuration.Load();
-            PrettyConsole.Log(LogSeverity.Info, "Commands", $"Loading {config.Database} commands");
-            switch (config.Database)
-            {
-                case DbMode.SQLite:
-                    await _service.LoadSqliteModulesAsync(); break;
-                case DbMode.MySQL:
-                    throw new NotImplementedException();
-                case DbMode.Redis:
-                    throw new NotImplementedException();
-                case DbMode.MongoDB:
-                    throw new NotImplementedException();
-                case DbMode.PostgreSQL:
-                    throw new NotImplementedException();
-                default:
-                    break;
-            }
+            PrettyConsole.Log(LogSeverity.Info, "Commands", $"Loading SQLite commands");
+            await _service.LoadSqliteModulesAsync();
+          
 
             _client.MessageReceived += HandleCommandAsync;
             PrettyConsole.Log(LogSeverity.Info, "Commands", $"Ready, loaded {_service.Commands.Count()} commands");

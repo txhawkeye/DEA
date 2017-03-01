@@ -1,18 +1,17 @@
 ﻿using Discord;
 using Discord.Commands;
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 
 namespace DEA.Modules
 {
-    public class AdminModule : ModuleBase<SocketCommandContext>
+    public class Moderation : ModuleBase<SocketCommandContext>
     {
         [Command("ban")]
         [Alias("hammer")]
         [RequireBotPermission(GuildPermission.BanMembers)]
-        [Summary("Ban a user from the server")]
+        [Remarks("Ban a user from the server")]
         public async Task Ban(IGuildUser UserToBan, params string[] reason)
         {
             try
@@ -30,7 +29,7 @@ namespace DEA.Modules
         [Command("kick")]
         [Alias("boot")]
         [RequireBotPermission(GuildPermission.KickMembers)]
-        [Summary("Kick a user from the server")]
+        [Remarks("Kick a user from the server")]
         public async Task Kick(IGuildUser UserToKick, params string[] reason)
         {
             try

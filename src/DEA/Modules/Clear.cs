@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace DEA.Modules
 {
-    [Group("clean"), RequireContext(ContextType.Guild)]
-    [Remarks("Clean messages from a channel.")]
-    public class CleanModule : ModuleBase<SocketCommandContext>
+    [Group("Clear"), RequireContext(ContextType.Guild)]
+    [Alias("Clean")]
+    [RequireBotPermission(GuildPermission.ManageMessages)]
+    public class Clear : ModuleBase<SocketCommandContext>
     {
         [Command]
+        [Remarks("Deletes x amount of messages.")]
         public async Task CleanAsync(int count = 25)
         { 
             var messages = await Context.Channel.GetMessagesAsync(count, CacheMode.AllowDownload).Flatten();
@@ -21,6 +23,7 @@ namespace DEA.Modules
         }
 
         [Command("contains")]
+        [Remarks("Deletes x amount of messages containing a specific word.")]
         public async Task ContainsAsync(string content, int count = 25)
         {
             var messages = await Context.Channel.GetMessagesAsync(count, CacheMode.AllowDownload).Flatten();
@@ -33,6 +36,7 @@ namespace DEA.Modules
         }
 
         [Command("user")]
+        [Remarks("Deletes x amount of messages sent by a specific user.")]
         public async Task UserAsync(SocketUser user, int count = 25)
         {
             var messages = await Context.Channel.GetMessagesAsync(count, CacheMode.AllowDownload).Flatten();
@@ -45,6 +49,7 @@ namespace DEA.Modules
         }
 
         [Command("bots")]
+        [Remarks("Deletes x amount of messages sent by bots.")]
         public async Task BotsAsync(int count = 25)
         {
             var messages = await Context.Channel.GetMessagesAsync(count, CacheMode.AllowDownload).Flatten();
