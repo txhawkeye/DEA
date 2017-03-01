@@ -1,61 +1,75 @@
 ﻿using Discord;
-using Discord.WebSocket;
 using Discord.Commands;
 using System;
-using System.Linq;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 
 namespace DEA.Modules
 {
-    class AdminModule : ModuleBase<SocketCommandContext>
+    public class AdminModule : ModuleBase<SocketCommandContext>
     {
-        private CommandService _service;
-
-        public AdminModule(CommandService service)
-        {
-            _service = service;
-        }
-
         [Command("ban")]
         [Alias("hammer")]
         [RequireBotPermission(GuildPermission.BanMembers)]
         [Summary("Ban a user from the server")]
-        public async Task Ban(IUser UserToBan)
+        public async Task Ban(IGuildUser UserToBan, params string[] reason)
         {
-            await Context.Guild.AddBanAsync(UserToBan);
+            try
+            {
+                await Context.Guild.AddBanAsync(UserToBan);
+                await LogAdminCommand(Context.User, "Ban", UserToBan, new Color(255, 0, 0), reason);
+                await ReplyAsync($"{Context.User.Mention} has swung the banhammer on {UserToBan.Mention}");
+            }
+            catch (Exception e)
+            {
+                await ReplyAsync(e.Message);
+            }
         }
 
         [Command("kick")]
         [Alias("boot")]
         [RequireBotPermission(GuildPermission.KickMembers)]
         [Summary("Kick a user from the server")]
-        public async Task Kick(IGuildUser UserToKick)
+        public async Task Kick(IGuildUser UserToKick, params string[] reason)
         {
-            await UserToKick.KickAsync();
+            try
+            {
+                await UserToKick.KickAsync();
+                await LogAdminCommand(Context.User, "Kick", UserToKick, new Color(255, 114, 14), reason);
+                await ReplyAsync($"{Context.User.Mention} has kicked that faggot {UserToKick.Mention}");
+            } catch (Exception e)
+            {
+                await ReplyAsync(e.Message);
+            }
+
         }
 
-        [Command("test")]
-        [Alias("test2")]
-        [RequireBotPermission(GuildPermission.EmbedLinks | GuildPermission.SendMessages)]
-        [Summary("Test command logging")]
-        public async Task LogAdminCommand(IGuildUser moderator, string action, IGuildUser subject, string reason)
+        public async Task LogAdminCommand(IUser moderator, string action, IUser subject, Color color, params string[] reason)
         {
             EmbedFooterBuilder footer = new EmbedFooterBuilder()
             {
                 IconUrl = "http://i.imgur.com/BQZJAqT.png",
-                Text = "Temp text"
+                Text = "Case #0"
             };
+            EmbedAuthorBuilder author = new EmbedAuthorBuilder()
+            {
+                IconUrl = moderator.GetAvatarUrl(),
+                Name = $"{moderator.Username}#{moderator.Discriminator}"
+            };
+
+            string r = "";
+            foreach (string s in reason)
+                r += s + " ";
             var builder = new EmbedBuilder()
             {
-                Color = new Color(114, 137, 218),
-                Description = $"**Action:** {action}\n**User:** {subject.Username}#{subject.Discriminator} ({subject.Id})\n**Reason:** {reason}",
+                Author = author,
+                Color = color,
+                Description = $"**Action:** {action}\n**User:** {subject.Username}#{subject.Discriminator} ({subject.Id})\n**Reason:** {r}",
                 Footer = footer
             }.WithCurrentTimestamp();
 
-            await ReplyAsync("", embed: builder);
+            await Context.Guild.GetTextChannel(248050603450826752).SendMessageAsync("", embed: builder);
         }
     }
 }
