@@ -7,3 +7,12 @@ D:\Discord Bot\src\DEA.SQLite\obj\Debug\netstandard1.5\DEA.SQLite.csprojResolveA
 D:\Discord Bot\src\DEA.SQLite\obj\Debug\netstandard1.5\DEA.SQLite.AssemblyInfo.cs
 D:\Discord Bot\src\DEA.SQLite\obj\Debug\netstandard1.5\DEA.SQLite.dll
 D:\Discord Bot\src\DEA.SQLite\obj\Debug\netstandard1.5\DEA.SQLite.pdb
+C:\Users\Reyn\Documents\Visual Studio 2017\Projects\DEA\src\DEA.SQLite\bin\Debug\netstandard1.5\DEA.SQLite.deps.json
+C:\Users\Reyn\Documents\Visual Studio 2017\Projects\DEA\src\DEA.SQLite\bin\Debug\netstandard1.5\DEA.SQLite.dll
+C:\Users\Reyn\Documents\Visual Studio 2017\Projects\DEA\src\DEA.SQLite\bin\Debug\netstandard1.5\DEA.SQLite.pdb
+C:\Users\Reyn\Documents\Visual Studio 2017\Projects\DEA\src\DEA.SQLite\bin\Debug\netstandard1.5\DEA.Core.dll
+C:\Users\Reyn\Documents\Visual Studio 2017\Projects\DEA\src\DEA.SQLite\bin\Debug\netstandard1.5\DEA.Core.pdb
+C:\Users\Reyn\Documents\Visual Studio 2017\Projects\DEA\src\DEA.SQLite\obj\Debug\netstandard1.5\DEA.SQLite.csprojResolveAssemblyReference.cache
+C:\Users\Reyn\Documents\Visual Studio 2017\Projects\DEA\src\DEA.SQLite\obj\Debug\netstandard1.5\DEA.SQLite.AssemblyInfo.cs
+C:\Users\Reyn\Documents\Visual Studio 2017\Projects\DEA\src\DEA.SQLite\obj\Debug\netstandard1.5\DEA.SQLite.dll
+C:\Users\Reyn\Documents\Visual Studio 2017\Projects\DEA\src\DEA.SQLite\obj\Debug\netstandard1.5\DEA.SQLite.pdb

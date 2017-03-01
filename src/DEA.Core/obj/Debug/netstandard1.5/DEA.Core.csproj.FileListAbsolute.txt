@@ -5,3 +5,10 @@ D:\Discord Bot\src\DEA.Core\obj\Debug\netstandard1.5\DEA.Core.csprojResolveAssem
 D:\Discord Bot\src\DEA.Core\obj\Debug\netstandard1.5\DEA.Core.AssemblyInfo.cs
 D:\Discord Bot\src\DEA.Core\obj\Debug\netstandard1.5\DEA.Core.dll
 D:\Discord Bot\src\DEA.Core\obj\Debug\netstandard1.5\DEA.Core.pdb
+C:\Users\Reyn\Documents\Visual Studio 2017\Projects\DEA\src\DEA.Core\bin\Debug\netstandard1.5\DEA.Core.deps.json
+C:\Users\Reyn\Documents\Visual Studio 2017\Projects\DEA\src\DEA.Core\bin\Debug\netstandard1.5\DEA.Core.dll
+C:\Users\Reyn\Documents\Visual Studio 2017\Projects\DEA\src\DEA.Core\bin\Debug\netstandard1.5\DEA.Core.pdb
+C:\Users\Reyn\Documents\Visual Studio 2017\Projects\DEA\src\DEA.Core\obj\Debug\netstandard1.5\DEA.Core.AssemblyInfo.cs
+C:\Users\Reyn\Documents\Visual Studio 2017\Projects\DEA\src\DEA.Core\obj\Debug\netstandard1.5\DEA.Core.dll
+C:\Users\Reyn\Documents\Visual Studio 2017\Projects\DEA\src\DEA.Core\obj\Debug\netstandard1.5\DEA.Core.pdb
+C:\Users\Reyn\Documents\Visual Studio 2017\Projects\DEA\src\DEA.Core\obj\Debug\netstandard1.5\DEA.Core.csprojResolveAssemblyReference.cache
