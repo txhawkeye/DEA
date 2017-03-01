@@ -16,3 +16,12 @@ C:\Users\Reyn\Documents\Visual Studio 2017\Projects\DEA\src\DEA.SQLite\obj\Debug
 C:\Users\Reyn\Documents\Visual Studio 2017\Projects\DEA\src\DEA.SQLite\obj\Debug\netstandard1.5\DEA.SQLite.AssemblyInfo.cs
 C:\Users\Reyn\Documents\Visual Studio 2017\Projects\DEA\src\DEA.SQLite\obj\Debug\netstandard1.5\DEA.SQLite.dll
 C:\Users\Reyn\Documents\Visual Studio 2017\Projects\DEA\src\DEA.SQLite\obj\Debug\netstandard1.5\DEA.SQLite.pdb
+D:\DEA\src\DEA.SQLite\bin\Debug\netstandard1.5\DEA.SQLite.deps.json
+D:\DEA\src\DEA.SQLite\bin\Debug\netstandard1.5\DEA.SQLite.dll
+D:\DEA\src\DEA.SQLite\bin\Debug\netstandard1.5\DEA.SQLite.pdb
+D:\DEA\src\DEA.SQLite\bin\Debug\netstandard1.5\DEA.Core.dll
+D:\DEA\src\DEA.SQLite\bin\Debug\netstandard1.5\DEA.Core.pdb
+D:\DEA\src\DEA.SQLite\obj\Debug\netstandard1.5\DEA.SQLite.csprojResolveAssemblyReference.cache
+D:\DEA\src\DEA.SQLite\obj\Debug\netstandard1.5\DEA.SQLite.AssemblyInfo.cs
+D:\DEA\src\DEA.SQLite\obj\Debug\netstandard1.5\DEA.SQLite.dll
+D:\DEA\src\DEA.SQLite\obj\Debug\netstandard1.5\DEA.SQLite.pdb

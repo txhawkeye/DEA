@@ -11,6 +11,7 @@ namespace DEA.Modules
         [Command("ban")]
         [Alias("hammer")]
         [RequireBotPermission(GuildPermission.BanMembers)]
+        [RequireUserPermission(GuildPermission.ManageMessages)]
         [Remarks("Ban a user from the server")]
         public async Task Ban(IGuildUser UserToBan, params string[] reason)
         {
@@ -29,6 +30,7 @@ namespace DEA.Modules
         [Command("kick")]
         [Alias("boot")]
         [RequireBotPermission(GuildPermission.KickMembers)]
+        [RequireUserPermission(GuildPermission.ManageMessages)]
         [Remarks("Kick a user from the server")]
         public async Task Kick(IGuildUser UserToKick, params string[] reason)
         {

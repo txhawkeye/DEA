@@ -13,4 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\DEA.Core\DEA.Core.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Databases\" />
+  </ItemGroup>
 </Project>

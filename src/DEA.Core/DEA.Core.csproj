@@ -9,9 +9,13 @@
     <EmbeddedResource Include="**\*.resx" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="Common\**" />
+    <Compile Remove="obj\**" />
     <EmbeddedResource Remove="Common\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Discord.Net" Version="1.0.0-rc-00608" />
+    <PackageReference Include="Discord.Net" Version="1.0.0-rc-00610" />
   </ItemGroup>
 </Project>

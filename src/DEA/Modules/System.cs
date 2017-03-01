@@ -71,7 +71,7 @@ namespace System.Modules
             var application = await Context.Client.GetApplicationInfoAsync();
             var message =
                 $"```asciidoc\n= STATISTICS =\n" +
-                $"• Memory   :: {Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2)} MB\n" +
+                $"• Memory   :: {(_process.PrivateMemorySize64 / 1000000f).ToString("0.##")} MB\n" +
                 $"• Uptime   :: Days: {uptime.Days}, Hours: {uptime.Hours}, Minutes: {uptime.Minutes}, Seconds: {uptime.Seconds}\n" +
                 $"• Users    :: {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Users.Count)}\n" +
                 $"• Servers  :: {(Context.Client as DiscordSocketClient).Guilds.Count}\n" +

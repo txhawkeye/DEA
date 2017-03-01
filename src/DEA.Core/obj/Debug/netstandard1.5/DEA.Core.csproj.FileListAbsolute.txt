@@ -12,3 +12,10 @@ C:\Users\Reyn\Documents\Visual Studio 2017\Projects\DEA\src\DEA.Core\obj\Debug\n
 C:\Users\Reyn\Documents\Visual Studio 2017\Projects\DEA\src\DEA.Core\obj\Debug\netstandard1.5\DEA.Core.dll
 C:\Users\Reyn\Documents\Visual Studio 2017\Projects\DEA\src\DEA.Core\obj\Debug\netstandard1.5\DEA.Core.pdb
 C:\Users\Reyn\Documents\Visual Studio 2017\Projects\DEA\src\DEA.Core\obj\Debug\netstandard1.5\DEA.Core.csprojResolveAssemblyReference.cache
+D:\DEA\src\DEA.Core\bin\Debug\netstandard1.5\DEA.Core.deps.json
+D:\DEA\src\DEA.Core\bin\Debug\netstandard1.5\DEA.Core.dll
+D:\DEA\src\DEA.Core\bin\Debug\netstandard1.5\DEA.Core.pdb
+D:\DEA\src\DEA.Core\obj\Debug\netstandard1.5\DEA.Core.csprojResolveAssemblyReference.cache
+D:\DEA\src\DEA.Core\obj\Debug\netstandard1.5\DEA.Core.AssemblyInfo.cs
+D:\DEA\src\DEA.Core\obj\Debug\netstandard1.5\DEA.Core.dll
+D:\DEA\src\DEA.Core\obj\Debug\netstandard1.5\DEA.Core.pdb

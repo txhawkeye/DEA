@@ -31,7 +31,7 @@ namespace DEA.Services
 
             var config = Configuration.Load();
             PrettyConsole.Log(LogSeverity.Info, "Commands", $"Loading SQLite commands");
-            await _service.LoadSqliteModulesAsync();
+            //TODO: await _service.LoadSqliteModulesAsync();
           
 
             _client.MessageReceived += HandleCommandAsync;
