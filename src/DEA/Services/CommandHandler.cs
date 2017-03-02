@@ -45,6 +45,13 @@ namespace DEA.Services
                 return;
 
             var context = new SocketCommandContext(_client, msg);
+
+            if (context.Channel is SocketTextChannel)
+                if ((context.Guild.CurrentUser as IGuildUser).GetPermissions(context.Channel as SocketTextChannel).SendMessages == false)
+                {
+                    return;
+                }
+
             string prefix = Configuration.Load().Prefix;
 
             int argPos = 0;
