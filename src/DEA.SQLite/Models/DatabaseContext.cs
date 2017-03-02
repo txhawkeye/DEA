@@ -11,7 +11,7 @@ namespace DEA.SQLite.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite(@"Server=(localdb)\mssqllocaldb;Database=DEA;Trusted_Connection=true;");
+            optionsBuilder.UseSqlite("Filename=../Databases/DEA.db");
         }
     }
 }

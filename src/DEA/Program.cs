@@ -13,12 +13,11 @@ namespace DEA
         private DiscordSocketClient _client;
         private CommandHandler _handler;
 
+
         public async Task Start()
         {
             PrettyConsole.NewLine("===   DEA   ===");
             PrettyConsole.NewLine();
-
-            Configuration.EnsureExists();
 
             _client = new DiscordSocketClient(new DiscordSocketConfig()
             {
@@ -31,7 +30,7 @@ namespace DEA
                 => Task.Run(()
                 => PrettyConsole.Log(l.Severity, l.Source, l.Exception?.ToString() ?? l.Message));
 
-            await _client.LoginAsync(TokenType.Bot, Configuration.Load().Token.Discord);
+            await _client.LoginAsync(TokenType.Bot, Config.TOKEN);
             await _client.StartAsync();
 
             _handler = new CommandHandler();

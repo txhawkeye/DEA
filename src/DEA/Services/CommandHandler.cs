@@ -29,8 +29,7 @@ namespace DEA.Services
 
             await _service.AddModulesAsync(Assembly.GetEntryAssembly());
 
-            var config = Configuration.Load();
-            PrettyConsole.Log(LogSeverity.Info, "Commands", $"Loading SQLite commands");
+            //PrettyConsole.Log(LogSeverity.Info, "Commands", $"Loading SQLite commands");
             //TODO: await _service.LoadSqliteModulesAsync();
           
 
@@ -52,21 +51,11 @@ namespace DEA.Services
                     return;
                 }
 
-            string prefix = Configuration.Load().Prefix;
-
             int argPos = 0;
-            if (msg.HasStringPrefix(prefix, ref argPos) ||
+            if (msg.HasStringPrefix(Config.PREFIX, ref argPos) ||
                 msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
             {
                 var result = await _service.ExecuteAsync(context, argPos);
-
-                if (!result.IsSuccess)
-                {
-                    if (result is ExecuteResult r)
-                        Console.WriteLine(r.Exception.ToString());
-                    else
-                        await context.Channel.SendMessageAsync(result.ToString());
-                }
             }
         }
     }
