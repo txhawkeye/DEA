@@ -43,10 +43,10 @@ namespace DEA.Services
             if (msg == null)
                 return;
 
-            var context = new SocketCommandContext(_client, msg);
+            var Context = new SocketCommandContext(_client, msg);
 
-            if (context.Channel is SocketTextChannel)
-                if ((context.Guild.CurrentUser as IGuildUser).GetPermissions(context.Channel as SocketTextChannel).SendMessages == false)
+            if (Context.Channel is SocketTextChannel)
+                if ((Context.Guild.CurrentUser as IGuildUser).GetPermissions(Context.Channel as SocketTextChannel).SendMessages == false)
                 {
                     return;
                 }
@@ -55,7 +55,16 @@ namespace DEA.Services
             if (msg.HasStringPrefix(Config.PREFIX, ref argPos) ||
                 msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
             {
-                var result = await _service.ExecuteAsync(context, argPos);
+                var result = await _service.ExecuteAsync(Context, argPos);
+
+                if (!result.IsSuccess)
+                {
+                    if (!result.IsSuccess && result.Error != CommandError.UnknownCommand)
+                        try
+                        {
+                            await msg.Channel.SendMessageAsync($"{Context.User.Mention}, {result.ErrorReason}");
+                        } catch { }   
+                }
             }
         }
     }

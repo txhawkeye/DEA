@@ -8,45 +8,41 @@ namespace DEA.Modules
 {
     public class Moderation : ModuleBase<SocketCommandContext>
     {
-        [Command("ban")]
+        [Command("Ban")]
         [Alias("hammer")]
         [RequireBotPermission(GuildPermission.BanMembers)]
-        [RequireUserPermission(GuildPermission.ManageMessages)]
         [Remarks("Ban a user from the server")]
-        public async Task Ban(IGuildUser UserToBan, [Remainder] string reason)
+        public async Task Ban(IGuildUser userToBan, [Remainder] string reason = "No reason.")
         {
-            try
-            {
-                await Context.Guild.AddBanAsync(UserToBan);
-                await LogAdminCommand(Context.User, "Ban", UserToBan, new Color(255, 0, 0), reason);
-                await ReplyAsync($"{Context.User.Mention} has swung the banhammer on {UserToBan.Mention}");
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync(e.Message);
-            }
+            await InformSubject(Context.User, "Ban", userToBan, reason);
+            await Context.Guild.AddBanAsync(userToBan);
+            await ModLog(Context.User, "Ban", userToBan, new Color(255, 0, 0), reason);
+            await ReplyAsync($"{Context.User.Mention} has swung the banhammer on {userToBan.Mention}");
         }
 
-        [Command("kick")]
+        [Command("Kick")]
         [Alias("boot")]
         [RequireBotPermission(GuildPermission.KickMembers)]
-        [RequireUserPermission(GuildPermission.ManageMessages)]
         [Remarks("Kick a user from the server")]
-        public async Task Kick(IGuildUser UserToKick, [Remainder] string reason)
+        public async Task Kick(IGuildUser userToKick, [Remainder] string reason = "No reason.")
         {
-            try
-            {
-                await UserToKick.KickAsync();
-                await LogAdminCommand(Context.User, "Kick", UserToKick, new Color(255, 114, 14), reason);
-                await ReplyAsync($"{Context.User.Mention} has kicked that faggot {UserToKick.Mention}");
-            } catch (Exception e)
-            {
-                await ReplyAsync(e.Message);
-            }
-
+            await InformSubject(Context.User, "Kick", userToKick, reason);
+            await userToKick.KickAsync();
+            await ModLog(Context.User, "Kick", userToKick, new Color(255, 114, 14), reason);
+            await ReplyAsync($"{Context.User.Mention} has kicked {userToKick.Mention}");
         }
 
-        public async Task LogAdminCommand(IUser moderator, string action, IUser subject, Color color, [Remainder] string reason)
+        public async Task InformSubject(IUser moderator, string action, IUser subject, [Remainder] string reason)
+        {
+
+            var channel = await subject.CreateDMChannelAsync();
+            if (reason == "No reason.")
+                await channel.SendMessageAsync($"{moderator.Mention} has attempted to {action.ToLower()} you.");
+            else
+                await channel.SendMessageAsync($"{moderator.Mention} has attempted to {action.ToLower()} you for the following reason: \"{reason}\"");
+        }
+
+        public async Task ModLog(IUser moderator, string action, IUser subject, Color color, [Remainder] string reason)
         {
             EmbedFooterBuilder footer = new EmbedFooterBuilder()
             {
@@ -67,7 +63,7 @@ namespace DEA.Modules
                 Footer = footer
             }.WithCurrentTimestamp();
 
-            await Context.Guild.GetTextChannel(248050603450826752).SendMessageAsync("", embed: builder);
+            await Context.Guild.GetTextChannel(248050603450826752).SendMessageAsync("", embed: builder);     
         }
     }
 }

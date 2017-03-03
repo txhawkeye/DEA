@@ -14,13 +14,7 @@ namespace DEA
         private DiscordSocketClient _client;
         private CommandHandler _handler;
 
-        public Program()
-        {
-            using (var client = new Database())
-            {
-                client.Database.EnsureCreated();
-            }
-        }
+
 
         public async Task Start()
         {

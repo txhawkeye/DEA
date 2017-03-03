@@ -1,6 +1,5 @@
 ﻿using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Threading.Tasks;
 
 namespace DEA
@@ -17,16 +16,6 @@ namespace DEA
         public async Task InitializeSQLiteAsync()
         {
             await Task.Delay(0);
-        }
-
-        public Task InitializeMySQLAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task InitializeRedisAsync()
-        {
-            throw new NotImplementedException();
         }
 
         public void ConfigureServices(IServiceCollection services)

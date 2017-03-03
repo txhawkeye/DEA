@@ -43,8 +43,6 @@ namespace System.Modules
                 message += $"**{module.Name} Commands **: ```asciidoc\n";
                 foreach (var cmd in module.Commands)
                 {
-                    var result = await cmd.CheckPreconditionsAsync(Context);
-                    if (result.IsSuccess)
                         message += $"{Config.PREFIX}{cmd.Aliases.First()}{new String(' ', (longest + 1) - cmd.Aliases.First().Length)} :: {cmd.Remarks}\n";
                 }
 
@@ -57,7 +55,7 @@ namespace System.Modules
                 await ReplyAsync($"{Context.User.Mention}, you have been DMed with all the command information!");
             } catch (Exception e)
             {
-                await ReplyAsync(e.Message);
+                await ReplyAsync($"{Context.User.Mention}, {e.Message}");
             }
    
         }
@@ -86,7 +84,7 @@ namespace System.Modules
             }
             catch (Exception e)
             {
-                await ReplyAsync(e.Message);
+                await ReplyAsync($"{Context.User.Mention}, {e.Message}");
             }
             
         }
