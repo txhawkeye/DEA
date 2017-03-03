@@ -13,7 +13,7 @@ namespace DEA.Modules
         [RequireBotPermission(GuildPermission.BanMembers)]
         [RequireUserPermission(GuildPermission.ManageMessages)]
         [Remarks("Ban a user from the server")]
-        public async Task Ban(IGuildUser UserToBan, params string[] reason)
+        public async Task Ban(IGuildUser UserToBan, [Remainder] string reason)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace DEA.Modules
         [RequireBotPermission(GuildPermission.KickMembers)]
         [RequireUserPermission(GuildPermission.ManageMessages)]
         [Remarks("Kick a user from the server")]
-        public async Task Kick(IGuildUser UserToKick, params string[] reason)
+        public async Task Kick(IGuildUser UserToKick, [Remainder] string reason)
         {
             try
             {
@@ -46,7 +46,7 @@ namespace DEA.Modules
 
         }
 
-        public async Task LogAdminCommand(IUser moderator, string action, IUser subject, Color color, params string[] reason)
+        public async Task LogAdminCommand(IUser moderator, string action, IUser subject, Color color, [Remainder] string reason)
         {
             EmbedFooterBuilder footer = new EmbedFooterBuilder()
             {
@@ -59,14 +59,11 @@ namespace DEA.Modules
                 Name = $"{moderator.Username}#{moderator.Discriminator}"
             };
 
-            string r = "";
-            foreach (string s in reason)
-                r += s + " ";
             var builder = new EmbedBuilder()
             {
                 Author = author,
                 Color = color,
-                Description = $"**Action:** {action}\n**User:** {subject.Username}#{subject.Discriminator} ({subject.Id})\n**Reason:** {r}",
+                Description = $"**Action:** {action}\n**User:** {subject.Username}#{subject.Discriminator} ({subject.Id})\n**Reason:** {reason}",
                 Footer = footer
             }.WithCurrentTimestamp();
 

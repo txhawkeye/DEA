@@ -30,7 +30,7 @@ namespace System.Modules
         [Remarks("All command information.")]
         public async Task HelpAsync()
         {
-            string prefix = "!";
+
             string message = null;
             int longest = 0;
 
@@ -45,7 +45,7 @@ namespace System.Modules
                 {
                     var result = await cmd.CheckPreconditionsAsync(Context);
                     if (result.IsSuccess)
-                        message += $"{prefix}{cmd.Aliases.First()}{new String(' ', (longest + 1) - cmd.Aliases.First().Length)} :: {cmd.Remarks}\n";
+                        message += $"{Config.PREFIX}{cmd.Aliases.First()}{new String(' ', (longest + 1) - cmd.Aliases.First().Length)} :: {cmd.Remarks}\n";
                 }
 
                 message += "```\n ";

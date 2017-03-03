@@ -1,29 +1,29 @@
 ﻿namespace DEA.SQLite.Models
 {
-    class Guild
+    public class Guild
     {
 
-        public long Id { get; set; }
+        public ulong Id { get; set; }
 
-        public string Prefix { get; set; } = "!";
+        public string Prefix { get; set; } = "$";
 
-        public long ModRoleId { get; set; }
+        public ulong ModRoleId { get; set; }
 
-        public long ModChannelId { get; set; }
+        public ulong ModChannelId { get; set; }
 
-        public int CaseNumber { get; set; } = 0;
+        public uint CaseNumber { get; set; } = 1;
 
         public bool DM { get; set; } = false;
 
-        public long GambleChannelId { get; set; }
+        public ulong GambleChannelId { get; set; }
 
-        public long Rank1Id { get; set; }
+        public ulong Rank1Id { get; set; }
 
-        public long Rank2Id { get; set; }
+        public ulong Rank2Id { get; set; }
 
-        public long Rank3Id { get; set; }
+        public ulong Rank3Id { get; set; }
 
-        public long Rank4Id { get; set; }
+        public ulong Rank4Id { get; set; }
 
     }
 }

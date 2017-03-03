@@ -1,4 +1,5 @@
 ﻿using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 
@@ -26,6 +27,11 @@ namespace DEA
         public Task InitializeRedisAsync()
         {
             throw new NotImplementedException();
+        }
+
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddEntityFrameworkSqlite().AddDbContext<SQLite.Models.Database>();
         }
     }
 }
