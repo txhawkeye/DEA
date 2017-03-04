@@ -23,6 +23,96 @@ namespace DEA.Modules
             _db.Dispose();
         }
 
+        [Command("Investments")]
+        [Alias("Investements", "Investement", "Investment")]
+        [Remarks("Increase your money per message")]
+        public async Task Invest(string investString = null)
+        {
+            var userRepo = new UserRepository(_db);
+            var guildRepo = new GuildRepository(_db);
+            float cash = await userRepo.GetCash(Context.User.Id);
+
+            switch (investString)
+            {
+                case "line":
+                    if (Config.LINE_COST > cash)
+                    {
+                        await ReplyAsync($"You do not have enough money. Balance: {cash.ToString("N2")}$");
+                        break;
+                    }
+                    if (await userRepo.GetMessageCooldown(Context.User.Id) == Config.LINE_COOLDOWN)
+                    {
+                        await ReplyAsync($"You have already purchased this investment.");
+                        break;
+                    }
+                    else // They have enough cash and they don't have it already
+                    {
+                        await userRepo.SetMessageCooldown(Context.User.Id, Config.LINE_COOLDOWN);
+                        await userRepo.EditCash(Context.User.Id, -Config.LINE_COST);
+                        await ReplyAsync("Don't forget to wipe your nose when you are done with that line.");
+                        break;
+                    }
+                case "pound":
+                case "lb":
+                    if (Config.POUND_COST > cash)
+                    {
+                        await ReplyAsync($"You do not have enough money. Balance: {cash.ToString("N2")}$");
+                        break;
+                    }
+                    if (await userRepo.GetInvestmentMultiplier(Context.User.Id) >= Config.POUND_MULTIPLIER)
+                    {
+                        await ReplyAsync($"You already purchased this investment.");
+                        break;
+                    }
+                    else
+                    {
+                        await userRepo.EditCash(Context.User.Id, -Config.POUND_COST);
+                        await userRepo.SetInvestmentMultiplier(Context.User.Id, Config.POUND_MULTIPLIER);
+                        await ReplyAsync("You get double the cash, but at what cost to your mental state?");
+                        break;
+                    }
+                case "kg":
+                case "kilo":
+                case "kilogram":
+                    if (Config.KILO_COST > cash)
+                    {
+                        await ReplyAsync($"You do not have enough money. Balance: {cash.ToString("N2")}$");
+                        break;
+                    }
+                    if (await userRepo.GetInvestmentMultiplier(Context.User.Id) != Config.POUND_MULTIPLIER)
+                    {
+                        await ReplyAsync("You must purchase the pound of cocaine investment before buying this one.");
+                        break;
+                    }
+                    if (await userRepo.GetInvestmentMultiplier(Context.User.Id) >= Config.KILO_MULTIPLIER)
+                    {
+                        await ReplyAsync($"You already purchased this investment.");
+                        break;
+                    }
+                    else
+                    {
+                        await userRepo.EditCash(Context.User.Id, -Config.KILO_COST);
+                        await userRepo.SetInvestmentMultiplier(Context.User.Id, Config.KILO_MULTIPLIER);
+                        await ReplyAsync("You get 4 times the money/msg. Don't go all Lindsay lohan on us now!");
+                    }
+                    break;
+                default:
+                    var builder = new EmbedBuilder()
+                    {
+                        Title = "Current Available Investments:",
+                        Color = new Color(0x0000FF),
+                        Description = ($"\n**Cost: {Config.LINE_COST}$** | Command: *{await guildRepo.GetPrefix(Context.Guild.Id)}investments line* | Description: " +
+                        $"One line of blow. Seems like nothing, yet it's enough to lower the message cooldown from 30 to 25 seconds." +
+                        $"\n**Cost: {Config.POUND_COST}$** | Command: *{await guildRepo.GetPrefix(Context.Guild.Id)}investments pound* | Description: " +
+                        $"This one pound of coke will double the amount of cash you get per message\n**Cost: {Config.KILO_COST}$** | Command: " +
+                        $"*{await guildRepo.GetPrefix(Context.Guild.Id)}investments kilo* | Description: A kilo of cocaine is more than enough to " +
+                        $"quadruple your cash/message.\n These investments stack with the chatting multiplier. However, they do not stack with themselves."),
+                    };
+                    await Context.Channel.SendMessageAsync("", embed: builder);
+                    break;
+            }
+        }
+
         [Command("Leaderboards")]
         [Alias("lb", "rankings", "highscores", "leaderboard", "highscore")]
         [Remarks("View the richest Drug Traffickers.")]

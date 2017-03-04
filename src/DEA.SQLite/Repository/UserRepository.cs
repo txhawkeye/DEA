@@ -58,6 +58,20 @@ namespace DEA.SQLite.Repository
             await UpdateAsync(user);
         }
 
+        public async Task SetInvestmentMultiplier(ulong userId, float investmentMultiplier)
+        {
+            var user = await FetchUser(userId);
+            user.InvestmentMultiplier = investmentMultiplier;
+            await UpdateAsync(user);
+        }
+
+        public async Task SetMessageCooldown(ulong userId, int messageCooldown)
+        {
+            var user = await FetchUser(userId);
+            user.MessageCooldown = messageCooldown;
+            await UpdateAsync(user);
+        }
+
         public async Task SetLastMessage(ulong userId, DateTime lastMessage)
         {
             var user = await FetchUser(userId);

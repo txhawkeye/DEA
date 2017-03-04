@@ -18,7 +18,7 @@ namespace DEA.Services
 
         public async Task InitializeAsync(DiscordSocketClient c)
         {
-            _client = c;                                            
+            _client = c;
             _service = new CommandService(new CommandServiceConfig()
             {
                 CaseSensitiveCommands = false,
@@ -27,9 +27,9 @@ namespace DEA.Services
 #elif RELEASE
                 DefaultRunMode = RunMode.Async
 #endif
-            });                         
+            });
 
-            await _service.AddModulesAsync(Assembly.GetEntryAssembly());          
+            await _service.AddModulesAsync(Assembly.GetEntryAssembly());
 
             _client.MessageReceived += HandleCommandAsync;
             PrettyConsole.Log(LogSeverity.Info, "Commands", $"Ready, loaded {_service.Commands.Count()} commands");
@@ -61,7 +61,8 @@ namespace DEA.Services
                         try
                         {
                             await msg.Channel.SendMessageAsync($"{Context.User.Mention}, {result.ErrorReason}");
-                        } catch { }   
+                        }
+                        catch { }
                 }
             }
             else if (msg.ToString().Length >= Config.MIN_CHAR_LENGTH)
