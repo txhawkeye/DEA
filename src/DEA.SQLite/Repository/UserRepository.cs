@@ -65,6 +65,13 @@ namespace DEA.SQLite.Repository
             await UpdateAsync(user);
         }
 
+        public async Task SetInvestmentMultiplier(ulong userId, float investmentMultiplier)
+        {
+            var user = await FetchUser(userId);
+            user.InvestmentMultiplier = investmentMultiplier;
+            await UpdateAsync(user);
+        }
+
         private async Task<User> FetchUser(ulong userId)
         {
             User ExistingUser = await SearchFor(c => c.Id == userId).FirstOrDefaultAsync();

@@ -43,27 +43,6 @@ namespace DEA.Services
 
             var Context = new SocketCommandContext(_client, msg);
 
-            if (msg.ToString().Length >= Config.MIN_CHAR_LENGTH && !msg.ToString().StartsWith(Config.PREFIX))
-            {
-                _db = new DbContext();
-                ulong userId = Context.User.Id;
-                var userRepo = new UserRepository(_db);
-                if (DateTime.Now.Subtract(await userRepo.GetLastMessage(userId)).TotalMilliseconds > await userRepo.GetMessageCooldown(userId))
-                {
-                    if (await userRepo.GetTemporaryMultiplier(userId) < Config.MAX_TEMP_MULTIPLIER)
-                    {
-                        await userRepo.SetLastMessage(userId, DateTime.Now);
-                        await userRepo.SetTemporaryMultiplier(userId, await userRepo.GetTemporaryMultiplier(userId) + Config.TEMP_MULTIPLIER_RATE);
-                        await userRepo.EditCash(userId, await userRepo.GetTemporaryMultiplier(userId) * await userRepo.GetInvestmentMultiplier(userId));
-                    } else
-                    {
-                        await userRepo.SetLastMessage(userId, DateTime.Now);
-                        await userRepo.EditCash(userId, await userRepo.GetTemporaryMultiplier(userId) * await userRepo.GetInvestmentMultiplier(userId));
-                    }
-                }
-                _db.Dispose();
-            }
-
             if (Context.Channel is SocketTextChannel)
                 if ((Context.Guild.CurrentUser as IGuildUser).GetPermissions(Context.Channel as SocketTextChannel).SendMessages == false)
                 {
@@ -84,6 +63,27 @@ namespace DEA.Services
                             await msg.Channel.SendMessageAsync($"{Context.User.Mention}, {result.ErrorReason}");
                         } catch { }   
                 }
+            }
+            else if (msg.ToString().Length >= Config.MIN_CHAR_LENGTH)
+            {
+                _db = new DbContext();
+                ulong userId = Context.User.Id;
+                var userRepo = new UserRepository(_db);
+                if (DateTime.Now.Subtract(await userRepo.GetLastMessage(userId)).TotalMilliseconds > await userRepo.GetMessageCooldown(userId))
+                {
+                    if (await userRepo.GetTemporaryMultiplier(userId) < Config.MAX_TEMP_MULTIPLIER)
+                    {
+                        await userRepo.SetLastMessage(userId, DateTime.Now);
+                        await userRepo.SetTemporaryMultiplier(userId, await userRepo.GetTemporaryMultiplier(userId) + Config.TEMP_MULTIPLIER_RATE);
+                        await userRepo.EditCash(userId, await userRepo.GetTemporaryMultiplier(userId) * await userRepo.GetInvestmentMultiplier(userId));
+                    }
+                    else
+                    {
+                        await userRepo.SetLastMessage(userId, DateTime.Now);
+                        await userRepo.EditCash(userId, await userRepo.GetTemporaryMultiplier(userId) * await userRepo.GetInvestmentMultiplier(userId));
+                    }
+                }
+                _db.Dispose();
             }
         }
     }

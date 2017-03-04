@@ -106,5 +106,6 @@ namespace DEA.Modules
             await userRepo.EditCash(userMentioned.Id, +money);
             await ReplyAsync($"Successfully given {money.ToString("N2")}$ to {userMentioned}.");
         }
+
     }
 }
