@@ -10,6 +10,7 @@ namespace DEA.Modules
         [Command("Ban")]
         [Alias("hammer")]
         [RequireBotPermission(GuildPermission.BanMembers)]
+        [RequireUserPermission(GuildPermission.ManageNicknames)]
         [Remarks("Ban a user from the server")]
         public async Task Ban(IGuildUser userToBan, [Remainder] string reason = "No reason.")
         {
@@ -22,6 +23,7 @@ namespace DEA.Modules
         [Command("Kick")]
         [Alias("boot")]
         [RequireBotPermission(GuildPermission.KickMembers)]
+        [RequireUserPermission(GuildPermission.ManageNicknames)]
         [Remarks("Kick a user from the server")]
         public async Task Kick(IGuildUser userToKick, [Remainder] string reason = "No reason.")
         {
@@ -33,12 +35,14 @@ namespace DEA.Modules
 
         public async Task InformSubject(IUser moderator, string action, IUser subject, [Remainder] string reason)
         {
-
-            var channel = await subject.CreateDMChannelAsync();
-            if (reason == "No reason.")
-                await channel.SendMessageAsync($"{moderator.Mention} has attempted to {action.ToLower()} you.");
-            else
-                await channel.SendMessageAsync($"{moderator.Mention} has attempted to {action.ToLower()} you for the following reason: \"{reason}\"");
+            try
+            {
+                var channel = await subject.CreateDMChannelAsync();
+                if (reason == "No reason.")
+                    await channel.SendMessageAsync($"{moderator.Mention} has attempted to {action.ToLower()} you.");
+                else
+                    await channel.SendMessageAsync($"{moderator.Mention} has attempted to {action.ToLower()} you for the following reason: \"{reason}\"");
+            } catch { }
         }
 
         public async Task ModLog(IUser moderator, string action, IUser subject, Color color, [Remainder] string reason)
@@ -58,7 +62,7 @@ namespace DEA.Modules
             {
                 Author = author,
                 Color = color,
-                Description = $"**Action:** {action}\n**User:** {subject.Username}#{subject.Discriminator} ({subject.Id})\n**Reason:** {reason}",
+                Description = $"**Action:** {action}\n**User:** {subject} ({subject.Id})\n**Reason:** {reason}",
                 Footer = footer
             }.WithCurrentTimestamp();
 

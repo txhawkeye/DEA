@@ -2,7 +2,6 @@
 using Discord.WebSocket;
 using DEA.Services;
 using System.Threading.Tasks;
-using DEA.SQLite.Models;
 
 namespace DEA
 {
@@ -13,8 +12,6 @@ namespace DEA
 
         private DiscordSocketClient _client;
         private CommandHandler _handler;
-
-
 
         public async Task Start()
         {

@@ -1,5 +1,6 @@
 ﻿using DEA.SQLite.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Threading.Tasks;
 
 namespace DEA.SQLite.Repository
@@ -13,98 +14,70 @@ namespace DEA.SQLite.Repository
             _dbContext = dbContext;
         }
 
-        public async Task EditCash(ulong UserID, float Change)
+        public async Task EditCash(ulong userId, float Change)
         {
-            User ExistingUser = await SearchFor(c=> c.Id == UserID).FirstOrDefaultAsync();
-            if (ExistingUser == null)
-            {
-                var CreatedUser = new User()
-                {
-                    Id = UserID,
-                    Cash = Change
-                };
-                await InsertAsync(CreatedUser);
-            }
-            else
-            {
-                ExistingUser.Cash += Change;
-                await UpdateAsync(ExistingUser);
-            }
+            var user = await FetchUser(userId);
+            user.Cash += (float) Math.Round(Change, 2);
+            await UpdateAsync(user);
         }
 
-        public async Task<float> GetCash(ulong UserID)
+        public async Task<float> GetCash(ulong userId)
         {
-            User ExistingUser = await SearchFor(c => c.Id == UserID).FirstOrDefaultAsync();
-            if (ExistingUser == null)
-            {
-                var CreatedUser = new User()
-                {
-                    Id = UserID
-                };
-                await InsertAsync(CreatedUser);
-                return CreatedUser.Cash;
-            }
-            return ExistingUser.Cash;
+            var user = await FetchUser(userId);
+            return user.Cash;
         }
 
-        public async Task<float> GetTemporaryMultiplier(ulong UserID)
+        public async Task<float> GetTemporaryMultiplier(ulong userId)
         {
-            User ExistingUser = await SearchFor(c => c.Id == UserID).FirstOrDefaultAsync();
-            if (ExistingUser == null)
-            {
-                var CreatedUser = new User()
-                {
-                    Id = UserID
-                };
-                await InsertAsync(CreatedUser);
-                return CreatedUser.TemporaryMultiplier;
-            }
-            return ExistingUser.TemporaryMultiplier;
+            var user = await FetchUser(userId);
+            return user.TemporaryMultiplier;
         }
 
-        public async Task<float> GetInvestementMultiplier(ulong UserID)
+        public async Task<float> GetInvestmentMultiplier(ulong userId)
         {
-            User ExistingUser = await SearchFor(c => c.Id == UserID).FirstOrDefaultAsync();
-            if (ExistingUser == null)
-            {
-                var CreatedUser = new User()
-                {
-                    Id = UserID
-                };
-                await InsertAsync(CreatedUser);
-                return CreatedUser.InvestementMultiplier;
-            }
-            return ExistingUser.InvestementMultiplier;
+            var user = await FetchUser(userId);
+            return user.InvestmentMultiplier;
         }
 
-        public async Task<int> GetMessageCooldown(ulong UserID)
+        public async Task<int> GetMessageCooldown(ulong userId)
         {
-            User ExistingUser = await SearchFor(c => c.Id == UserID).FirstOrDefaultAsync();
-            if (ExistingUser == null)
-            {
-                var CreatedUser = new User()
-                {
-                    Id = UserID
-                };
-                await InsertAsync(CreatedUser);
-                return CreatedUser.MessageCooldown;
-            }
-            return ExistingUser.MessageCooldown;
+            var user = await FetchUser(userId);
+            return user.MessageCooldown;
         }
 
-        public async Task<ulong> GetLastMessage(ulong UserID)
+        public async Task<DateTime> GetLastMessage(ulong userId)
         {
-            User ExistingUser = await SearchFor(c => c.Id == UserID).FirstOrDefaultAsync();
+            var user = await FetchUser(userId);
+            return DateTime.Parse(user.LastMessage);
+        }
+
+        public async Task SetTemporaryMultiplier(ulong userId, float tempMultiplier)
+        {
+            var user = await FetchUser(userId);
+            user.TemporaryMultiplier = tempMultiplier;
+            await UpdateAsync(user);
+        }
+
+        public async Task SetLastMessage(ulong userId, DateTime lastMessage)
+        {
+            var user = await FetchUser(userId);
+            user.LastMessage = lastMessage.ToString();
+            await UpdateAsync(user);
+        }
+
+        private async Task<User> FetchUser(ulong userId)
+        {
+            User ExistingUser = await SearchFor(c => c.Id == userId).FirstOrDefaultAsync();
             if (ExistingUser == null)
             {
                 var CreatedUser = new User()
                 {
-                    Id = UserID
+                    Id = userId
                 };
                 await InsertAsync(CreatedUser);
-                return CreatedUser.LastMessage;
+                return CreatedUser;
             }
-            return ExistingUser.LastMessage;
+            return ExistingUser;
         }
     }
 }

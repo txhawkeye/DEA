@@ -14,7 +14,7 @@ namespace DEA.SQLite.Models
 
         public uint MuteLength { get; set; } = 86400000;
 
-        public ulong MutedAt { get; set; } = 0;
+        public string MutedAt { get; set; } = "1 / 1 / 2017 0:00:00 AM";
 
     }
 }

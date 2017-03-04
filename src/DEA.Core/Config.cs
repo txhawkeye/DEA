@@ -1,4 +1,6 @@
-﻿public static class Config
+﻿using System;
+
+public static class Config
 {
     public static readonly string TOKEN = "MjgwMjAxNzUwMjQ0MzYwMTk0.C5keHw.Nj6fcpH5igw15CmcEcelaz1V5d4", PREFIX = "$";
 

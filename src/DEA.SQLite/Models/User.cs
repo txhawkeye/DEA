@@ -9,21 +9,21 @@
 
         public float Cash { get; set; } = 0;
 
-        public ulong LastMessage { get; set; } = 0;
+        public string LastMessage { get; set; } = "1 / 1 / 2017 0:00:00 AM";
 
-        public ulong LastWhore { get; set; } = 0;
+        public string LastWhore { get; set; } = "1 / 1 / 2017 0:00:00 AM";
 
-        public ulong LastJump { get; set; } = 0;
+        public string LastJump { get; set; } = "1 / 1 / 2017 0:00:00 AM";
 
-        public ulong LastSteal { get; set; } = 0;
+        public string LastSteal { get; set; } = "1 / 1 / 2017 0:00:00 AM";
 
-        public ulong LastRob { get; set; } = 0;
+        public string LastRob { get; set; } = "1 / 1 / 2017 0:00:00 AM";
 
-        public ulong LastReset { get; set; } = 0;
+        public string LastReset { get; set; } = "1 / 1 / 2017 0:00:00 AM";
 
         public float TemporaryMultiplier { get; set; } = 1;
 
-        public float InvestementMultiplier { get; set; } = 1;
+        public float InvestmentMultiplier { get; set; } = 1;
 
         public int MessageCooldown { get; set; } = 30000;
 

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace DEA.Modules
 {
     [Group("Clear"), RequireContext(ContextType.Guild)]
+    [RequireUserPermission(GuildPermission.ManageNicknames)]
     [Alias("Clean")]
     [RequireBotPermission(GuildPermission.ManageMessages)]
     public class Clear : ModuleBase<SocketCommandContext>
