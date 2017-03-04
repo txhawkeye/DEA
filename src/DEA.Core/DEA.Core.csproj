@@ -3,7 +3,7 @@
     <RootNamespace>DEA</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
-    <TargetFramework>netstandard1.5</TargetFramework>
+    <TargetFramework>netstandard1.6</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="**\*.resx" />
@@ -16,6 +16,6 @@
     <None Remove="obj\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Discord.Net" Version="1.0.0-rc-00610" />
+    <PackageReference Include="Discord.Net" Version="1.0.0-rc-00614" />
   </ItemGroup>
 </Project>

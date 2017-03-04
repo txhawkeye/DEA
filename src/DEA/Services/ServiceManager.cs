@@ -20,7 +20,7 @@ namespace DEA
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddEntityFrameworkSqlite().AddDbContext<SQLite.Models.Database>();
+            services.AddEntityFrameworkSqlite().AddDbContext<SQLite.Models.DbContext>();
         }
     }
 }
