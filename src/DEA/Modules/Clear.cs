@@ -15,7 +15,7 @@ namespace DEA.Modules
         [Command]
         [Remarks("Deletes x amount of messages.")]
         public async Task CleanAsync(int count = 25)
-        { 
+        {
             var messages = await Context.Channel.GetMessagesAsync(count, CacheMode.AllowDownload).Flatten();
             await Context.Channel.DeleteMessagesAsync(messages);
             var tempMsg = await ReplyAsync($"Deleted **{messages.Count()}** message(s)");

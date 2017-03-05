@@ -1,4 +1,7 @@
-﻿using Discord;
+﻿using DEA.SQLite.Models;
+using DEA.SQLite.Repository;
+using Discord;
+using System;
 using Discord.Commands;
 using System.Threading.Tasks;
 
@@ -7,13 +10,27 @@ namespace DEA.Modules
 {
     public class Moderation : ModuleBase<SocketCommandContext>
     {
+
+        private DbContext _db;
+
+        protected override void BeforeExecute()
+        {
+            _db = new DbContext();
+        }
+
+        protected override void AfterExecute()
+        {
+            _db.Dispose();
+        }
+
         [Command("Ban")]
         [Alias("hammer")]
         [RequireBotPermission(GuildPermission.BanMembers)]
-        [RequireUserPermission(GuildPermission.ManageNicknames)]
+        [RequireUserPermission(GuildPermission.ManageMessages)]
         [Remarks("Ban a user from the server")]
         public async Task Ban(IGuildUser userToBan, [Remainder] string reason = "No reason.")
         {
+            if (userToBan.GuildPermissions.ManageMessages) throw new Exception("You cannot kick another mod!");
             await InformSubject(Context.User, "Ban", userToBan, reason);
             await Context.Guild.AddBanAsync(userToBan);
             await ModLog(Context.User, "Ban", userToBan, new Color(255, 0, 0), reason);
@@ -23,10 +40,11 @@ namespace DEA.Modules
         [Command("Kick")]
         [Alias("boot")]
         [RequireBotPermission(GuildPermission.KickMembers)]
-        [RequireUserPermission(GuildPermission.ManageNicknames)]
+        [RequireUserPermission(GuildPermission.ManageMessages)]
         [Remarks("Kick a user from the server")]
         public async Task Kick(IGuildUser userToKick, [Remainder] string reason = "No reason.")
         {
+            if (userToKick.GuildPermissions.ManageMessages) throw new Exception("You cannot kick another mod!");
             await InformSubject(Context.User, "Kick", userToKick, reason);
             await userToKick.KickAsync();
             await ModLog(Context.User, "Kick", userToKick, new Color(255, 114, 14), reason);
@@ -47,10 +65,11 @@ namespace DEA.Modules
 
         public async Task ModLog(IUser moderator, string action, IUser subject, Color color, [Remainder] string reason)
         {
+            var guildRepo = new GuildRepository(_db);
             EmbedFooterBuilder footer = new EmbedFooterBuilder()
             {
                 IconUrl = "http://i.imgur.com/BQZJAqT.png",
-                Text = "Case #0"
+                Text = $"Case #0"
             };
             EmbedAuthorBuilder author = new EmbedAuthorBuilder()
             {
@@ -66,7 +85,9 @@ namespace DEA.Modules
                 Footer = footer
             }.WithCurrentTimestamp();
 
-            await Context.Guild.GetTextChannel(248050603450826752).SendMessageAsync("", embed: builder);     
+            //if (Context.Guild.GetTextChannel(await guildRepo.GetModLogChannelId(Context.Guild.Id)) != null)
+                //await guildRepo.IncrementCaseNumber(Context.Guild.Id);
+                await Context.Guild.GetTextChannel(248050603450826752).SendMessageAsync("", embed: builder);     
         }
     }
 }

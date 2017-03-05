@@ -9,7 +9,7 @@
 
         public ulong ModRoleId { get; set; }
 
-        public ulong ModChannelId { get; set; }
+        public ulong ModLogChannelId { get; set; }
 
         public uint CaseNumber { get; set; } = 1;
 

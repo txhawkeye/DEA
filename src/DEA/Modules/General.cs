@@ -45,13 +45,10 @@ namespace DEA.Modules
                         await ReplyAsync($"You have already purchased this investment.");
                         break;
                     }
-                    else // They have enough cash and they don't have it already
-                    {
-                        await userRepo.SetMessageCooldown(Context.User.Id, Config.LINE_COOLDOWN);
-                        await userRepo.EditCash(Context.User.Id, -Config.LINE_COST);
-                        await ReplyAsync("Don't forget to wipe your nose when you are done with that line.");
-                        break;
-                    }
+                    await userRepo.EditCash(Context, -Config.LINE_COST);
+                    await userRepo.SetMessageCooldown(Context.User.Id, Config.LINE_COOLDOWN);
+                    await ReplyAsync("Don't forget to wipe your nose when you are done with that line.");
+                    break;
                 case "pound":
                 case "lb":
                     if (Config.POUND_COST > cash)
@@ -64,13 +61,10 @@ namespace DEA.Modules
                         await ReplyAsync($"You already purchased this investment.");
                         break;
                     }
-                    else
-                    {
-                        await userRepo.EditCash(Context.User.Id, -Config.POUND_COST);
-                        await userRepo.SetInvestmentMultiplier(Context.User.Id, Config.POUND_MULTIPLIER);
-                        await ReplyAsync("You get double the cash, but at what cost to your mental state?");
-                        break;
-                    }
+                    await userRepo.EditCash(Context, -Config.POUND_COST);
+                    await userRepo.SetInvestmentMultiplier(Context.User.Id, Config.POUND_MULTIPLIER);
+                    await ReplyAsync("You get double the cash, but at what cost to your mental state?");
+                    break;
                 case "kg":
                 case "kilo":
                 case "kilogram":
@@ -89,12 +83,9 @@ namespace DEA.Modules
                         await ReplyAsync($"You already purchased this investment.");
                         break;
                     }
-                    else
-                    {
-                        await userRepo.EditCash(Context.User.Id, -Config.KILO_COST);
-                        await userRepo.SetInvestmentMultiplier(Context.User.Id, Config.KILO_MULTIPLIER);
-                        await ReplyAsync("You get 4 times the money/msg. Don't go all Lindsay lohan on us now!");
-                    }
+                    await userRepo.EditCash(Context, -Config.KILO_COST);
+                    await userRepo.SetInvestmentMultiplier(Context.User.Id, Config.KILO_MULTIPLIER);
+                    await ReplyAsync("You get 4 times the money/msg. Don't go all Lindsay lohan on us now!");
                     break;
                 default:
                     var builder = new EmbedBuilder()
@@ -193,7 +184,7 @@ namespace DEA.Modules
         {
             if (Context.User.Id != 137756307837943809) throw new Exception("Only Patron may use this command!");
             var userRepo = new UserRepository(_db);
-            await userRepo.EditCash(userMentioned.Id, +money);
+            await userRepo.EditOtherCash(Context.Guild, userMentioned.Id, +money);
             await ReplyAsync($"Successfully given {money.ToString("N2")}$ to {userMentioned}.");
         }
 

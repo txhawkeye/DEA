@@ -50,11 +50,11 @@ namespace DEA.Services
                 }
 
             int argPos = 0;
-            if (msg.HasStringPrefix(Config.PREFIX, ref argPos) ||
+            var guildRepo = new GuildRepository(new DbContext());
+            if (msg.HasStringPrefix("$", ref argPos) ||
                 msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
             {
                 var result = await _service.ExecuteAsync(Context, argPos);
-
                 if (!result.IsSuccess)
                 {
                     if (!result.IsSuccess && result.Error != CommandError.UnknownCommand)
@@ -69,19 +69,19 @@ namespace DEA.Services
             {
                 _db = new DbContext();
                 ulong userId = Context.User.Id;
-                var userRepo = new UserRepository(_db);
+                var userRepo = new UserRepository(new DbContext());
                 if (DateTime.Now.Subtract(await userRepo.GetLastMessage(userId)).TotalMilliseconds > await userRepo.GetMessageCooldown(userId))
                 {
                     if (await userRepo.GetTemporaryMultiplier(userId) < Config.MAX_TEMP_MULTIPLIER)
                     {
                         await userRepo.SetLastMessage(userId, DateTime.Now);
                         await userRepo.SetTemporaryMultiplier(userId, await userRepo.GetTemporaryMultiplier(userId) + Config.TEMP_MULTIPLIER_RATE);
-                        await userRepo.EditCash(userId, await userRepo.GetTemporaryMultiplier(userId) * await userRepo.GetInvestmentMultiplier(userId));
+                        await userRepo.EditCash(Context, await userRepo.GetTemporaryMultiplier(userId) * await userRepo.GetInvestmentMultiplier(userId));
                     }
                     else
                     {
                         await userRepo.SetLastMessage(userId, DateTime.Now);
-                        await userRepo.EditCash(userId, await userRepo.GetTemporaryMultiplier(userId) * await userRepo.GetInvestmentMultiplier(userId));
+                        await userRepo.EditCash(Context, await userRepo.GetTemporaryMultiplier(userId) * await userRepo.GetInvestmentMultiplier(userId));
                     }
                 }
                 _db.Dispose();

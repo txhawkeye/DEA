@@ -21,10 +21,10 @@ namespace DEA.SQLite.Repository
             await UpdateAsync(guild);
         }
 
-        public async Task SetCaseNumber(ulong guildId, uint caseNumber)
+        public async Task IncrementCaseNumber(ulong guildId)
         {
             var guild = await FetchGuild(guildId);
-            guild.CaseNumber = caseNumber;
+            guild.CaseNumber++;
             await UpdateAsync(guild);
         }
 
@@ -42,10 +42,10 @@ namespace DEA.SQLite.Repository
             await UpdateAsync(guild);
         }
 
-        public async Task SetModChannelId(ulong guildId, ulong modChannelId)
+        public async Task SetModLogChannelId(ulong guildId, ulong modLogChannelId)
         {
             var guild = await FetchGuild(guildId);
-            guild.ModChannelId = modChannelId;
+            guild.ModLogChannelId = modLogChannelId;
             await UpdateAsync(guild);
         }
 
@@ -100,10 +100,10 @@ namespace DEA.SQLite.Repository
             return guild.ModRoleId;
         }
 
-        public async Task<ulong> GetModChannelId(ulong guildId)
+        public async Task<ulong> GetModLogChannelId(ulong guildId)
         {
             var guild = await FetchGuild(guildId);
-            return guild.ModChannelId;
+            return guild.ModLogChannelId;
         }
 
         public async Task<bool> GetDM(ulong guildId)

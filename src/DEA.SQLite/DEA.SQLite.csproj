@@ -11,6 +11,7 @@
     <None Remove="Databases\**" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Discord.Net" Version="1.0.0-rc-00614" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="1.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="1.1.0" />
     <PackageReference Include="NETStandard.Library" Version="1.6.1" />

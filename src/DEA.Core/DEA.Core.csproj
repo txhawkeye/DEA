@@ -6,9 +6,6 @@
     <TargetFramework>netstandard1.6</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <EmbeddedResource Include="**\*.resx" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Remove="Common\**" />
     <Compile Remove="obj\**" />
     <EmbeddedResource Remove="Common\**" />
@@ -17,5 +14,8 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="1.0.0-rc-00614" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DEA.SQLite\DEA.SQLite.csproj" />
   </ItemGroup>
 </Project>

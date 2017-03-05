@@ -5,24 +5,32 @@ using System.Linq;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using DEA.SQLite.Models;
+using DEA.SQLite.Repository;
 
 namespace System.Modules
 {
     public class System : ModuleBase<SocketCommandContext>
     {
 
+        private DbContext _db;
         private Process _process;
         private CommandService _service;
 
-        // Creates a constructor for the commandservice dependency.
-        public System(CommandService service)           
-        {
-            _service = service;
-        }
         protected override void BeforeExecute()
         {
             _process = Process.GetCurrentProcess();
+            _db = new DbContext();
+        }
 
+        protected override void AfterExecute()
+        {
+            _db.Dispose();
+        }
+
+        public System(CommandService service)           
+        {
+            _service = service;
         }
 
         [Command("Help")]
@@ -30,7 +38,7 @@ namespace System.Modules
         [Remarks("All command information.")]
         public async Task HelpAsync()
         {
-
+            var guildRepo = new GuildRepository(_db);
             string message = null;
             int longest = 0;
 
@@ -43,7 +51,7 @@ namespace System.Modules
                 message += $"**{module.Name} Commands **: ```asciidoc\n";
                 foreach (var cmd in module.Commands)
                 {
-                        message += $"{Config.PREFIX}{cmd.Aliases.First()}{new String(' ', (longest + 1) - cmd.Aliases.First().Length)} :: {cmd.Remarks}\n";
+                        message += $"{await guildRepo.GetPrefix(Context.Guild.Id)}{cmd.Aliases.First()}{new String(' ', (longest + 1) - cmd.Aliases.First().Length)} :: {cmd.Remarks}\n";
                 }
 
                 message += "```\n ";

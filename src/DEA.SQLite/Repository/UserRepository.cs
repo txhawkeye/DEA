@@ -1,4 +1,6 @@
 ﻿using DEA.SQLite.Models;
+using Discord.Commands;
+using Discord;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
@@ -14,10 +16,19 @@ namespace DEA.SQLite.Repository
             _dbContext = dbContext;
         }
 
-        public async Task EditCash(ulong userId, float Change)
+        public async Task EditCash(ICommandContext context, float change)
+        {
+            var user = await FetchUser(context.User.Id);
+            user.Cash += (float) Math.Round(change, 2);
+            RankHandler.Handle(context.Guild, context.User.Id);
+            await UpdateAsync(user);
+        }
+
+        public async Task EditOtherCash(IGuild guild, ulong userId, float change)
         {
             var user = await FetchUser(userId);
-            user.Cash += (float) Math.Round(Change, 2);
+            user.Cash += (float)Math.Round(change, 2);
+            RankHandler.Handle(guild, userId);
             await UpdateAsync(user);
         }
 
@@ -76,13 +87,6 @@ namespace DEA.SQLite.Repository
         {
             var user = await FetchUser(userId);
             user.LastMessage = lastMessage.ToString();
-            await UpdateAsync(user);
-        }
-
-        public async Task SetInvestmentMultiplier(ulong userId, float investmentMultiplier)
-        {
-            var user = await FetchUser(userId);
-            user.InvestmentMultiplier = investmentMultiplier;
             await UpdateAsync(user);
         }
 
