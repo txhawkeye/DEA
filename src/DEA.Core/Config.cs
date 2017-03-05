@@ -4,7 +4,9 @@ public static class Config
 {
     public static readonly string TOKEN = "MjgwMjAxNzUwMjQ0MzYwMTk0.C5keHw.Nj6fcpH5igw15CmcEcelaz1V5d4";
 
-    public static readonly int MIN_CHAR_LENGTH = 7, LEADERBOARD_CAP = 20, LINE_COOLDOWN = 25000;
+    public static readonly int MIN_CHAR_LENGTH = 7, LEADERBOARD_CAP = 20, LINE_COOLDOWN = 25000, WHORE_COOLDOWN = 7200000, JUMP_COOLDOWN = 14400000,
+    
+    STEAL_COOLDOWN = 21600000, ROB_COOLDOWN = 28800000;
 
     public static readonly float RANK1 = 500, RANK2 = 2500, RANK3 = 5000, RANK4 = 10000, LINE_COST = 250, POUND_COST = 1000,
 

@@ -62,6 +62,36 @@ namespace DEA.SQLite.Repository
             return DateTime.Parse(user.LastMessage);
         }
 
+        public async Task<DateTime> GetLastWhore(ulong userId)
+        {
+            var user = await FetchUser(userId);
+            return DateTime.Parse(user.LastWhore);
+        }
+
+        public async Task<DateTime> GetLastJump(ulong userId)
+        {
+            var user = await FetchUser(userId);
+            return DateTime.Parse(user.LastJump);
+        }
+
+        public async Task<DateTime> GetLastSteal(ulong userId)
+        {
+            var user = await FetchUser(userId);
+            return DateTime.Parse(user.LastSteal);
+        }
+
+        public async Task<DateTime> GetLastRob(ulong userId)
+        {
+            var user = await FetchUser(userId);
+            return DateTime.Parse(user.LastRob);
+        }
+
+        public async Task<DateTime> GetLastReset(ulong userId)
+        {
+            var user = await FetchUser(userId);
+            return DateTime.Parse(user.LastReset);
+        }
+
         public async Task SetTemporaryMultiplier(ulong userId, float tempMultiplier)
         {
             var user = await FetchUser(userId);
