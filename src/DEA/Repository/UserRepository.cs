@@ -20,7 +20,7 @@ namespace DEA.SQLite.Repository
         {
             var user = await FetchUser(context.User.Id);
             user.Cash += (float) Math.Round(change, 2);
-            RankHandler.Handle(context.Guild, context.User.Id);
+            await RankHandler.Handle(context.Guild, context.User.Id);
             await UpdateAsync(user);
         }
 
@@ -28,7 +28,7 @@ namespace DEA.SQLite.Repository
         {
             var user = await FetchUser(userId);
             user.Cash += (float)Math.Round(change, 2);
-            RankHandler.Handle(guild, userId);
+            await RankHandler.Handle(guild, userId);
             await UpdateAsync(user);
         }
 
@@ -90,6 +90,41 @@ namespace DEA.SQLite.Repository
         {
             var user = await FetchUser(userId);
             return DateTime.Parse(user.LastReset);
+        }
+
+        public async Task SetLastWhore(ulong userId, DateTime lastWhore)
+        {
+            var user = await FetchUser(userId);
+            user.LastWhore = lastWhore.ToString();
+            await UpdateAsync(user);
+        }
+
+        public async Task SetLastJump(ulong userId, DateTime lastJump)
+        {
+            var user = await FetchUser(userId);
+            user.LastJump = lastJump.ToString();
+            await UpdateAsync(user);
+        }
+
+        public async Task SetLastSteal(ulong userId, DateTime lastSteal)
+        {
+            var user = await FetchUser(userId);
+            user.LastSteal = lastSteal.ToString();
+            await UpdateAsync(user);
+        }
+
+        public async Task SetLastRob(ulong userId, DateTime lastRob)
+        {
+            var user = await FetchUser(userId);
+            user.LastRob = lastRob.ToString();
+            await UpdateAsync(user);
+        }
+
+        public async Task SetLastReset(ulong userId, DateTime lastReset)
+        {
+            var user = await FetchUser(userId);
+            user.LastReset = lastReset.ToString();
+            await UpdateAsync(user);
         }
 
         public async Task SetTemporaryMultiplier(ulong userId, float tempMultiplier)

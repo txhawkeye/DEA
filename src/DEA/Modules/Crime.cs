@@ -4,7 +4,6 @@ using System;
 using System.Threading.Tasks;
 using DEA.SQLite.Models;
 using DEA.SQLite.Repository;
-using System.Linq;
 
 
 namespace DEA.Modules
@@ -24,16 +23,18 @@ namespace DEA.Modules
         }
 
         [Command("Whore")]
-        [Remarks("Sell your body for a few quick bucks.")]
+        [Remarks("Sell your body for some quick cash.")]
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Whore()
         {
+            var guildRepo = new GuildRepository(_db);
             var userRepo = new UserRepository(_db);
             if (DateTime.Now.Subtract(await userRepo.GetLastWhore(Context.User.Id)).TotalMilliseconds > Config.WHORE_COOLDOWN)
             {
                 Random rand = new Random();
                 float moneyWhored = (float)(rand.Next((int)(Config.HIGHEST_WHORE) * 100))/100;
-                await userRepo.EditCash(Context.User.Id, moneyWhored);
+                await userRepo.SetLastWhore(Context.User.Id, DateTime.Now);
+                await userRepo.EditCash(Context, moneyWhored);
                 await ReplyAsync($"You whip it out and manage to rake in {moneyWhored.ToString("N2")}$");
             }
             else
@@ -41,25 +42,27 @@ namespace DEA.Modules
                 DateTime cd = DateTime.Parse(DateTime.Now.Subtract(await userRepo.GetLastWhore(Context.User.Id)).ToString());
                 var builder = new EmbedBuilder()
                 {
-                    Title = "Cooldown left on $whore",
+                    Title = $"{await guildRepo.GetPrefix(Context.Guild.Id)}Whore cooldown for {Context.User}",
                     Description = $"{cd.Hour} Hours\n{cd.Minute} Minutes\n{cd.Second} Seconds",
-                    Color = new Color(0xFF1010)
+                    Color = new Color(49, 62, 255)
                 };
+                await Context.Channel.SendMessageAsync("", embed: builder);
             }
         }
 
         [Command("Jump")]
-        [Alias("Claim")]
-        [Remarks("Jump some random person on the street.")]
+        [Remarks("Jump some random nigga in the hood.")]
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Jump()
         {
+            var guildRepo = new GuildRepository(_db);
             var userRepo = new UserRepository(_db);
             if (DateTime.Now.Subtract(await userRepo.GetLastJump(Context.User.Id)).TotalMilliseconds > Config.JUMP_COOLDOWN)
             {
                 Random rand = new Random();
                 float moneyJumped = (float)(rand.Next((int)(Config.HIGHEST_JUMP) * 100)) / 100;
-                await userRepo.EditCash(Context.User.Id, moneyJumped);
+                await userRepo.SetLastJump(Context.User.Id, DateTime.Now);
+                await userRepo.EditCash(Context, moneyJumped);
                 await ReplyAsync($"You jump some random nigga on the streets and manage to get {moneyJumped.ToString("N2")}$");
             }
             else
@@ -67,10 +70,11 @@ namespace DEA.Modules
                 DateTime cd = DateTime.Parse(DateTime.Now.Subtract(await userRepo.GetLastJump(Context.User.Id)).ToString());
                 var builder = new EmbedBuilder()
                 {
-                    Title = "Cooldown left on $jump",
+                    Title = $"{await guildRepo.GetPrefix(Context.Guild.Id)}Jump cooldown for {Context.User}",
                     Description = $"{cd.Hour} Hours\n{cd.Minute} Minutes\n{cd.Second} Seconds",
-                    Color = new Color(0xFF1010)
+                    Color = new Color(49, 62, 255)
                 };
+                await Context.Channel.SendMessageAsync("", embed: builder);
             }
 
         }

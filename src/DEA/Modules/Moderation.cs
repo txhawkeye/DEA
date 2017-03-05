@@ -65,29 +65,35 @@ namespace DEA.Modules
 
         public async Task ModLog(IUser moderator, string action, IUser subject, Color color, [Remainder] string reason)
         {
-            var guildRepo = new GuildRepository(_db);
-            EmbedFooterBuilder footer = new EmbedFooterBuilder()
+            using (var db = new DbContext())
             {
-                IconUrl = "http://i.imgur.com/BQZJAqT.png",
-                Text = $"Case #0"
-            };
-            EmbedAuthorBuilder author = new EmbedAuthorBuilder()
-            {
-                IconUrl = moderator.GetAvatarUrl(),
-                Name = $"{moderator.Username}#{moderator.Discriminator}"
-            };
+                var guildRepo = new GuildRepository(db);
 
-            var builder = new EmbedBuilder()
-            {
-                Author = author,
-                Color = color,
-                Description = $"**Action:** {action}\n**User:** {subject} ({subject.Id})\n**Reason:** {reason}",
-                Footer = footer
-            }.WithCurrentTimestamp();
+                EmbedFooterBuilder footer = new EmbedFooterBuilder()
+                {
+                    IconUrl = "http://i.imgur.com/BQZJAqT.png",
+                    Text = $"Case #{await guildRepo.GetCaseNumber(Context.Guild.Id)}"
+                };
+                EmbedAuthorBuilder author = new EmbedAuthorBuilder()
+                {
+                    IconUrl = moderator.GetAvatarUrl(),
+                    Name = $"{moderator.Username}#{moderator.Discriminator}"
+                };
 
-            //if (Context.Guild.GetTextChannel(await guildRepo.GetModLogChannelId(Context.Guild.Id)) != null)
-                //await guildRepo.IncrementCaseNumber(Context.Guild.Id);
-                await Context.Guild.GetTextChannel(248050603450826752).SendMessageAsync("", embed: builder);     
+                var builder = new EmbedBuilder()
+                {
+                    Author = author,
+                    Color = color,
+                    Description = $"**Action:** {action}\n**User:** {subject} ({subject.Id})\n**Reason:** {reason}",
+                    Footer = footer
+                }.WithCurrentTimestamp();
+
+                if (Context.Guild.GetTextChannel(await guildRepo.GetModLogChannelId(Context.Guild.Id)) != null)
+                {
+                    await guildRepo.IncrementCaseNumber(Context.Guild.Id);
+                    await Context.Guild.GetTextChannel(248050603450826752).SendMessageAsync("", embed: builder);
+                }
+            }
         }
     }
 }

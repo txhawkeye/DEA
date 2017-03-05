@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace DEA.Modules
 {
-    public class Server_Owner : ModuleBase<SocketCommandContext>
+    public class Administration : ModuleBase<SocketCommandContext>
     {
 
         private DbContext _db;
@@ -28,7 +28,6 @@ namespace DEA.Modules
         [Remarks("Sets the guild specific prefix.")]
         public async Task SetPrefix(string prefix)
         {
-            throw new Exception("This command has been temporarily disabled!");
             if (prefix.Length > 3) throw new Exception("The maximum character length of a prefix is 3.");
             var guildRepo = new GuildRepository(_db);
             await guildRepo.SetPrefix(Context.Guild.Id, prefix);
@@ -89,6 +88,29 @@ namespace DEA.Modules
             var guildRepo = new GuildRepository(_db);
             await guildRepo.SetModLogChannelId(Context.Guild.Id, modLogChannel.Id);
             await ReplyAsync($"You have successfully set the moderator log channel to {modLogChannel.Mention}!");
+        }
+
+        [Command("EnableDM")]
+        [Alias("DisableDM")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        [Remarks("Sends all sizeable messages to the DM's of the user.")]
+        public async Task ChangeDMSettings(ITextChannel modLogChannel)
+        {
+            var guildRepo = new GuildRepository(_db);
+            var DMSettings = await guildRepo.GetDM(Context.Guild.Id);
+            switch (DMSettings)
+            {
+                case true:
+                    await guildRepo.SetDM(Context.Guild.Id, false);
+                    await ReplyAsync($"You have successfully disabled DM messages!");
+                    break;
+                case false:
+                    await guildRepo.SetDM(Context.Guild.Id, true);
+                    await ReplyAsync($"You have successfully enabled DM messages!");
+                    break;
+                default:
+                    throw new Exception("Something went wrong.");
+            }
         }
 
     }

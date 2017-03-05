@@ -37,55 +37,55 @@ namespace DEA.Modules
                 case "line":
                     if (Config.LINE_COST > cash)
                     {
-                        await ReplyAsync($"You do not have enough money. Balance: {cash.ToString("N2")}$");
+                        await ReplyAsync($"{Context.User.Mention}, you do not have enough money. Balance: {cash.ToString("N2")}$");
                         break;
                     }
                     if (await userRepo.GetMessageCooldown(Context.User.Id) == Config.LINE_COOLDOWN)
                     {
-                        await ReplyAsync($"You have already purchased this investment.");
+                        await ReplyAsync($"{Context.User.Mention}, you have already purchased this investment.");
                         break;
                     }
                     await userRepo.EditCash(Context, -Config.LINE_COST);
                     await userRepo.SetMessageCooldown(Context.User.Id, Config.LINE_COOLDOWN);
-                    await ReplyAsync("Don't forget to wipe your nose when you are done with that line.");
+                    await ReplyAsync("{Context.User.Mention}, don't forget to wipe your nose when you are done with that line.");
                     break;
                 case "pound":
                 case "lb":
                     if (Config.POUND_COST > cash)
                     {
-                        await ReplyAsync($"You do not have enough money. Balance: {cash.ToString("N2")}$");
+                        await ReplyAsync($"{Context.User.Mention}, you do not have enough money. Balance: {cash.ToString("N2")}$");
                         break;
                     }
                     if (await userRepo.GetInvestmentMultiplier(Context.User.Id) >= Config.POUND_MULTIPLIER)
                     {
-                        await ReplyAsync($"You already purchased this investment.");
+                        await ReplyAsync($"{Context.User.Mention}, you already purchased this investment.");
                         break;
                     }
                     await userRepo.EditCash(Context, -Config.POUND_COST);
                     await userRepo.SetInvestmentMultiplier(Context.User.Id, Config.POUND_MULTIPLIER);
-                    await ReplyAsync("You get double the cash, but at what cost to your mental state?");
+                    await ReplyAsync("{Context.User.Mention}, ***DOUBLE CASH SMACK DAB CENTER NIGGA!***");
                     break;
                 case "kg":
                 case "kilo":
                 case "kilogram":
                     if (Config.KILO_COST > cash)
                     {
-                        await ReplyAsync($"You do not have enough money. Balance: {cash.ToString("N2")}$");
+                        await ReplyAsync($"{Context.User.Mention}, you do not have enough money. Balance: {cash.ToString("N2")}$");
                         break;
                     }
                     if (await userRepo.GetInvestmentMultiplier(Context.User.Id) != Config.POUND_MULTIPLIER)
                     {
-                        await ReplyAsync("You must purchase the pound of cocaine investment before buying this one.");
+                        await ReplyAsync("{Context.User.Mention}, you must purchase the pound of cocaine investment before buying this one.");
                         break;
                     }
                     if (await userRepo.GetInvestmentMultiplier(Context.User.Id) >= Config.KILO_MULTIPLIER)
                     {
-                        await ReplyAsync($"You already purchased this investment.");
+                        await ReplyAsync($"{Context.User.Mention}, you already purchased this investment.");
                         break;
                     }
                     await userRepo.EditCash(Context, -Config.KILO_COST);
                     await userRepo.SetInvestmentMultiplier(Context.User.Id, Config.KILO_MULTIPLIER);
-                    await ReplyAsync("You get 4 times the money/msg. Don't go all Lindsay lohan on us now!");
+                    await ReplyAsync("{Context.User.Mention}, you get 4 times the money/msg. Don't go all Lindsay lohan on us now!");
                     break;
                 default:
                     var builder = new EmbedBuilder()
