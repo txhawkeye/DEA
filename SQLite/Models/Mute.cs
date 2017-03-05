@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DEA.SQLite.Models
+﻿namespace DEA.SQLite.Models
 {
     public class Mute
     {

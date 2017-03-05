@@ -60,7 +60,8 @@ namespace DEA.Modules
                     await channel.SendMessageAsync($"{moderator.Mention} has attempted to {action.ToLower()} you.");
                 else
                     await channel.SendMessageAsync($"{moderator.Mention} has attempted to {action.ToLower()} you for the following reason: \"{reason}\"");
-            } catch { }
+            }
+            catch { }
         }
 
         public async Task ModLog(IUser moderator, string action, IUser subject, Color color, [Remainder] string reason)

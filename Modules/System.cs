@@ -28,7 +28,7 @@ namespace System.Modules
             _db.Dispose();
         }
 
-        public System(CommandService service)           
+        public System(CommandService service)
         {
             _service = service;
         }
@@ -51,7 +51,7 @@ namespace System.Modules
                 message += $"**{module.Name} Commands **: ```asciidoc\n";
                 foreach (var cmd in module.Commands)
                 {
-                        message += $"{await guildRepo.GetPrefix(Context.Guild.Id)}{cmd.Aliases.First()}{new String(' ', (longest + 1) - cmd.Aliases.First().Length)} :: {cmd.Remarks}\n";
+                    message += $"{await guildRepo.GetPrefix(Context.Guild.Id)}{cmd.Aliases.First()}{new String(' ', (longest + 1) - cmd.Aliases.First().Length)} :: {cmd.Remarks}\n";
                 }
 
                 message += "```\n ";
@@ -61,11 +61,12 @@ namespace System.Modules
                 var channel = await Context.User.CreateDMChannelAsync();
                 await channel.SendMessageAsync(message);
                 await ReplyAsync($"{Context.User.Mention}, you have been DMed with all the command information!");
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 await ReplyAsync($"{Context.User.Mention}, {e.Message}");
             }
-   
+
         }
 
         [Command("Stats")]
@@ -94,7 +95,7 @@ namespace System.Modules
             {
                 await ReplyAsync($"{Context.User.Mention}, {e.Message}");
             }
-            
+
         }
     }
 }

@@ -34,7 +34,7 @@ namespace DEA.SQLite.Repository
         {
             var muted = await SearchFor(c => c.UserId == UserID && c.GuildId == GuildID).FirstOrDefaultAsync();
 
-            if(muted != null)
+            if (muted != null)
             {
                 await base.DeleteAsync(muted);
                 return true;

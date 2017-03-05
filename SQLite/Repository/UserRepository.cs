@@ -19,7 +19,7 @@ namespace DEA.SQLite.Repository
         public async Task EditCash(ICommandContext context, float change)
         {
             var user = await FetchUser(context.User.Id);
-            user.Cash += (float) Math.Round(change, 2);
+            user.Cash += (float)Math.Round(change, 2);
             await RankHandler.Handle(context.Guild, context.User.Id);
             await UpdateAsync(user);
         }
@@ -171,3 +171,4 @@ namespace DEA.SQLite.Repository
         }
     }
 }
+

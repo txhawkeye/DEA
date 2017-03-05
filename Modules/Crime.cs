@@ -32,7 +32,7 @@ namespace DEA.Modules
             if (DateTime.Now.Subtract(await userRepo.GetLastWhore(Context.User.Id)).TotalMilliseconds > Config.WHORE_COOLDOWN)
             {
                 Random rand = new Random();
-                float moneyWhored = (float)(rand.Next((int)(Config.HIGHEST_WHORE) * 100))/100;
+                float moneyWhored = (float)(rand.Next((int)(Config.HIGHEST_WHORE) * 100)) / 100;
                 await userRepo.SetLastWhore(Context.User.Id, DateTime.Now);
                 await userRepo.EditCash(Context, moneyWhored);
                 await ReplyAsync($"You whip it out and manage to rake in {moneyWhored.ToString("N2")}$");
