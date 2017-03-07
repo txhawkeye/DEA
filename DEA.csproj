@@ -255,8 +255,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config.cs" />
     <Compile Include="Modules\Administration.cs" />
-    <Compile Include="Modules\Clear.cs" />
     <Compile Include="Modules\Crime.cs" />
     <Compile Include="Modules\Gambling.cs" />
     <Compile Include="Modules\General.cs" />
@@ -264,6 +264,7 @@
     <Compile Include="Modules\System.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Ranks.cs" />
     <Compile Include="Services\CommandHandler.cs" />
     <Compile Include="Services\PrettyConsole.cs" />
     <Compile Include="Services\RankHandler.cs" />

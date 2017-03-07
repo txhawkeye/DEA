@@ -1,0 +1,1 @@
+﻿public enum Ranks { Rank1, Rank2, Rank3, Rank4, Moderator, Administrator, Server_Owner, Bot_Owner }

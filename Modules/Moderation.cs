@@ -4,33 +4,21 @@ using Discord;
 using System;
 using Discord.Commands;
 using System.Threading.Tasks;
-
+using System.Linq;
 
 namespace DEA.Modules
 {
     public class Moderation : ModuleBase<SocketCommandContext>
     {
 
-        private DbContext _db;
-
-        protected override void BeforeExecute()
-        {
-            _db = new DbContext();
-        }
-
-        protected override void AfterExecute()
-        {
-            _db.Dispose();
-        }
-
         [Command("Ban")]
         [Alias("hammer")]
         [RequireBotPermission(GuildPermission.BanMembers)]
-        [RequireUserPermission(GuildPermission.ManageMessages)]
         [Remarks("Ban a user from the server")]
         public async Task Ban(IGuildUser userToBan, [Remainder] string reason = "No reason.")
         {
-            if (userToBan.GuildPermissions.ManageMessages) throw new Exception("You cannot kick another mod!");
+            await RankHandler.RankRequired(Context, Ranks.Moderator);
+            if (await IsMod(userToBan)) throw new Exception("You cannot ban another mod!");
             await InformSubject(Context.User, "Ban", userToBan, reason);
             await Context.Guild.AddBanAsync(userToBan);
             await ModLog(Context.User, "Ban", userToBan, new Color(255, 0, 0), reason);
@@ -40,15 +28,42 @@ namespace DEA.Modules
         [Command("Kick")]
         [Alias("boot")]
         [RequireBotPermission(GuildPermission.KickMembers)]
-        [RequireUserPermission(GuildPermission.ManageMessages)]
         [Remarks("Kick a user from the server")]
         public async Task Kick(IGuildUser userToKick, [Remainder] string reason = "No reason.")
         {
-            if (userToKick.GuildPermissions.ManageMessages) throw new Exception("You cannot kick another mod!");
+            await RankHandler.RankRequired(Context, Ranks.Moderator);
+            if (await IsMod(userToKick)) throw new Exception("You cannot kick another mod!");
             await InformSubject(Context.User, "Kick", userToKick, reason);
             await userToKick.KickAsync();
             await ModLog(Context.User, "Kick", userToKick, new Color(255, 114, 14), reason);
             await ReplyAsync($"{Context.User.Mention} has kicked {userToKick.Mention}");
+        }
+
+        [Command("Clear")]
+        [RequireBotPermission(GuildPermission.ManageMessages)]
+        [Remarks("Deletes x amount of messages.")]
+        public async Task CleanAsync(int count = 25)
+        {
+            await RankHandler.RankRequired(Context, Ranks.Moderator);
+            var messages = await Context.Channel.GetMessagesAsync(count, CacheMode.AllowDownload).Flatten();
+            await Context.Channel.DeleteMessagesAsync(messages);
+            var tempMsg = await ReplyAsync($"Deleted **{messages.Count()}** message(s)");
+            await Task.Delay(5000);
+            await tempMsg.DeleteAsync();
+        }
+
+        public async Task<bool> IsMod(IGuildUser user)
+        {
+            using (var db = new DbContext())
+            {
+                var guildRepo = new GuildRepository(db);
+                var modRoleId = await guildRepo.GetModRoleId(user.GuildId);
+                if (user.Guild.GetRole(modRoleId) != null)
+                {
+                    if (user.RoleIds.Any(x => x == modRoleId)) return true;
+                }
+                return false;
+            }
         }
 
         public async Task InformSubject(IUser moderator, string action, IUser subject, [Remainder] string reason)

@@ -28,79 +28,82 @@ namespace DEA.Modules
         [Remarks("Increase your money per message")]
         public async Task Invest(string investString = null)
         {
-            var userRepo = new UserRepository(_db);
-            var guildRepo = new GuildRepository(_db);
-            float cash = await userRepo.GetCash(Context.User.Id);
-
-            switch (investString)
+            using (var db = new DbContext())
             {
-                case "line":
-                    if (Config.LINE_COST > cash)
-                    {
-                        await ReplyAsync($"{Context.User.Mention}, you do not have enough money. Balance: {cash.ToString("N2")}$");
+                var userRepo = new UserRepository(db);
+                var guildRepo = new GuildRepository(db);
+                float cash = await userRepo.GetCash(Context.User.Id);
+
+                switch (investString)
+                {
+                    case "line":
+                        if (Config.LINE_COST > cash)
+                        {
+                            await ReplyAsync($"{Context.User.Mention}, you do not have enough money. Balance: {cash.ToString("N2")}$");
+                            break;
+                        }
+                        if (await userRepo.GetMessageCooldown(Context.User.Id) == Config.LINE_COOLDOWN)
+                        {
+                            await ReplyAsync($"{Context.User.Mention}, you have already purchased this investment.");
+                            break;
+                        }
+                        await userRepo.EditCash(Context, -Config.LINE_COST);
+                        await userRepo.SetMessageCooldown(Context.User.Id, Config.LINE_COOLDOWN);
+                        await ReplyAsync($"{Context.User.Mention}, don't forget to wipe your nose when you are done with that line.");
                         break;
-                    }
-                    if (await userRepo.GetMessageCooldown(Context.User.Id) == Config.LINE_COOLDOWN)
-                    {
-                        await ReplyAsync($"{Context.User.Mention}, you have already purchased this investment.");
+                    case "pound":
+                    case "lb":
+                        if (Config.POUND_COST > cash)
+                        {
+                            await ReplyAsync($"{Context.User.Mention}, you do not have enough money. Balance: {cash.ToString("N2")}$");
+                            break;
+                        }
+                        if (await userRepo.GetInvestmentMultiplier(Context.User.Id) >= Config.POUND_MULTIPLIER)
+                        {
+                            await ReplyAsync($"{Context.User.Mention}, you already purchased this investment.");
+                            break;
+                        }
+                        await userRepo.EditCash(Context, -Config.POUND_COST);
+                        await userRepo.SetInvestmentMultiplier(Context.User.Id, Config.POUND_MULTIPLIER);
+                        await ReplyAsync($"{Context.User.Mention}, ***DOUBLE CASH SMACK DAB CENTER NIGGA!***");
                         break;
-                    }
-                    await userRepo.EditCash(Context, -Config.LINE_COST);
-                    await userRepo.SetMessageCooldown(Context.User.Id, Config.LINE_COOLDOWN);
-                    await ReplyAsync("{Context.User.Mention}, don't forget to wipe your nose when you are done with that line.");
-                    break;
-                case "pound":
-                case "lb":
-                    if (Config.POUND_COST > cash)
-                    {
-                        await ReplyAsync($"{Context.User.Mention}, you do not have enough money. Balance: {cash.ToString("N2")}$");
+                    case "kg":
+                    case "kilo":
+                    case "kilogram":
+                        if (Config.KILO_COST > cash)
+                        {
+                            await ReplyAsync($"{Context.User.Mention}, you do not have enough money. Balance: {cash.ToString("N2")}$");
+                            break;
+                        }
+                        if (await userRepo.GetInvestmentMultiplier(Context.User.Id) != Config.POUND_MULTIPLIER)
+                        {
+                            await ReplyAsync($"{Context.User.Mention}, you must purchase the pound of cocaine investment before buying this one.");
+                            break;
+                        }
+                        if (await userRepo.GetInvestmentMultiplier(Context.User.Id) >= Config.KILO_MULTIPLIER)
+                        {
+                            await ReplyAsync($"{Context.User.Mention}, you already purchased this investment.");
+                            break;
+                        }
+                        await userRepo.EditCash(Context, -Config.KILO_COST);
+                        await userRepo.SetInvestmentMultiplier(Context.User.Id, Config.KILO_MULTIPLIER);
+                        await ReplyAsync($"{Context.User.Mention}, you get 4 times the money/msg. Don't go all Lindsay lohan on us now!");
                         break;
-                    }
-                    if (await userRepo.GetInvestmentMultiplier(Context.User.Id) >= Config.POUND_MULTIPLIER)
-                    {
-                        await ReplyAsync($"{Context.User.Mention}, you already purchased this investment.");
+                    default:
+                        var builder = new EmbedBuilder()
+                        {
+                            Title = "Current Available Investments:",
+                            Color = new Color(0x0000FF),
+                            Description = ($"\n**Cost: {Config.LINE_COST}$** | Command: *{await guildRepo.GetPrefix(Context.Guild.Id)}investments line* | Description: " +
+                            $"One line of blow. Seems like nothing, yet it's enough to lower the message cooldown from 30 to 25 seconds." +
+                            $"\n**Cost: {Config.POUND_COST}$** | Command: *{await guildRepo.GetPrefix(Context.Guild.Id)}investments pound* | Description: " +
+                            $"This one pound of coke will double the amount of cash you get per message\n**Cost: {Config.KILO_COST}$** | Command: " +
+                            $"*{await guildRepo.GetPrefix(Context.Guild.Id)}investments kilo* | Description: A kilo of cocaine is more than enough to " +
+                            $"quadruple your cash/message.\n These investments stack with the chatting multiplier. However, they do not stack with themselves."),
+                        };
+                        await ReplyAsync("", embed: builder);
                         break;
-                    }
-                    await userRepo.EditCash(Context, -Config.POUND_COST);
-                    await userRepo.SetInvestmentMultiplier(Context.User.Id, Config.POUND_MULTIPLIER);
-                    await ReplyAsync("{Context.User.Mention}, ***DOUBLE CASH SMACK DAB CENTER NIGGA!***");
-                    break;
-                case "kg":
-                case "kilo":
-                case "kilogram":
-                    if (Config.KILO_COST > cash)
-                    {
-                        await ReplyAsync($"{Context.User.Mention}, you do not have enough money. Balance: {cash.ToString("N2")}$");
-                        break;
-                    }
-                    if (await userRepo.GetInvestmentMultiplier(Context.User.Id) != Config.POUND_MULTIPLIER)
-                    {
-                        await ReplyAsync("{Context.User.Mention}, you must purchase the pound of cocaine investment before buying this one.");
-                        break;
-                    }
-                    if (await userRepo.GetInvestmentMultiplier(Context.User.Id) >= Config.KILO_MULTIPLIER)
-                    {
-                        await ReplyAsync($"{Context.User.Mention}, you already purchased this investment.");
-                        break;
-                    }
-                    await userRepo.EditCash(Context, -Config.KILO_COST);
-                    await userRepo.SetInvestmentMultiplier(Context.User.Id, Config.KILO_MULTIPLIER);
-                    await ReplyAsync("{Context.User.Mention}, you get 4 times the money/msg. Don't go all Lindsay lohan on us now!");
-                    break;
-                default:
-                    var builder = new EmbedBuilder()
-                    {
-                        Title = "Current Available Investments:",
-                        Color = new Color(0x0000FF),
-                        Description = ($"\n**Cost: {Config.LINE_COST}$** | Command: *{await guildRepo.GetPrefix(Context.Guild.Id)}investments line* | Description: " +
-                        $"One line of blow. Seems like nothing, yet it's enough to lower the message cooldown from 30 to 25 seconds." +
-                        $"\n**Cost: {Config.POUND_COST}$** | Command: *{await guildRepo.GetPrefix(Context.Guild.Id)}investments pound* | Description: " +
-                        $"This one pound of coke will double the amount of cash you get per message\n**Cost: {Config.KILO_COST}$** | Command: " +
-                        $"*{await guildRepo.GetPrefix(Context.Guild.Id)}investments kilo* | Description: A kilo of cocaine is more than enough to " +
-                        $"quadruple your cash/message.\n These investments stack with the chatting multiplier. However, they do not stack with themselves."),
-                    };
-                    await Context.Channel.SendMessageAsync("", embed: builder);
-                    break;
+                }
             }
         }
 
@@ -135,7 +138,7 @@ namespace DEA.Modules
                 Color = new Color(0x00AE86),
                 Description = desciption
             };
-            await Context.Channel.SendMessageAsync("", embed: builder);
+            await ReplyAsync("", embed: builder);
 
         }
 
@@ -152,7 +155,7 @@ namespace DEA.Modules
                 Description = $"**Ranking of {userToView}**\nBalance: {(await userRepo.GetCash(userToView.Id)).ToString("N2")}$"
             };
 
-            await Context.Channel.SendMessageAsync("", embed: builder);
+            await ReplyAsync("", embed: builder);
 
         }
 
@@ -174,7 +177,7 @@ namespace DEA.Modules
                 $"{await userRepo.GetMessageCooldown(id) / 1000} seconds"
             };
 
-            await Context.Channel.SendMessageAsync("", embed: builder);
+            await ReplyAsync("", embed: builder);
 
         }
 

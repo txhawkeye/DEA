@@ -24,10 +24,10 @@ namespace DEA.Modules
         }
 
         [Command("SetPrefix")]
-        [RequireUserPermission(GuildPermission.Administrator)]
         [Remarks("Sets the guild specific prefix.")]
         public async Task SetPrefix(string prefix)
         {
+            await RankHandler.RankRequired(Context, Ranks.Administrator);
             if (prefix.Length > 3) throw new Exception("The maximum character length of a prefix is 3.");
             var guildRepo = new GuildRepository(_db);
             await guildRepo.SetPrefix(Context.Guild.Id, prefix);
@@ -35,21 +35,26 @@ namespace DEA.Modules
         }
 
         [Command("SetModRole")]
-        [RequireUserPermission(GuildPermission.Administrator)]
         [Remarks("Sets the guild specific prefix.")]
         public async Task SetModRole(IRole modRole)
         {
+            await RankHandler.RankRequired(Context, Ranks.Administrator);
             var guildRepo = new GuildRepository(_db);
             await guildRepo.SetModRoleId(Context.Guild.Id, modRole.Id);
             await ReplyAsync($"You have successfully set the moderator role to {modRole.Mention}!");
         }
 
         [Command("SetRankRoles")]
-        [RequireUserPermission(GuildPermission.Administrator)]
+        [Alias("setrank", "setrole", "setranks", "setroles", "setrankrole")]
         [Remarks("Sets the rank roles for the DEA cash system.")]
-        public async Task SetRankRoles(int roleNumber, IRole rankRole)
+        public async Task SetRankRoles(int roleNumber = 0, IRole rankRole = null)
         {
+            await RankHandler.RankRequired(Context, Ranks.Administrator);
             var guildRepo = new GuildRepository(_db);
+            if ((roleNumber != 1 && roleNumber != 2 && roleNumber != 3 && roleNumber != 4) || rankRole == null)
+                throw new Exception($"You are incorrectly using the {await guildRepo.GetPrefix(Context.Guild.Id)}SetRankRoles command.\n" +
+                                     $"Follow up this command with the rank role number and the role to set it to.\n" +
+                                     $"Example: **{await guildRepo.GetPrefix(Context.Guild.Id)}SetRankRoles 1 @FirstRole.**");
             if (rankRole.Position >= Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
             {
                 throw new Exception("You may not set a rank role that is higher in hierarchy than DEA's highest role.");
@@ -72,19 +77,14 @@ namespace DEA.Modules
                     await guildRepo.SetRank4Id(Context.Guild.Id, rankRole.Id);
                     await ReplyAsync($"You have successfully set the fourth rank role to {rankRole.Mention}!");
                     break;
-                default:
-                    await ReplyAsync($"You are incorrectly using the {guildRepo.GetPrefix(Context.Guild.Id)}SetRankRoles command.\n" +
-                                     $"Follow up this command with the rank role number and the role to set it to.\n" +
-                                     $"Example: \"{guildRepo.GetPrefix(Context.Guild.Id)}SetRankRoles 1 @FirstRole\".");
-                    break;
             }
         }
 
         [Command("SetModLog")]
-        [RequireUserPermission(GuildPermission.Administrator)]
         [Remarks("Sets the guild specific prefix.")]
         public async Task SetModLogChannel(ITextChannel modLogChannel)
         {
+            await RankHandler.RankRequired(Context, Ranks.Administrator);
             var guildRepo = new GuildRepository(_db);
             await guildRepo.SetModLogChannelId(Context.Guild.Id, modLogChannel.Id);
             await ReplyAsync($"You have successfully set the moderator log channel to {modLogChannel.Mention}!");
@@ -92,10 +92,10 @@ namespace DEA.Modules
 
         [Command("EnableDM")]
         [Alias("DisableDM")]
-        [RequireUserPermission(GuildPermission.Administrator)]
         [Remarks("Sends all sizeable messages to the DM's of the user.")]
         public async Task ChangeDMSettings(ITextChannel modLogChannel)
         {
+            await RankHandler.RankRequired(Context, Ranks.Administrator);
             var guildRepo = new GuildRepository(_db);
             var DMSettings = await guildRepo.GetDM(Context.Guild.Id);
             switch (DMSettings)
