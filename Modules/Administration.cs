@@ -35,7 +35,7 @@ namespace DEA.Modules
         }
 
         [Command("SetModRole")]
-        [Remarks("Sets the guild specific prefix.")]
+        [Remarks("Sets the moderator role.")]
         public async Task SetModRole(IRole modRole)
         {
             await RankHandler.RankRequired(Context, Ranks.Administrator);
@@ -81,7 +81,7 @@ namespace DEA.Modules
         }
 
         [Command("SetModLog")]
-        [Remarks("Sets the guild specific prefix.")]
+        [Remarks("Sets the moderation log.")]
         public async Task SetModLogChannel(ITextChannel modLogChannel)
         {
             await RankHandler.RankRequired(Context, Ranks.Administrator);

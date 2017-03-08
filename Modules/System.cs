@@ -13,19 +13,12 @@ namespace System.Modules
     public class System : ModuleBase<SocketCommandContext>
     {
 
-        private DbContext _db;
         private Process _process;
         private CommandService _service;
 
         protected override void BeforeExecute()
         {
             _process = Process.GetCurrentProcess();
-            _db = new DbContext();
-        }
-
-        protected override void AfterExecute()
-        {
-            _db.Dispose();
         }
 
         public System(CommandService service)
@@ -38,7 +31,12 @@ namespace System.Modules
         [Remarks("All command information.")]
         public async Task HelpAsync()
         {
-            var guildRepo = new GuildRepository(_db);
+            string prefix = "$";
+            using (var db = new DbContext())
+            {
+                var guildRepo = new GuildRepository(db);
+                if (Context.Channel is SocketTextChannel) prefix = await guildRepo.GetPrefix(Context.Guild.Id);
+            }
             string message = null;
             int longest = 0;
 
@@ -51,21 +49,15 @@ namespace System.Modules
                 message += $"**{module.Name} Commands **: ```asciidoc\n";
                 foreach (var cmd in module.Commands)
                 {
-                    message += $"{await guildRepo.GetPrefix(Context.Guild.Id)}{cmd.Aliases.First()}{new String(' ', (longest + 1) - cmd.Aliases.First().Length)} :: {cmd.Remarks}\n";
+                    message += $"{prefix}{cmd.Aliases.First()}{new String(' ', (longest + 1) - cmd.Aliases.First().Length)} :: {cmd.Remarks}\n";
                 }
 
                 message += "```\n ";
             }
-            try
-            {
-                var channel = await Context.User.CreateDMChannelAsync();
-                await channel.SendMessageAsync(message);
+            var channel = await Context.User.CreateDMChannelAsync();
+            await channel.SendMessageAsync(message);
+            if (Context.Channel is SocketTextChannel)
                 await ReplyAsync($"{Context.User.Mention}, you have been DMed with all the command information!");
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync($"{Context.User.Mention}, {e.Message}");
-            }
 
         }
 
@@ -85,17 +77,10 @@ namespace System.Modules
                 $"• Channels :: {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Channels.Count)}\n" +
                 $"• Library  :: Discord.Net {DiscordConfig.Version}\n" +
                 $"• Runtime  :: {RuntimeInformation.FrameworkDescription} {RuntimeInformation.OSArchitecture}```";
-            try
-            {
-                var channel = await Context.User.CreateDMChannelAsync();
-                await channel.SendMessageAsync(message);
+            var channel = await Context.User.CreateDMChannelAsync();
+            await channel.SendMessageAsync(message);
+            if (Context.Channel is SocketTextChannel)
                 await ReplyAsync($"{Context.User.Mention}, you have been DMed with all the statistics!");
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync($"{Context.User.Mention}, {e.Message}");
-            }
-
         }
     }
 }

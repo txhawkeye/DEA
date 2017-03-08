@@ -50,13 +50,13 @@ namespace DEA.Modules
                 if (roll >= odds)
                 {
                     await userRepo.EditCash(Context, (bet * payoutMultiplier));
-                    await ReplyAsync($"You rolled: {roll}. Congratulations, you just won {(bet * payoutMultiplier).ToString("N2")}$! " +
+                    await ReplyAsync($"{Context.User.Mention}, you rolled: {roll}. Congratulations, you just won {(bet * payoutMultiplier).ToString("N2")}$! " +
                                      $"Balance: {(await userRepo.GetCash(Context.User.Id)).ToString("N2")}$.");
                 }
                 else
                 {
                     await userRepo.EditCash(Context, -bet);
-                    await ReplyAsync($"You rolled {roll}. Unfortunately, you lost {bet.ToString("N2")}$. " +
+                    await ReplyAsync($"{Context.User.Mention}, you rolled {roll}. Unfortunately, you lost {bet.ToString("N2")}$. " +
                                      $"Balance: {(await userRepo.GetCash(Context.User.Id)).ToString("N2")}$.");
                 }
             }

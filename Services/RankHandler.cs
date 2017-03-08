@@ -4,6 +4,7 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -55,6 +56,7 @@ namespace DEA
                                                                                          $"Required role: {context.Guild.GetRole(role4Id).Mention}");
                             break;
                         case Ranks.Moderator:
+                            if (!(context.Channel is SocketTextChannel)) return;
                             if (user.GuildPermissions.Administrator) break;
                             var moderatorRoleId = await guildRepo.GetModRoleId(context.Guild.Id);
                             if (context.Guild.GetRole(moderatorRoleId) == null)
@@ -64,6 +66,7 @@ namespace DEA
                                                                                                  $"Required role: {context.Guild.GetRole(moderatorRoleId).Mention}");
                             break;
                         case Ranks.Administrator:
+                            if (!(context.Channel is SocketTextChannel)) return;
                             if (!user.GuildPermissions.Administrator) throw new Exception("Only an Administrator may use this command.");
                             break;
                         case Ranks.Server_Owner:
@@ -95,53 +98,59 @@ namespace DEA
                 var role2 = guild.GetRole(await guildRepo.GetRank2Id(guild.Id));
                 var role3 = guild.GetRole(await guildRepo.GetRank3Id(guild.Id));
                 var role4 = guild.GetRole(await guildRepo.GetRank4Id(guild.Id));
+                List<IRole> rolesToAdd = new List<IRole>();
+                List<IRole> rolesToRemove = new List<IRole>();
                 //CHECKS IF THE ROLE EXISTS AND IF IT IS LOWER THAN THE BOT'S HIGHEST ROLE
                 if (role1 != null && role1.Position < currentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                 {
                     //ADDS ROLE IF THEY HAVE THE REQUIRED CASH
                     if (cash >= Config.RANK1 && !user.RoleIds.Any(x => x == role1.Id))
                     {
-                        await user.AddRolesAsync(role1);
+                        rolesToAdd.Add(role1);
                     }
                     //REMOVES ROLE IF THEY DO NOT HAVE REQUIRED CASH
                     if (cash < Config.RANK1 && user.RoleIds.Any(x => x == role1.Id))
                     {
-                        await user.RemoveRolesAsync(role1);
+                        rolesToRemove.Add(role1);
                     }
                 }
                 if (role2 != null && role2.Position < currentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                 {
                     if (cash >= Config.RANK2 && !user.RoleIds.Any(x => x == role2.Id))
                     {
-                        await user.AddRolesAsync(role2);
+                        rolesToAdd.Add(role2);
                     }
                     if (cash < Config.RANK2 && user.RoleIds.Any(x => x == role2.Id))
                     {
-                        await user.RemoveRolesAsync(role2);
+                        rolesToRemove.Add(role2);
                     }
                 }
                 if (role3 != null && role3.Position < currentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                 {
                     if (cash >= Config.RANK3 && !user.RoleIds.Any(x => x == role3.Id))
                     {
-                        await user.AddRolesAsync(role3);
+                        rolesToAdd.Add(role3);
                     }
                     if (cash < Config.RANK3 && user.RoleIds.Any(x => x == role3.Id))
                     {
-                        await user.RemoveRolesAsync(role3);
+                        rolesToRemove.Add(role3);
                     }
                 }
                 if (role4 != null && role4.Position < currentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                 {
                     if (cash >= Config.RANK4 && !user.RoleIds.Any(x => x == role4.Id))
                     {
-                        await user.AddRolesAsync(role4);
+                        rolesToAdd.Add(role4);
                     }
                     if (cash < Config.RANK4 && user.RoleIds.Any(x => x == role4.Id))
                     {
-                        await user.RemoveRolesAsync(role4);
+                        rolesToRemove.Add(role4);
                     }
                 }
+                if (rolesToAdd.Count >= 1)
+                    await user.AddRolesAsync(rolesToAdd);
+                if (rolesToRemove.Count >= 1)
+                    await user.RemoveRolesAsync(rolesToRemove);
             }
         }
     }

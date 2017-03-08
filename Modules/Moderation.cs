@@ -54,6 +54,7 @@ namespace DEA.Modules
 
         public async Task<bool> IsMod(IGuildUser user)
         {
+            if (user.GuildPermissions.Administrator) return true;
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
