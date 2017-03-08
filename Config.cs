@@ -1,6 +1,6 @@
 ﻿public static class Config
 {
-    public static readonly string TOKEN = "MjgwMjAxNzUwMjQ0MzYwMTk0.C54PJw.lP1e7xPkikNpb2YvgJTLUI9-i6w";
+    public static readonly string TOKEN = "bot token";
     
     public static readonly double WHORE_COOLDOWN = 7200000, JUMP_COOLDOWN = 14400000,
 
