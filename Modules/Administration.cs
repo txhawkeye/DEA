@@ -90,6 +90,16 @@ namespace DEA.Modules
             await ReplyAsync($"You have successfully set the moderator log channel to {modLogChannel.Mention}!");
         }
 
+        [Command("SetGambleChannel")]
+        [Remarks("Sets the moderation log.")]
+        public async Task SetGambleChannel(ITextChannel gambleChannel)
+        {
+            await RankHandler.RankRequired(Context, Ranks.Administrator);
+            var guildRepo = new GuildRepository(_db);
+            await guildRepo.SetGambleChannelId(Context.Guild.Id, gambleChannel.Id);
+            await ReplyAsync($"You have successfully set the gamble channel to {gambleChannel.Mention}!");
+        }
+
         [Command("EnableDM")]
         [Alias("DisableDM")]
         [Remarks("Sends all sizeable messages to the DM's of the user.")]

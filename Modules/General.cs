@@ -171,6 +171,26 @@ __{role4.Name}__ can use the **{prefix}50x2** AND can use the **{prefix}robbery*
             }
         }
 
+        [Command("Donate")]
+        [Remarks("Sauce some cash to one of your mates.")]
+        public async Task Donate(IGuildUser userMentioned, float money)
+        {
+            using (var db = new DbContext())
+            {
+                if (userMentioned.Id == Context.User.Id) throw new Exception("Hey kids! Look at that retard, he is trying to give money to himself!");
+                var userRepo = new UserRepository(db);
+                if (await userRepo.GetCash(Context.User.Id) < money) throw new Exception($"You do not have enough money. Balance: {(await userRepo.GetCash(Context.User.Id)).ToString("N2")}$.");
+                if (money < await userRepo.GetCash(Context.User.Id) / 20) throw new Exception($"The lowest donation is 5% of your total cash, that is {(await userRepo.GetCash(Context.User.Id) / 20).ToString("N2")}$.");
+                if (money < 5) throw new Exception("The lowest donation is 5$.");
+                await userRepo.EditCash(Context, -money);
+                float deaMoney = money / 10;
+                money *= 0.9f;
+                await userRepo.EditOtherCash(Context.Guild, userMentioned.Id, +money);
+                await userRepo.EditOtherCash(Context.Guild, Context.Guild.CurrentUser.Id, +deaMoney);
+                await ReplyAsync($"Successfully donated {money.ToString("N2")}$ to {userMentioned}. DEA has taken a {deaMoney.ToString("N2")}$ cut out of this donation.");
+            }
+        }
+
         [Command("Money")]
         [Alias("rank", "cash", "ranking", "balance")]
         [Remarks("View the wealth of anyone.")]

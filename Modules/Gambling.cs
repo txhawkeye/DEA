@@ -42,11 +42,17 @@ namespace DEA.Modules
             using (var db = new DbContext())
             {
                 var userRepo = new UserRepository(db);
+                var guildRepo = new GuildRepository(db);
+                if (Context.Guild.GetTextChannel(await guildRepo.GetGambleChannelId(Context.Guild.Id)) != null
+                    && Context.Channel.Id != await guildRepo.GetGambleChannelId(Context.Guild.Id))
+                    throw new Exception($"You may only gamble in {Context.Guild.GetTextChannel(await guildRepo.GetGambleChannelId(Context.Guild.Id)).Mention}!");
+   
                 var Cash = await userRepo.GetCash(Context.User.Id);
-                if (bet > Cash) throw new Exception($"You do not have enough money. Balance: {(await userRepo.GetCash(Context.User.Id)).ToString("N2")}$.");
-                if (bet < 5) throw new Exception("Lowest bet is $5.");
-                if (bet < Cash / 10) throw new Exception($"The lowest bet is 10% of your total cash, that is {(Cash / 10).ToString("N2")}.");
-                int roll = new Random().Next(1, 100);
+                if (bet > Cash) throw new Exception($"You do not have enough money. Balance: {(await userRepo.GetCash(Context.User.Id)).ToString("N2")}$.\n" +
+                                                    $"Debugging: Exact cash: {Cash} | Exact bet: {bet}");
+                if (bet < 5) throw new Exception("Lowest bet is 5$.");
+                if (bet < Cash / 10) throw new Exception($"The lowest bet is 10% of your total cash, that is {(Cash / 10).ToString("N2")}$.");
+                int roll = new Random().Next(1, 101);
                 if (roll >= odds)
                 {
                     await userRepo.EditCash(Context, (bet * payoutMultiplier));

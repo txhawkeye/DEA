@@ -1,0 +1,7 @@
+site_name: DEA Discord Bot
+pages:
+    - Home: index.md
+    - Introduction: introduction.md
+    - Setup: setup.md
+    - Commands: commands.md
+theme: readthedocs

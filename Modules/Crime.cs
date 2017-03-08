@@ -92,7 +92,7 @@ namespace DEA.Modules
                     await userRepo.SetLastSteal(Context.User.Id, DateTime.Now);
                     await userRepo.EditCash(Context, moneySteal);
                     string randomStore = Config.STORES[rand.Next(1, Config.STORES.Length) - 1];
-                    await ReplyAsync($"{Context.User.Mention}, you walk in to your local ${randomStore}, point a fake gun at the clerk, and manage to walk away" +
+                    await ReplyAsync($"{Context.User.Mention}, you walk in to your local ${randomStore}, point a fake gun at the clerk, and manage to walk away " +
                                      $"with {moneySteal.ToString("N2")}$");
                 }
                 else
@@ -123,7 +123,7 @@ namespace DEA.Modules
                 if (role3.Position <= userToBully.Roles.OrderByDescending(x => x.Position).First().Position)
                     throw new Exception($"You cannot bully someone with role higher or equal to: {role3.Mention}");
                 await userToBully.ModifyAsync(x => x.Nickname = nickname);
-                await ReplyAsync($"{userToBully.Mention} just got ***BULLIED*** by ${Context.User.Mention} with his new nickname: \"{nickname}\".");
+                await ReplyAsync($"{userToBully.Mention} just got ***BULLIED*** by {Context.User.Mention} with his new nickname: \"{nickname}\".");
             }
         }
     }
