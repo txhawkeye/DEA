@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using DEA.SQLite.Models;
 using DEA.SQLite.Repository;
 using Discord.WebSocket;
+using System.Linq;
 
 namespace DEA.Modules
 {
@@ -52,8 +53,6 @@ namespace DEA.Modules
             {
                 var guildRepo = new GuildRepository(db);
                 var userRepo = new UserRepository(db);
-                string prefix = "$";
-                if (Context.Channel is SocketTextChannel) prefix = await guildRepo.GetPrefix(Context.Guild.Id);
                 if (DateTime.Now.Subtract(await userRepo.GetLastJump(Context.User.Id)).TotalMilliseconds > Config.JUMP_COOLDOWN)
                 {
                     Random rand = new Random();
@@ -67,7 +66,7 @@ namespace DEA.Modules
                     var timeSpan = TimeSpan.FromMilliseconds(Config.JUMP_COOLDOWN - DateTime.Now.Subtract(await userRepo.GetLastJump(Context.User.Id)).TotalMilliseconds);
                     var builder = new EmbedBuilder()
                     {
-                        Title = $"{prefix}jump cooldown for {Context.User}",
+                        Title = $"{await guildRepo.GetPrefix(Context.Guild.Id)}jump cooldown for {Context.User}",
                         Description = $"{timeSpan.Hours} Hours\n{timeSpan.Minutes} Minutes\n{timeSpan.Seconds} Seconds",
                         Color = new Color(49, 62, 255)
                     };
@@ -86,8 +85,6 @@ namespace DEA.Modules
             {
                 var guildRepo = new GuildRepository(db);
                 var userRepo = new UserRepository(db);
-                string prefix = "$";
-                if (Context.Channel is SocketTextChannel) prefix = await guildRepo.GetPrefix(Context.Guild.Id);
                 if (DateTime.Now.Subtract(await userRepo.GetLastSteal(Context.User.Id)).TotalMilliseconds > Config.STEAL_COOLDOWN)
                 {
                     Random rand = new Random();
@@ -103,12 +100,30 @@ namespace DEA.Modules
                     var timeSpan = TimeSpan.FromMilliseconds(Config.STEAL_COOLDOWN - DateTime.Now.Subtract(await userRepo.GetLastSteal(Context.User.Id)).TotalMilliseconds);
                     var builder = new EmbedBuilder()
                     {
-                        Title = $"{prefix}steal cooldown for {Context.User}",
+                        Title = $"{await guildRepo.GetPrefix(Context.Guild.Id)}steal cooldown for {Context.User}",
                         Description = $"{timeSpan.Hours} Hours\n{timeSpan.Minutes} Minutes\n{timeSpan.Seconds} Seconds",
                         Color = new Color(49, 62, 255)
                     };
                     await ReplyAsync("", embed: builder);
                 }
+            }
+        }
+
+        [Command("Bully")]
+        [Remarks("Bully anyone's nickname to whatever you please.")]
+        [RequireBotPermission(GuildPermission.ManageNicknames)]
+        public async Task Bully(SocketGuildUser userToBully, [Remainder] string nickname)
+        {
+            await RankHandler.RankRequired(Context, Ranks.Rank3);
+            if (nickname.Length > 32) throw new Exception("The length of a nickname can be a maximum of 32 characters.");
+            using (var db = new DbContext())
+            {
+                var guildRepo = new GuildRepository(db);
+                var role3 = Context.Guild.GetRole(await guildRepo.GetRank3Id(Context.Guild.Id));
+                if (role3.Position <= userToBully.Roles.OrderByDescending(x => x.Position).First().Position)
+                    throw new Exception($"You cannot bully someone with role higher or equal to: {role3.Mention}");
+                await userToBully.ModifyAsync(x => x.Nickname = nickname);
+                await ReplyAsync($"{userToBully.Mention} just got ***BULLIED*** by ${Context.User.Mention} with his new nickname: \"{nickname}\".");
             }
         }
     }

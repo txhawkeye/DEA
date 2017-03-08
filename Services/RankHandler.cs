@@ -56,7 +56,6 @@ namespace DEA
                                                                                          $"Required role: {context.Guild.GetRole(role4Id).Mention}");
                             break;
                         case Ranks.Moderator:
-                            if (!(context.Channel is SocketTextChannel)) return;
                             if (user.GuildPermissions.Administrator) break;
                             var moderatorRoleId = await guildRepo.GetModRoleId(context.Guild.Id);
                             if (context.Guild.GetRole(moderatorRoleId) == null)
@@ -66,7 +65,6 @@ namespace DEA
                                                                                                  $"Required role: {context.Guild.GetRole(moderatorRoleId).Mention}");
                             break;
                         case Ranks.Administrator:
-                            if (!(context.Channel is SocketTextChannel)) return;
                             if (!user.GuildPermissions.Administrator) throw new Exception("Only an Administrator may use this command.");
                             break;
                         case Ranks.Server_Owner:

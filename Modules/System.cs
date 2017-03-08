@@ -31,11 +31,11 @@ namespace System.Modules
         [Remarks("All command information.")]
         public async Task HelpAsync()
         {
-            string prefix = "$";
+            string prefix;
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
-                if (Context.Channel is SocketTextChannel) prefix = await guildRepo.GetPrefix(Context.Guild.Id);
+                prefix = await guildRepo.GetPrefix(Context.Guild.Id);
             }
             string message = null;
             int longest = 0;
@@ -56,8 +56,7 @@ namespace System.Modules
             }
             var channel = await Context.User.CreateDMChannelAsync();
             await channel.SendMessageAsync(message);
-            if (Context.Channel is SocketTextChannel)
-                await ReplyAsync($"{Context.User.Mention}, you have been DMed with all the command information!");
+            await ReplyAsync($"{Context.User.Mention}, you have been DMed with all the command information!");
 
         }
 
@@ -79,8 +78,7 @@ namespace System.Modules
                 $"• Runtime  :: {RuntimeInformation.FrameworkDescription} {RuntimeInformation.OSArchitecture}```";
             var channel = await Context.User.CreateDMChannelAsync();
             await channel.SendMessageAsync(message);
-            if (Context.Channel is SocketTextChannel)
-                await ReplyAsync($"{Context.User.Mention}, you have been DMed with all the statistics!");
+            await ReplyAsync($"{Context.User.Mention}, you have been DMed with all the statistics!");
         }
     }
 }

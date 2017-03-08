@@ -44,16 +44,15 @@ namespace DEA.Services
 
             if (Context.User.IsBot) return;
 
-            if (Context.Channel is SocketTextChannel)
-                if ((Context.Guild.CurrentUser as IGuildUser).GetPermissions(Context.Channel as SocketTextChannel).SendMessages == false) return;
+            if (!(Context.Channel is SocketTextChannel)) return;
+
+            if ((Context.Guild.CurrentUser as IGuildUser).GetPermissions(Context.Channel as SocketTextChannel).SendMessages == false) return;
 
             using (var db = new DbContext())
             {
                 int argPos = 0;
                 var guildRepo = new GuildRepository(db);
-                string prefix = "$";
-                if (Context.Channel is SocketTextChannel) prefix = await guildRepo.GetPrefix(Context.Guild.Id);
-                if (msg.HasStringPrefix(prefix, ref argPos) ||
+                if (msg.HasStringPrefix(await guildRepo.GetPrefix(Context.Guild.Id), ref argPos) ||
                     msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
                 {
                     var result = await _service.ExecuteAsync(Context, argPos);
@@ -71,8 +70,7 @@ namespace DEA.Services
                 {
                     ulong userId = Context.User.Id;
                     var userRepo = new UserRepository(db);
-                    if (DateTime.Now.Subtract(await userRepo.GetLastMessage(userId)).TotalMilliseconds > await userRepo.GetMessageCooldown(userId)
-                        && Context.Channel is SocketTextChannel)
+                    if (DateTime.Now.Subtract(await userRepo.GetLastMessage(userId)).TotalMilliseconds > await userRepo.GetMessageCooldown(userId))
                     {
                         if (await userRepo.GetTemporaryMultiplier(userId) < Config.MAX_TEMP_MULTIPLIER)
                         {
