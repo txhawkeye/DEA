@@ -46,7 +46,7 @@ namespace DEA.Modules
                 if (bet > Cash) throw new Exception($"You do not have enough money. Balance: {(await userRepo.GetCash(Context.User.Id)).ToString("N2")}$.");
                 if (bet < 5) throw new Exception("Lowest bet is $5.");
                 if (bet < Cash / 10) throw new Exception($"The lowest bet is 10% of your total cash, that is {(Cash / 10).ToString("N2")}.");
-                int roll = new Random().Next(1, 100);
+                int roll = new Random().Next(1, 101);
                 if (roll >= odds)
                 {
                     await userRepo.EditCash(Context, (bet * payoutMultiplier));
