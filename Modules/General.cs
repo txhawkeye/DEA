@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using DEA.SQLite.Models;
 using DEA.SQLite.Repository;
 using System.Linq;
-using Discord.WebSocket;
 
 namespace DEA.Modules
 {
@@ -28,8 +27,7 @@ namespace DEA.Modules
                 if (role1 == null || role2 == null || role3 == null || role4 == null)
                 {
                     throw new Exception($"You do not have 4 different functional roles added in with the" +
-                                        $"{prefix}SetRankRoles command, therefore the" +
-                                        $"{prefix}information command will not work!");
+                                        $"{prefix}SetRankRoles command, therefore the {prefix}information command will not work!");
                 }
                 var builder = new EmbedBuilder()
                 {
@@ -54,6 +52,7 @@ __{role4.Name}__ can use the **{prefix}50x2** AND can use the **{prefix}robbery*
         [Command("Investments")]
         [Alias("Investements", "Investement", "Investment")]
         [Remarks("Increase your money per message")]
+        [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Invest(string investString = null)
         {
             using (var db = new DbContext())
@@ -114,7 +113,7 @@ __{role4.Name}__ can use the **{prefix}50x2** AND can use the **{prefix}robbery*
                         }
                         await userRepo.EditCash(Context, -Config.KILO_COST);
                         await userRepo.SetInvestmentMultiplier(Context.User.Id, Config.KILO_MULTIPLIER);
-                        await ReplyAsync($"{Context.User.Mention}, you get 4 times the money/msg. Don't go all Lindsay lohan on us now!");
+                        await ReplyAsync($"{Context.User.Mention}, only the black jews would actually enjoy 4$/msg.");
                         break;
                     default:
                         var builder = new EmbedBuilder()
@@ -128,7 +127,13 @@ __{role4.Name}__ can use the **{prefix}50x2** AND can use the **{prefix}robbery*
                             $"*{await guildRepo.GetPrefix(Context.Guild.Id)}investments kilo* | Description: A kilo of cocaine is more than enough to " +
                             $"quadruple your cash/message.\n These investments stack with the chatting multiplier. However, they do not stack with themselves."),
                         };
-                        await ReplyAsync("", embed: builder);
+                        if (await guildRepo.GetDM(Context.Guild.Id))
+                        {
+                            var channel = await Context.User.CreateDMChannelAsync();
+                            await channel.SendMessageAsync("", embed: builder);
+                        }
+                        else
+                            await ReplyAsync("", embed: builder);
                         break;
                 }
             }
@@ -137,10 +142,12 @@ __{role4.Name}__ can use the **{prefix}50x2** AND can use the **{prefix}robbery*
         [Command("Leaderboards")]
         [Alias("lb", "rankings", "highscores", "leaderboard", "highscore")]
         [Remarks("View the richest Drug Traffickers.")]
+        [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Leaderboards()
         {
             using (var db = new DbContext())
             {
+                var guildRepo = new GuildRepository(db);
                 var userRepo = new UserRepository(db);
                 User[] users = userRepo.GetAll().ToArray();
                 User[] sorted = users.OrderByDescending(x => x.Cash).ToArray();
@@ -167,7 +174,13 @@ __{role4.Name}__ can use the **{prefix}50x2** AND can use the **{prefix}robbery*
                     Color = new Color(0x00AE86),
                     Description = desciption
                 };
-                await ReplyAsync("", embed: builder);
+                if (await guildRepo.GetDM(Context.Guild.Id))
+                {
+                    var channel = await Context.User.CreateDMChannelAsync();
+                    await channel.SendMessageAsync("", embed: builder);
+                }
+                else
+                    await ReplyAsync("", embed: builder);
             }
         }
 
@@ -185,8 +198,8 @@ __{role4.Name}__ can use the **{prefix}50x2** AND can use the **{prefix}robbery*
                 await userRepo.EditCash(Context, -money);
                 float deaMoney = money / 10;
                 money *= 0.9f;
-                await userRepo.EditOtherCash(Context.Guild, userMentioned.Id, +money);
-                await userRepo.EditOtherCash(Context.Guild, Context.Guild.CurrentUser.Id, +deaMoney);
+                await userRepo.EditOtherCash(Context, userMentioned.Id, +money);
+                await userRepo.EditOtherCash(Context, Context.Guild.CurrentUser.Id, +deaMoney);
                 await ReplyAsync($"Successfully donated {money.ToString("N2")}$ to {userMentioned}. DEA has taken a {deaMoney.ToString("N2")}$ cut out of this donation.");
             }
         }
@@ -194,10 +207,12 @@ __{role4.Name}__ can use the **{prefix}50x2** AND can use the **{prefix}robbery*
         [Command("Money")]
         [Alias("rank", "cash", "ranking", "balance")]
         [Remarks("View the wealth of anyone.")]
+        [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Money(IGuildUser userToView = null)
         {
             using (var db = new DbContext())
             {
+                var guildRepo = new GuildRepository(db);
                 var userRepo = new UserRepository(db);
                 if (userToView == null) userToView = Context.User as IGuildUser;
                 var builder = new EmbedBuilder()
@@ -205,16 +220,24 @@ __{role4.Name}__ can use the **{prefix}50x2** AND can use the **{prefix}robbery*
                     Color = new Color(0x00AE86),
                     Description = $"**Ranking of {userToView}**\nBalance: {(await userRepo.GetCash(userToView.Id)).ToString("N2")}$"
                 };
-                await ReplyAsync("", embed: builder);
+                if (await guildRepo.GetDM(Context.Guild.Id))
+                {
+                    var channel = await Context.User.CreateDMChannelAsync();
+                    await channel.SendMessageAsync("", embed: builder);
+                }
+                else
+                    await ReplyAsync("", embed: builder);
             }
         }
 
         [Command("Rate")]
         [Remarks("View the money/message rate of anyone.")]
+        [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Rate(IGuildUser userToView = null)
         {
             using (var db = new DbContext())
             {
+                var guildRepo = new GuildRepository(db);
                 var userRepo = new UserRepository(db);
                 if (userToView == null) userToView = Context.User as IGuildUser;
                 ulong id = userToView.Id;
@@ -228,6 +251,48 @@ __{role4.Name}__ can use the **{prefix}50x2** AND can use the **{prefix}robbery*
                     $"{(await userRepo.GetInvestmentMultiplier(id)).ToString("N2")}\nMessage cooldown: " +
                     $"{await userRepo.GetMessageCooldown(id) / 1000} seconds"
                 };
+                if (await guildRepo.GetDM(Context.Guild.Id))
+                {
+                    var channel = await Context.User.CreateDMChannelAsync();
+                    await channel.SendMessageAsync("", embed: builder);
+                }
+                else
+                    await ReplyAsync("", embed: builder);
+            }
+        }
+
+        [Command("Ranked")]
+        [Remarks("View the quantity of members for each ranked role.")]
+        [RequireBotPermission(GuildPermission.ManageRoles)]
+        public async Task Ranked()
+        {
+            using (var db = new DbContext())
+            {
+                var guildRepo = new GuildRepository(db);
+                var role1 = Context.Guild.GetRole(await guildRepo.GetRank1Id(Context.Guild.Id));
+                var role2 = Context.Guild.GetRole(await guildRepo.GetRank2Id(Context.Guild.Id));
+                var role3 = Context.Guild.GetRole(await guildRepo.GetRank3Id(Context.Guild.Id));
+                var role4 = Context.Guild.GetRole(await guildRepo.GetRank4Id(Context.Guild.Id));
+                string prefix = await guildRepo.GetPrefix(Context.Guild.Id);
+                if (role1 == null || role2 == null || role3 == null || role4 == null)
+                {
+                    throw new Exception($"You do not have 4 different functional roles added in with the" +
+                                        $"{prefix}SetRankRoles command, therefore the {prefix}ranked command will not work!");
+                }
+                var count1 = Context.Guild.Users.Count(x => x.Roles.Any(y => y.Id == role1.Id));
+                var count2 = Context.Guild.Users.Count(x => x.Roles.Any(y => y.Id == role2.Id));
+                var count3 = Context.Guild.Users.Count(x => x.Roles.Any(y => y.Id == role3.Id));
+                var count4 = Context.Guild.Users.Count(x => x.Roles.Any(y => y.Id == role4.Id));
+                var count = Context.Guild.Users.Count(x => x.Roles.Any(y => y.Id == role1.Id));
+                var builder = new EmbedBuilder()
+                {
+                    Title = "Ranked Users",
+                    Color = new Color(0x00AE86),
+                    Description = $"{role4.Mention}: {count4} members\n" +
+                                  $"{role3.Mention}: {count3 - count4} members\n" + 
+                                  $"{role2.Mention}: {count2 - count3} members\n" +
+                                  $"{role1.Mention}: {count1 - count2} members"     
+                };
                 await ReplyAsync("", embed: builder);
             }
         }
@@ -240,7 +305,7 @@ __{role4.Name}__ can use the **{prefix}50x2** AND can use the **{prefix}robbery*
             using (var db = new DbContext())
             {
                 var userRepo = new UserRepository(db);
-                await userRepo.EditOtherCash(Context.Guild, userMentioned.Id, +money);
+                await userRepo.EditOtherCash(Context, userMentioned.Id, +money);
                 await ReplyAsync($"Successfully given {money.ToString("N2")}$ to {userMentioned}.");
             }
         }

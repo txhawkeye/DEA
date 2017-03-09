@@ -38,7 +38,12 @@ namespace DEA.Modules
                         Description = $"{timeSpan.Hours} Hours\n{timeSpan.Minutes} Minutes\n{timeSpan.Seconds} Seconds",
                         Color = new Color(49, 62, 255)
                     };
-                    await ReplyAsync("", embed: builder);
+                    if (await guildRepo.GetDM(Context.Guild.Id))
+                    {
+                        var channel = await Context.User.CreateDMChannelAsync();
+                        await channel.SendMessageAsync("", embed: builder);
+                    } else
+                        await ReplyAsync("", embed: builder);
                 }
             }
         }
@@ -70,7 +75,13 @@ namespace DEA.Modules
                         Description = $"{timeSpan.Hours} Hours\n{timeSpan.Minutes} Minutes\n{timeSpan.Seconds} Seconds",
                         Color = new Color(49, 62, 255)
                     };
-                    await ReplyAsync("", embed: builder);
+                    if (await guildRepo.GetDM(Context.Guild.Id))
+                    {
+                        var channel = await Context.User.CreateDMChannelAsync();
+                        await channel.SendMessageAsync("", embed: builder);
+                    }
+                    else
+                        await ReplyAsync("", embed: builder);
                 }
             }
         }
@@ -104,7 +115,13 @@ namespace DEA.Modules
                         Description = $"{timeSpan.Hours} Hours\n{timeSpan.Minutes} Minutes\n{timeSpan.Seconds} Seconds",
                         Color = new Color(49, 62, 255)
                     };
-                    await ReplyAsync("", embed: builder);
+                    if (await guildRepo.GetDM(Context.Guild.Id))
+                    {
+                        var channel = await Context.User.CreateDMChannelAsync();
+                        await channel.SendMessageAsync("", embed: builder);
+                    }
+                    else
+                        await ReplyAsync("", embed: builder);
                 }
             }
         }

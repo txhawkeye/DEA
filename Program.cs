@@ -30,10 +30,15 @@ namespace DEA
                 => PrettyConsole.Log(l.Severity, l.Source, l.Exception?.ToString() ?? l.Message));
 
             await _client.LoginAsync(TokenType.Bot, Config.TOKEN);
+            
             await _client.StartAsync();
 
             _handler = new CommandHandler();
             await _handler.InitializeAsync(_client);
+
+            RecurringFunctions testing = new RecurringFunctions(_client);
+
+            //testing.Test();
 
             await Task.Delay(-1);
         }

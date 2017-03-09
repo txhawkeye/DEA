@@ -57,7 +57,6 @@ namespace System.Modules
             var channel = await Context.User.CreateDMChannelAsync();
             await channel.SendMessageAsync(message);
             await ReplyAsync($"{Context.User.Mention}, you have been DMed with all the command information!");
-
         }
 
         [Command("Stats")]

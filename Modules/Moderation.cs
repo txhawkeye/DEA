@@ -21,7 +21,7 @@ namespace DEA.Modules
             if (await IsMod(userToBan)) throw new Exception("You cannot ban another mod!");
             await InformSubject(Context.User, "Ban", userToBan, reason);
             await Context.Guild.AddBanAsync(userToBan);
-            await ModLog(Context.User, "Ban", userToBan, new Color(255, 0, 0), reason);
+            await ModLog(Context, "Ban", userToBan, new Color(255, 0, 0), reason);
             await ReplyAsync($"{Context.User.Mention} has swung the banhammer on {userToBan.Mention}");
         }
 
@@ -35,7 +35,7 @@ namespace DEA.Modules
             if (await IsMod(userToKick)) throw new Exception("You cannot kick another mod!");
             await InformSubject(Context.User, "Kick", userToKick, reason);
             await userToKick.KickAsync();
-            await ModLog(Context.User, "Kick", userToKick, new Color(255, 114, 14), reason);
+            await ModLog(Context, "Kick", userToKick, new Color(255, 114, 14), reason);
             await ReplyAsync($"{Context.User.Mention} has kicked {userToKick.Mention}");
         }
 
@@ -80,8 +80,10 @@ namespace DEA.Modules
             catch { }
         }
 
-        public async Task ModLog(IUser moderator, string action, IUser subject, Color color, [Remainder] string reason)
+        public async Task ModLog(SocketCommandContext context, string action, IUser subject, Color color, [Remainder] string reason)
         {
+            if (!(context.Guild.CurrentUser as IGuildUser).GuildPermissions.EmbedLinks)
+                throw new Exception($"{context.User.Mention}, Command requires guild permission EmbedLinks");
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
@@ -93,8 +95,8 @@ namespace DEA.Modules
                 };
                 EmbedAuthorBuilder author = new EmbedAuthorBuilder()
                 {
-                    IconUrl = moderator.GetAvatarUrl(),
-                    Name = $"{moderator.Username}#{moderator.Discriminator}"
+                    IconUrl = context.User.GetAvatarUrl(),
+                    Name = $"{context.User.Username}#{context.User.Discriminator}"
                 };
 
                 var builder = new EmbedBuilder()

@@ -4,6 +4,7 @@ using Discord;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
+using Discord.WebSocket;
 
 namespace DEA.SQLite.Repository
 {
@@ -16,20 +17,22 @@ namespace DEA.SQLite.Repository
             _dbContext = dbContext;
         }
 
-        public async Task EditCash(ICommandContext context, float change)
+        public async Task EditCash(SocketCommandContext context, float change)
         {
             var user = await FetchUser(context.User.Id);
             user.Cash = (float)Math.Round(user.Cash + change, 2);
             await UpdateAsync(user);
-            await RankHandler.Handle(context.Guild, context.User.Id);
+            if ((context.Guild.CurrentUser as IGuildUser).GuildPermissions.ManageRoles)
+                await RankHandler.Handle(context.Guild, context.User.Id);
         }
 
-        public async Task EditOtherCash(IGuild guild, ulong userId, float change)
+        public async Task EditOtherCash(SocketCommandContext context, ulong userId, float change)
         {
             var user = await FetchUser(userId);
             user.Cash = (float)Math.Round(user.Cash + change, 2);
             await UpdateAsync(user);
-            await RankHandler.Handle(guild, userId);
+            if ((context.Guild.CurrentUser as IGuildUser).GuildPermissions.ManageRoles)
+                await RankHandler.Handle(context.Guild, userId);
         }
 
         public async Task<float> GetCash(ulong userId)
