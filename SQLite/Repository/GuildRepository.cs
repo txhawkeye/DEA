@@ -42,6 +42,13 @@ namespace DEA.SQLite.Repository
             await UpdateAsync(guild);
         }
 
+        public async Task SetMutedRoleId(ulong guildId, ulong mutedRoleId)
+        {
+            var guild = await FetchGuild(guildId);
+            guild.MutedRoleId = mutedRoleId;
+            await UpdateAsync(guild);
+        }
+
         public async Task SetModLogChannelId(ulong guildId, ulong modLogChannelId)
         {
             var guild = await FetchGuild(guildId);
@@ -98,6 +105,12 @@ namespace DEA.SQLite.Repository
         {
             var guild = await FetchGuild(guildId);
             return guild.ModRoleId;
+        }
+
+        public async Task<ulong> GetMutedRoleId(ulong guildId)
+        {
+            var guild = await FetchGuild(guildId);
+            return guild.MutedRoleId;
         }
 
         public async Task<ulong> GetModLogChannelId(ulong guildId)

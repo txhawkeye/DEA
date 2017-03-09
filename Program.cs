@@ -36,9 +36,7 @@ namespace DEA
             _handler = new CommandHandler();
             await _handler.InitializeAsync(_client);
 
-            RecurringFunctions testing = new RecurringFunctions(_client);
-
-            //testing.Test();
+            new RecurringFunctions(_client).ResetTemporaryMultiplier();
 
             await Task.Delay(-1);
         }

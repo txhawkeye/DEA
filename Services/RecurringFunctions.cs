@@ -19,9 +19,9 @@ namespace DEA.Services
             _client = client;
         }
 
-        public void Test()
+        public void ResetTemporaryMultiplier()
         {
-            Timer t = new Timer(60000);
+            Timer t = new Timer(TimeSpan.FromHours(1).TotalMilliseconds);
             t.AutoReset = true;
             t.Elapsed += new ElapsedEventHandler(OnTimedEvent);
             t.Start();
@@ -35,9 +35,12 @@ namespace DEA.Services
                 User[] users = userRepo.GetAll().ToArray();
                 foreach (User user in users)
                 {
-                    user.TemporaryMultiplier = 1;
-                    db.Set<User>().Update(user);
-                    await db.SaveChangesAsync();
+                    if (user.TemporaryMultiplier != 1)
+                    {
+                        user.TemporaryMultiplier = 1;
+                        db.Set<User>().Update(user);
+                        await db.SaveChangesAsync();
+                    }
                 }
             }
         }

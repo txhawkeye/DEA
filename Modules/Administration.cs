@@ -38,6 +38,19 @@ namespace DEA.Modules
             }
         }
 
+        [Command("SetMutedRole")]
+        [Remarks("Sets the muted role.")]
+        public async Task SetMutedRole(IRole mutedRole)
+        {
+            using (var db = new DbContext())
+            {
+                await RankHandler.RankRequired(Context, Ranks.Administrator);
+                var guildRepo = new GuildRepository(db);
+                await guildRepo.SetMutedRoleId(Context.Guild.Id, mutedRole.Id);
+                await ReplyAsync($"You have successfully set the muted role to {mutedRole.Mention}!");
+            }
+        }
+
         [Command("SetRankRoles")]
         [Alias("setrank", "setrole", "setranks", "setroles", "setrankrole")]
         [Remarks("Sets the rank roles for the DEA cash system.")]
