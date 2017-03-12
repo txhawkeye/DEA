@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.WebSocket;
 using DEA.Services;
+using DEA.Events;
 using System.Threading.Tasks;
 
 namespace DEA
@@ -11,7 +12,7 @@ namespace DEA
             => new Program().Start().GetAwaiter().GetResult();
 
         private DiscordSocketClient _client;
-        private CommandHandler _handler;
+        private MessageRecieved _handler;
 
         public async Task Start()
         {
@@ -33,10 +34,15 @@ namespace DEA
             
             await _client.StartAsync();
 
-            _handler = new CommandHandler();
+            _handler = new MessageRecieved();
             await _handler.InitializeAsync(_client);
 
-            new RecurringFunctions(_client).ResetTemporaryMultiplier();
+            new UserJoined(_client);
+
+            RecurringFunctions funcs = new RecurringFunctions(_client);
+
+            funcs.ResetTemporaryMultiplier();
+            funcs.AutoUnmute();
 
             await Task.Delay(-1);
         }

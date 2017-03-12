@@ -10,7 +10,7 @@ using DEA.SQLite.Repository;
 
 namespace DEA.Services
 {
-    public class CommandHandler
+    public class MessageRecieved
     {
         private DiscordSocketClient _client;
         private CommandService _service;
@@ -21,11 +21,7 @@ namespace DEA.Services
             _service = new CommandService(new CommandServiceConfig()
             {
                 CaseSensitiveCommands = false,
-#if DEBUG
                 DefaultRunMode = RunMode.Sync
-#elif RELEASE
-                DefaultRunMode = RunMode.Async
-#endif
             });
 
             await _service.AddModulesAsync(Assembly.GetEntryAssembly());
@@ -52,7 +48,8 @@ namespace DEA.Services
             {
                 int argPos = 0;
                 var guildRepo = new GuildRepository(db);
-                if (msg.HasStringPrefix(await guildRepo.GetPrefix(Context.Guild.Id), ref argPos) ||
+                string prefix = await guildRepo.GetPrefix(Context.Guild.Id);
+                if (msg.HasStringPrefix(prefix, ref argPos) ||
                     msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
                 {
                     var result = await _service.ExecuteAsync(Context, argPos);
@@ -61,7 +58,17 @@ namespace DEA.Services
                         if (!result.IsSuccess && result.Error != CommandError.UnknownCommand)
                             try
                             {
-                                await msg.Channel.SendMessageAsync($"{Context.User.Mention}, {result.ErrorReason}");
+                                var cmd = _service.Search(Context, argPos).Commands.First().Command;
+                                switch (result.ErrorReason)
+                                {
+                                    case "The input text has too many parameters.":
+                                    case "The input text has too few parameters.":
+                                        await msg.Channel.SendMessageAsync($"You are incorrectly using this command, usage: `{prefix}{cmd.Remarks}`");
+                                        break;
+                                    default:
+                                        await msg.Channel.SendMessageAsync($"{Context.User.Mention}, {result.ErrorReason}");
+                                        break;
+                                }
                             }
                             catch { }
                     }

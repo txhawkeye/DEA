@@ -1,5 +1,6 @@
 ﻿using DEA.SQLite.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Threading.Tasks;
 
 namespace DEA.SQLite.Repository
@@ -13,14 +14,15 @@ namespace DEA.SQLite.Repository
             _dbContext = dbContext;
         }
 
-        public async Task AddMuteAsync(ulong UserID, ulong GuildID)
+        public async Task AddMuteAsync(ulong UserID, ulong GuildID, TimeSpan muteLength, DateTime time)
         {
-            await base.InsertAsync(new Mute()
+            await InsertAsync(new Mute()
             {
                 UserId = UserID,
-                GuildId = GuildID
+                GuildId = GuildID,
+                MuteLength = (uint) muteLength.TotalMilliseconds,
+                MutedAt = time.ToString()
             });
-
         }
 
         public async Task<bool> IsMutedAsync(ulong UserID, ulong GuildID)
@@ -30,16 +32,11 @@ namespace DEA.SQLite.Repository
 
         }
 
-        public async Task<bool> RemoveMuteAsync(ulong UserID, ulong GuildID)
+        public async Task RemoveMuteAsync(ulong UserID, ulong GuildID)
         {
             var muted = await SearchFor(c => c.UserId == UserID && c.GuildId == GuildID).FirstOrDefaultAsync();
 
-            if (muted != null)
-            {
-                await base.DeleteAsync(muted);
-                return true;
-            }
-            return false;
+            if (muted != null) await DeleteAsync(muted);
 
         }
     }

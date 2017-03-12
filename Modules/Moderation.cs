@@ -14,7 +14,8 @@ namespace DEA.Modules
         [Command("Ban")]
         [Alias("hammer")]
         [RequireBotPermission(GuildPermission.BanMembers)]
-        [Remarks("Bans a user from the server.")]
+        [Summary("Bans a user from the server.")]
+        [Remarks("Ban <@User> [Reason]")]
         public async Task Ban(IGuildUser userToBan, [Remainder] string reason = "No reason.")
         {
             await RankHandler.RankRequired(Context, Ranks.Moderator);
@@ -28,7 +29,8 @@ namespace DEA.Modules
         [Command("Kick")]
         [Alias("boot")]
         [RequireBotPermission(GuildPermission.KickMembers)]
-        [Remarks("Kicks a user from the server.")]
+        [Summary("Kicks a user from the server.")]
+        [Remarks("Kick <@User> [Reason]")]
         public async Task Kick(IGuildUser userToKick, [Remainder] string reason = "No reason.")
         {
             await RankHandler.RankRequired(Context, Ranks.Moderator);
@@ -41,10 +43,37 @@ namespace DEA.Modules
 
         [Command("Mute")]
         [RequireBotPermission(GuildPermission.ManageRoles)]
-        [Remarks("Temporarily mutes a user.")]
+        [Summary("Temporarily mutes a user.")]
+        [Remarks("Mute <@User> [Reason]")]
         public async Task Mute(IGuildUser userToMute, [Remainder] string reason = "No reason.")
         {
             await RankHandler.RankRequired(Context, Ranks.Moderator);
+            using (var db = new DbContext())
+            {
+                var guildRepo = new GuildRepository(db);
+                var mutedRole = Context.Guild.GetRole(await guildRepo.GetMutedRoleId(Context.Guild.Id));
+                if (mutedRole == null) throw new Exception($"You may not mute users if the muted role is not valid.\nPlease use the " +
+                                                           $"{await guildRepo.GetPrefix(Context.Guild.Id)}SetMutedRole command to change that.");
+                var muteRepo = new MuteRepository(db);
+                if (await IsMod(userToMute)) throw new Exception("You cannot mute another mod!");
+                await InformSubject(Context.User, "Mute", userToMute, reason);
+                await userToMute.AddRolesAsync(mutedRole);
+                await muteRepo.AddMuteAsync(userToMute.Id, Context.Guild.Id, TimeSpan.FromDays(1), DateTime.Now);
+                await ModLog(Context, "Mute", userToMute, new Color(255, 114, 14), reason);
+                await ReplyAsync($"{Context.User.Mention} has successfully muted {userToMute.Mention}");
+            }
+        }
+
+        [Command("CustomMute")]
+        [RequireBotPermission(GuildPermission.ManageRoles)]
+        [Summary("Temporarily mutes a user for x amount of days.")]
+        [Remarks("CustomMute <Mute length in days> <@User> [Reason]")]
+        public async Task CustomMute(int days, IGuildUser userToMute, [Remainder] string reason = "No reason.")
+        {
+            await RankHandler.RankRequired(Context, Ranks.Moderator);
+            if (days > 7) throw new Exception("You may not mute a user for more than 7 days.");
+            if (days < 2) throw new Exception("You may not mute a user with custom mute command for less than 1 day.\n"+ 
+                                              "If you wish to mute for 1 day exactly, please use the mute command.");
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
@@ -55,15 +84,16 @@ namespace DEA.Modules
                 if (await IsMod(userToMute)) throw new Exception("You cannot mute another mod!");
                 await InformSubject(Context.User, "Mute", userToMute, reason);
                 await userToMute.AddRolesAsync(mutedRole);
-                // TODO: await muteRepo.AddMuteAsync(userToMute.Id, Context.Guild.Id);
+                await muteRepo.AddMuteAsync(userToMute.Id, Context.Guild.Id, TimeSpan.FromDays(days), DateTime.Now);
                 await ModLog(Context, "Mute", userToMute, new Color(255, 114, 14), reason);
-                await ReplyAsync($"{Context.User.Mention} has successfully muted {userToMute.Mention}");
+                await ReplyAsync($"{Context.User.Mention} has successfully muted {userToMute.Mention} for {days} days!");
             }
         }
 
         [Command("Unmute")]
         [RequireBotPermission(GuildPermission.ManageRoles)]
-        [Remarks("Unmutes a muted user.")]
+        [Summary("Unmutes a muted user.")]
+        [Remarks("Unmute <@User> [Reason]")]
         public async Task Unmute(IGuildUser userToUnmute, [Remainder] string reason = "No reason.")
         {
             await RankHandler.RankRequired(Context, Ranks.Moderator);
@@ -75,7 +105,7 @@ namespace DEA.Modules
                 var muteRepo = new MuteRepository(db);
                 await InformSubject(Context.User, "Unmute", userToUnmute, reason);
                 await userToUnmute.RemoveRolesAsync(Context.Guild.GetRole(mutedRoleId));
-                // TODO: await muteRepo.RemoveMuteAsync(userToMute.Id, Context.Guild.Id);
+                await muteRepo.RemoveMuteAsync(userToUnmute.Id, Context.Guild.Id);
                 await ModLog(Context, "Unmute", userToUnmute, new Color(255, 114, 14), reason);
                 await ReplyAsync($"{Context.User.Mention} has successfully unmuted {userToUnmute.Mention}");
             }
@@ -83,7 +113,8 @@ namespace DEA.Modules
 
         [Command("Clear")]
         [RequireBotPermission(GuildPermission.ManageMessages)]
-        [Remarks("Deletes x amount of messages.")]
+        [Summary("Deletes x amount of messages.")]
+        [Remarks("Clear [Quantity of messages]")]
         public async Task CleanAsync(int count = 25)
         {
             await RankHandler.RankRequired(Context, Ranks.Moderator);
@@ -152,7 +183,7 @@ namespace DEA.Modules
                 if (Context.Guild.GetTextChannel(await guildRepo.GetModLogChannelId(Context.Guild.Id)) != null)
                 {
                     await guildRepo.IncrementCaseNumber(Context.Guild.Id);
-                    await Context.Guild.GetTextChannel(248050603450826752).SendMessageAsync("", embed: builder);
+                    await Context.Guild.GetTextChannel(await guildRepo.GetModLogChannelId(Context.Guild.Id)).SendMessageAsync("", embed: builder);
                 }
             }
         }

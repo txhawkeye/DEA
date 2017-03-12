@@ -1,6 +1,6 @@
 ﻿public static class Config
 {
-    public static readonly string TOKEN = "MjgwMjAxNzUwMjQ0MzYwMTk0.C6Ie_w.6EFdT2JZAe3f1vqphpeiYvPL9rU";
+    public static readonly string TOKEN = "Mjg5OTgwNjA1ODg4NzI1MDAz.C6WyWg.KMR-Py9vEqTYSzwoB397x2n4z8U";
     
     public static readonly double WHORE_COOLDOWN = 7200000, JUMP_COOLDOWN = 14400000,
 
@@ -14,7 +14,7 @@
 
     HIGHEST_JUMP = 250, HIGHEST_STEAL = 500, MAX_RESOURCES = 1000, MIN_RESOURCES, TEMP_MULTIPLIER_RATE = 0.1f, MAX_TEMP_MULTIPLIER = 10;
 
-    public static readonly ulong[] OWNER_IDS = { 137756307837943809 };
+    public static readonly ulong[] OWNER_IDS = { 289961733508825088, 188880365522255873 };
 
     public static readonly string[] BANKS = { "Bank of America", "Wells Fargo Bank", "JPMorgan Chase Bank", "Capital One Bank",
 

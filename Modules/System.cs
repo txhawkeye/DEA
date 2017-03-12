@@ -7,6 +7,8 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using DEA.SQLite.Models;
 using DEA.SQLite.Repository;
+using System.Collections.Generic;
+using DEA;
 
 namespace System.Modules
 {
@@ -28,40 +30,100 @@ namespace System.Modules
 
         [Command("Help")]
         [Alias("commands", "cmd", "cmds", "command")]
-        [Remarks("All command information.")]
-        public async Task HelpAsync()
-        {
+        [Summary("All command information.")]
+        [Remarks("Help [Command or Module]")]
+        [RequireBotPermission(GuildPermission.EmbedLinks)]
+        public async Task HelpAsync(string commandOrModule = null)
+        { 
             string prefix;
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
                 prefix = await guildRepo.GetPrefix(Context.Guild.Id);
             }
-            string message = null;
+            
+            List<string> messages = new List<string>();
             int longest = 0;
+            int elements = -1;
+
+            if (commandOrModule != null)
+            {
+                if (commandOrModule.StartsWith(prefix)) commandOrModule = commandOrModule.Remove(0, prefix.Length);
+                foreach (var module in _service.Modules)
+                {
+                    if (module.Name.ToLower() == commandOrModule.ToLower())
+                    {
+                        var longestInModule = 0;
+                        foreach (var cmd in module.Commands)
+                            if (cmd.Aliases.First().Length > longestInModule) longestInModule = cmd.Aliases.First().Length;
+                        var moduleInfo = $"**{module.Name} Commands **: ```asciidoc\n";
+                        foreach (var cmd in module.Commands)
+                        {
+                            moduleInfo += $"{prefix}{cmd.Aliases.First()}{new String(' ', (longestInModule + 1) - cmd.Aliases.First().Length)} :: {cmd.Summary}\n";
+                        }
+                        moduleInfo += "```";
+                        await ReplyAsync(moduleInfo);
+                        return;
+                    }
+                }
+
+                foreach (var module in _service.Modules)
+                    foreach (var cmd in module.Commands)
+                    {
+                        foreach (var alias in cmd.Aliases)
+                            if (alias == commandOrModule.ToLower())
+                            {
+                                var builder = new EmbedBuilder()
+                                {
+                                    Title = $"{prefix}{cmd.Name}",
+                                    Color = new Color(0x00AE86),
+                                    Description = $"**Description:** {cmd.Summary}\n"
+                                };
+                                if (cmd.Remarks != null) builder.Description += $"**Usage:** `{cmd.Remarks}`";
+                                await ReplyAsync("", embed: builder);
+                                return;
+                            }
+                    }
+            }
 
             foreach (var module in _service.Modules)
                 foreach (var cmd in module.Commands)
                     if (cmd.Aliases.First().Length > longest) longest = cmd.Aliases.First().Length;
-
             foreach (var module in _service.Modules)
             {
-                message += $"**{module.Name} Commands **: ```asciidoc\n";
+                var moduleInfo = $"**{module.Name} Commands **: ```asciidoc\n";
                 foreach (var cmd in module.Commands)
                 {
-                    message += $"{prefix}{cmd.Aliases.First()}{new String(' ', (longest + 1) - cmd.Aliases.First().Length)} :: {cmd.Remarks}\n";
+                    moduleInfo += $"{prefix}{cmd.Aliases.First()}{new String(' ', (longest + 1) - cmd.Aliases.First().Length)} :: {cmd.Summary}\n";
                 }
 
-                message += "```\n ";
+                moduleInfo += "```\n ";
+
+                if (elements == -1)
+                {
+                    messages.Add(moduleInfo);
+                    elements++;
+                }
+                else if (messages[elements].Length + moduleInfo.Length > 2000)
+                {
+                    messages.Add(moduleInfo);
+                    elements++;
+                } 
+                else
+                    messages[elements] += moduleInfo;
             }
+            
             var channel = await Context.User.CreateDMChannelAsync();
-            await channel.SendMessageAsync(message);
+            foreach (var message in messages)
+            {
+                await channel.SendMessageAsync(message);
+            }
             await ReplyAsync($"{Context.User.Mention}, you have been DMed with all the command information!");
         }
 
         [Command("Stats")]
         [Alias("statistics")]
-        [Remarks("All statistics about DEA.")]
+        [Summary("All statistics about DEA.")]
         public async Task Info()
         {
             var uptime = (DateTime.Now - _process.StartTime);

@@ -13,7 +13,7 @@ namespace DEA.Modules
     {
 
         [Command("Whore")]
-        [Remarks("Sell your body for some quick cash.")]
+        [Summary("Sell your body for some quick cash.")]
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Whore()
         {
@@ -34,7 +34,7 @@ namespace DEA.Modules
                     var timeSpan = TimeSpan.FromMilliseconds(Config.WHORE_COOLDOWN - DateTime.Now.Subtract(await userRepo.GetLastWhore(Context.User.Id)).TotalMilliseconds);
                     var builder = new EmbedBuilder()
                     {
-                        Title = $"{await guildRepo.GetPrefix(Context.Guild.Id)}whore cooldown for {Context.User}",
+                        Title = $"{await guildRepo.GetPrefix(Context.Guild.Id)}Whore cooldown for {Context.User}",
                         Description = $"{timeSpan.Hours} Hours\n{timeSpan.Minutes} Minutes\n{timeSpan.Seconds} Seconds",
                         Color = new Color(49, 62, 255)
                     };
@@ -49,7 +49,7 @@ namespace DEA.Modules
         }
 
         [Command("Jump")]
-        [Remarks("Jump some random nigga in the hood.")]
+        [Summary("Jump some random nigga in the hood.")]
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Jump()
         {
@@ -71,7 +71,7 @@ namespace DEA.Modules
                     var timeSpan = TimeSpan.FromMilliseconds(Config.JUMP_COOLDOWN - DateTime.Now.Subtract(await userRepo.GetLastJump(Context.User.Id)).TotalMilliseconds);
                     var builder = new EmbedBuilder()
                     {
-                        Title = $"{await guildRepo.GetPrefix(Context.Guild.Id)}jump cooldown for {Context.User}",
+                        Title = $"{await guildRepo.GetPrefix(Context.Guild.Id)}Jump cooldown for {Context.User}",
                         Description = $"{timeSpan.Hours} Hours\n{timeSpan.Minutes} Minutes\n{timeSpan.Seconds} Seconds",
                         Color = new Color(49, 62, 255)
                     };
@@ -87,7 +87,7 @@ namespace DEA.Modules
         }
 
         [Command("Steal")]
-        [Remarks("Snipe some goodies from your local stores.")]
+        [Summary("Snipe some goodies from your local stores.")]
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Steal()
         {
@@ -103,7 +103,7 @@ namespace DEA.Modules
                     await userRepo.SetLastSteal(Context.User.Id, DateTime.Now);
                     await userRepo.EditCash(Context, moneySteal);
                     string randomStore = Config.STORES[rand.Next(1, Config.STORES.Length) - 1];
-                    await ReplyAsync($"{Context.User.Mention}, you walk in to your local ${randomStore}, point a fake gun at the clerk, and manage to walk away " +
+                    await ReplyAsync($"{Context.User.Mention}, you walk in to your local {randomStore}, point a fake gun at the clerk, and manage to walk away " +
                                      $"with {moneySteal.ToString("N2")}$");
                 }
                 else
@@ -111,7 +111,7 @@ namespace DEA.Modules
                     var timeSpan = TimeSpan.FromMilliseconds(Config.STEAL_COOLDOWN - DateTime.Now.Subtract(await userRepo.GetLastSteal(Context.User.Id)).TotalMilliseconds);
                     var builder = new EmbedBuilder()
                     {
-                        Title = $"{await guildRepo.GetPrefix(Context.Guild.Id)}steal cooldown for {Context.User}",
+                        Title = $"{await guildRepo.GetPrefix(Context.Guild.Id)}Steal cooldown for {Context.User}",
                         Description = $"{timeSpan.Hours} Hours\n{timeSpan.Minutes} Minutes\n{timeSpan.Seconds} Seconds",
                         Color = new Color(49, 62, 255)
                     };
@@ -127,7 +127,8 @@ namespace DEA.Modules
         }
 
         [Command("Bully")]
-        [Remarks("Bully anyone's nickname to whatever you please.")]
+        [Summary("Bully anyone's nickname to whatever you please.")]
+        [Remarks("Bully <@User> <Nickname>")]
         [RequireBotPermission(GuildPermission.ManageNicknames)]
         public async Task Bully(SocketGuildUser userToBully, [Remainder] string nickname)
         {

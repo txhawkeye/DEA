@@ -5,15 +5,24 @@ using System.Threading.Tasks;
 using DEA.SQLite.Models;
 using DEA.SQLite.Repository;
 using System.Linq;
+using Discord.WebSocket;
+using System.Collections.Generic;
 
 namespace DEA.Modules
 {
     public class General : ModuleBase<SocketCommandContext>
     {
+        [Command("Invite")]
+        [Summary("Invite DEA to your Discord Server!")]
+        public async Task Invite()
+        {
+            await ReplyAsync($"Add DEA to your Discord Sever: <https://discordapp.com/oauth2/authorize?client_id=289980605888725003&scope=bot&permissions=477195286>!");
+        }
 
         [Command("Information")]
         [Alias("info")]
-        [Remarks("Information about the DEA Cash System.")]
+        [Summary("Information about the DEA Cash System.")]
+        [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Info(string investString = null)
         {
             using (var db = new DbContext())
@@ -32,16 +41,16 @@ namespace DEA.Modules
                 var builder = new EmbedBuilder()
                 {
                     Color = new Color(0x00AE86),
-                    Description = ($@"In order to gain money, you must send a message that is at least 7 characters in length. There is a 30 second cooldown between each message that will give you cash. However, these rates are not fixed. For every message you send, your chatting multiplier(which increases the amount of money you get per message) is increased by 0.1. This increase is capped at 10, but will most likely be reset when someone uses the **{prefix}reset** command, which will reset everyone's chatting multiplier's. Using the **{prefix}reset** command may sound counter productive, however, it provides the user of it with $100.
+                    Description = ($@"In order to gain money, you must send a message that is at least 7 characters in length. There is a 30 second cooldown between each message that will give you cash. However, these rates are not fixed. For every message you send, your chatting multiplier(which increases the amount of money you get per message) is increased by 0.1. This increase is capped at 10, however, it will be automatically reset every hour.
 
 To view your steadily increasing chatting multiplier, you may use the **{prefix}rate** command, and the **{prefix}money** command to see your cash grow. This command shows you every single variable taken into consideration for every message you send. If you wish to improve these variables, you may use investments. With the **{prefix}investments** command, you may pay to have *permanent* changes to your message rates. These will stack with the chatting multiplier.
 
 Another common way of gaining money is by gambling, there are loads of different gambling commands, which can all be viewed with the **{prefix}help** command. You might be wondering what is the point of all these commands. This is where ranks come in. Depending on how much money you have, you will get a certain rank. These are the current benfits of each rank, and the money required to get them: 
 
-__{role1.Name}__ can use the **{prefix}jump** command. 
-__{role2.Name}__ can use the **{prefix}steal** command. 
-__{role3.Name}__ can change the nickname of ANYONE with **{prefix}bully** command. 
-__{role4.Name}__ can use the **{prefix}50x2** AND can use the **{prefix}robbery** command.")
+**{Config.RANK1}$:** __{role1.Name}__ can use the **{prefix}jump** command. 
+**{Config.RANK2}$:** __{role2.Name}__ can use the **{prefix}steal** command. 
+**{Config.RANK3}$:** __{role3.Name}__ can change the nickname of ANYONE with **{prefix}bully** command. 
+**{Config.RANK4}$:** __{role4.Name}__ can use the **{prefix}50x2** AND can use the **{prefix}robbery** command.")
                 };
                 var channel = await Context.User.CreateDMChannelAsync();
                 await channel.SendMessageAsync("", embed: builder);
@@ -51,7 +60,8 @@ __{role4.Name}__ can use the **{prefix}50x2** AND can use the **{prefix}robbery*
 
         [Command("Investments")]
         [Alias("Investements", "Investement", "Investment")]
-        [Remarks("Increase your money per message")]
+        [Summary("Increase your money per message")]
+        [Remarks("Investments [investment]")]
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Invest(string investString = null)
         {
@@ -141,7 +151,7 @@ __{role4.Name}__ can use the **{prefix}50x2** AND can use the **{prefix}robbery*
 
         [Command("Leaderboards")]
         [Alias("lb", "rankings", "highscores", "leaderboard", "highscore")]
-        [Remarks("View the richest Drug Traffickers.")]
+        [Summary("View the richest Drug Traffickers.")]
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Leaderboards()
         {
@@ -185,7 +195,8 @@ __{role4.Name}__ can use the **{prefix}50x2** AND can use the **{prefix}robbery*
         }
 
         [Command("Donate")]
-        [Remarks("Sauce some cash to one of your mates.")]
+        [Remarks("Donate <@User> <Amount of cash>")]
+        [Summary("Sauce some cash to one of your mates.")]
         public async Task Donate(IGuildUser userMentioned, float money)
         {
             using (var db = new DbContext())
@@ -206,32 +217,49 @@ __{role4.Name}__ can use the **{prefix}50x2** AND can use the **{prefix}robbery*
 
         [Command("Money")]
         [Alias("rank", "cash", "ranking", "balance")]
-        [Remarks("View the wealth of anyone.")]
+        [Remarks("Money [@User]")]
+        [Summary("View the wealth of anyone.")]
         [RequireBotPermission(GuildPermission.EmbedLinks)]
-        public async Task Money(IGuildUser userToView = null)
+        public async Task Money(SocketUser userToView = null)
         {
+            userToView = userToView ?? Context.User;
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
                 var userRepo = new UserRepository(db);
-                if (userToView == null) userToView = Context.User as IGuildUser;
+                var cash = await userRepo.GetCash(userToView.Id);
+                List<User> users = userRepo.GetAll().OrderByDescending(x => x.Cash).ToList();
+                IRole rank = null;
+                if (cash >= Config.RANK1 && cash < Config.RANK2) rank = Context.Guild.GetRole(await guildRepo.GetRank1Id(Context.Guild.Id));
+                if (cash >= Config.RANK2 && cash < Config.RANK3) rank = Context.Guild.GetRole(await guildRepo.GetRank2Id(Context.Guild.Id));
+                if (cash >= Config.RANK3 && cash < Config.RANK4) rank = Context.Guild.GetRole(await guildRepo.GetRank3Id(Context.Guild.Id));
+                if (cash >= Config.RANK4) rank = Context.Guild.GetRole(await guildRepo.GetRank4Id(Context.Guild.Id));
                 var builder = new EmbedBuilder()
                 {
+                    Title = $"Ranking of {userToView}",
                     Color = new Color(0x00AE86),
-                    Description = $"**Ranking of {userToView}**\nBalance: {(await userRepo.GetCash(userToView.Id)).ToString("N2")}$"
+                    Description = $"Balance: {cash.ToString("N2")}$\n" +
+                                  $"Position: #{users.FindIndex(x => x.Id == userToView.Id) + 1}\n"
                 };
                 if (await guildRepo.GetDM(Context.Guild.Id))
                 {
+                    if (rank != null)
+                        builder.Description += $"Rank: {rank.Name}";
                     var channel = await Context.User.CreateDMChannelAsync();
                     await channel.SendMessageAsync("", embed: builder);
                 }
                 else
+                {
+                    if (rank != null)
+                        builder.Description += $"Rank: {rank.Mention}";
                     await ReplyAsync("", embed: builder);
+                }
             }
         }
 
         [Command("Rate")]
-        [Remarks("View the money/message rate of anyone.")]
+        [Summary("View the money/message rate of anyone.")]
+        [Remarks("Rate [@User]")]
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Rate(IGuildUser userToView = null)
         {
@@ -262,7 +290,7 @@ __{role4.Name}__ can use the **{prefix}50x2** AND can use the **{prefix}robbery*
         }
 
         [Command("Ranked")]
-        [Remarks("View the quantity of members for each ranked role.")]
+        [Summary("View the quantity of members for each ranked role.")]
         [RequireBotPermission(GuildPermission.ManageRoles)]
         public async Task Ranked()
         {
@@ -298,7 +326,8 @@ __{role4.Name}__ can use the **{prefix}50x2** AND can use the **{prefix}robbery*
         }
 
         [Command("Give")]
-        [Remarks("Inject cash into a users balance.")]
+        [Summary("Inject cash into a users balance.")]
+        [Remarks("Give <@User> <Amount of cash>")]
         public async Task Give(IGuildUser userMentioned, float money)
         {
             await RankHandler.RankRequired(Context, Ranks.Bot_Owner);

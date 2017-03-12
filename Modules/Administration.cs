@@ -12,7 +12,8 @@ namespace DEA.Modules
     {
 
         [Command("SetPrefix")]
-        [Remarks("Sets the guild specific prefix.")]
+        [Summary("Sets the guild specific prefix.")]
+        [Remarks("SetPrefix <Prefix>")]
         public async Task SetPrefix(string prefix)
         {
             using (var db = new DbContext())
@@ -26,7 +27,8 @@ namespace DEA.Modules
         }
 
         [Command("SetModRole")]
-        [Remarks("Sets the moderator role.")]
+        [Summary("Sets the moderator role.")]
+        [Remarks("SetModRole <@ModRole>")]
         public async Task SetModRole(IRole modRole)
         {
             using (var db = new DbContext())
@@ -39,7 +41,9 @@ namespace DEA.Modules
         }
 
         [Command("SetMutedRole")]
-        [Remarks("Sets the muted role.")]
+        [Alias("SetMuteRole")]
+        [Summary("Sets the muted role.")]
+        [Remarks("SetMutedRole <@MutedRole>")]
         public async Task SetMutedRole(IRole mutedRole)
         {
             using (var db = new DbContext())
@@ -53,7 +57,8 @@ namespace DEA.Modules
 
         [Command("SetRankRoles")]
         [Alias("setrank", "setrole", "setranks", "setroles", "setrankrole")]
-        [Remarks("Sets the rank roles for the DEA cash system.")]
+        [Summary("Sets the rank roles for the DEA cash system.")]
+        [Remarks("SetRankRoles <Rank Role (1-4)> <@RankRole>")]
         public async Task SetRankRoles(int roleNumber = 0, IRole rankRole = null)
         {
             using (var db = new DbContext())
@@ -91,7 +96,8 @@ namespace DEA.Modules
         }
 
         [Command("SetModLog")]
-        [Remarks("Sets the moderation log.")]
+        [Summary("Sets the moderation log.")]
+        [Remarks("SetModLog <#ModLog>")]
         public async Task SetModLogChannel(ITextChannel modLogChannel)
         {
             using (var db = new DbContext())
@@ -105,7 +111,9 @@ namespace DEA.Modules
         }
 
         [Command("SetGambleChannel")]
-        [Remarks("Sets the moderation log.")]
+        [Alias("SetGamble")]
+        [Summary("Sets the gambling channel.")]
+        [Remarks("SetGambleChannel <#GambleChannel>")]
         public async Task SetGambleChannel(ITextChannel gambleChannel)
         {
             using (var db = new DbContext())
@@ -117,9 +125,9 @@ namespace DEA.Modules
             } 
         }
 
-        [Command("EnableDM")]
-        [Alias("DisableDM")]
-        [Remarks("Sends all sizeable messages to the DM's of the user.")]
+        [Command("ChangeDMSettings")]
+        [Alias("EnableDM", "DisableDM")]
+        [Summary("Sends all sizeable messages to the DM's of the user.")]
         public async Task ChangeDMSettings()
         {
             using (var db = new DbContext())
