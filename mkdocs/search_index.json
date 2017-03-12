@@ -1,0 +1,84 @@
+{
+    "docs": [
+        {
+            "location": "/",
+            "text": "Welcome to DEA\n\n\nTo invite DEA to your Discord Server, click the image below.\n\n\n\n\nDEA is a multi-purpose Discord Bot mainly known for it's infamous Cash System with multiple subtleties referencing to the show Narcos, which inspired the start the creation of this masterpiece. \n\n\nThis bot is also capable of being an excellent moderation bot for all needs. Multiple commands such as kick, ban, mute are available at your disposition. One of the most acclaimed features of DEA is the automatic unmutes after the specified amount of time with mute evasion prevention. \n\n\nContrary to nearly all public bots, almost everything is customizable. You may set a custom prefix, moderator role and even things such as mod log channels.\n\n\nIf you have any issues when setting up the bot, do not hesitate to join the official DEA support channel by clicking on the link below:",
+            "title": "Home"
+        },
+        {
+            "location": "/#welcome-to-dea",
+            "text": "To invite DEA to your Discord Server, click the image below.   DEA is a multi-purpose Discord Bot mainly known for it's infamous Cash System with multiple subtleties referencing to the show Narcos, which inspired the start the creation of this masterpiece.   This bot is also capable of being an excellent moderation bot for all needs. Multiple commands such as kick, ban, mute are available at your disposition. One of the most acclaimed features of DEA is the automatic unmutes after the specified amount of time with mute evasion prevention.   Contrary to nearly all public bots, almost everything is customizable. You may set a custom prefix, moderator role and even things such as mod log channels.  If you have any issues when setting up the bot, do not hesitate to join the official DEA support channel by clicking on the link below:",
+            "title": "Welcome to DEA"
+        },
+        {
+            "location": "/introduction/",
+            "text": "DEA Cash System\n\n\nIn order to gain money, you must send a message that is at least 7 characters in length. There is a 30 second cooldown between each message that will give you cash. However, these rates are not fixed. For every message you send, your chatting multiplier(which increases the amount of money you get per message) is increased by 0.1. This increase is capped at 10, however, it will be automatically reset every hour.  \n\n\nTo view your steadily increasing chatting multiplier, you may use the \n$rate\n command, and the \n$money\n command to see your cash grow. This command shows you every single variable taken into consideration for every message you send. If you wish to improve these variables, you may use investments. With the \n$investments\n command, you may pay to have \npermanent\n changes to your message rates. These will stack with the chatting multiplier.  \n\n\nAnother common way of gaining money is by gambling, there are loads of different gambling commands, which may all be viewed with the \n$help gambling\n command. You might be wondering what is the point of all these commands. This is where ranks come in. Depending on how much money you have, you will get a certain rank. These are the current benfits of each rank, and the money required to get them:   \n\n\n500$:\n \nThe 1st rank\n may use the \n$jump\n command.\n\n\n2500$:\n \nThe 2nd rank\n may use the \n$steal\n command.\n\n\n5000$:\n \nThe 3rd rank\n may change the nickname of ANYONE with \n$bully\n command.\n\n\n10000$:\n \nThe 4th rank\n may use the \n$50x2\n AND may use the \n$robbery\n command.",
+            "title": "Introduction"
+        },
+        {
+            "location": "/introduction/#dea-cash-system",
+            "text": "In order to gain money, you must send a message that is at least 7 characters in length. There is a 30 second cooldown between each message that will give you cash. However, these rates are not fixed. For every message you send, your chatting multiplier(which increases the amount of money you get per message) is increased by 0.1. This increase is capped at 10, however, it will be automatically reset every hour.    To view your steadily increasing chatting multiplier, you may use the  $rate  command, and the  $money  command to see your cash grow. This command shows you every single variable taken into consideration for every message you send. If you wish to improve these variables, you may use investments. With the  $investments  command, you may pay to have  permanent  changes to your message rates. These will stack with the chatting multiplier.    Another common way of gaining money is by gambling, there are loads of different gambling commands, which may all be viewed with the  $help gambling  command. You might be wondering what is the point of all these commands. This is where ranks come in. Depending on how much money you have, you will get a certain rank. These are the current benfits of each rank, and the money required to get them:     500$:   The 1st rank  may use the  $jump  command.  2500$:   The 2nd rank  may use the  $steal  command.  5000$:   The 3rd rank  may change the nickname of ANYONE with  $bully  command.  10000$:   The 4th rank  may use the  $50x2  AND may use the  $robbery  command.",
+            "title": "DEA Cash System"
+        },
+        {
+            "location": "/setup/",
+            "text": "Cash System Setup\n\n\nOnce DEA is on your server, you need to use a few commands to get it working.\n\n\n\n\nCreate four seperate roles for the DEA ranking system, all being a lower role than DEA's highest role, to prevent issues.\n\n\nAssign these roles with the \n$SetRank\n command. After this you may now use the \n$Info\n command and see that your roles were set in place.\n\n\nIf you wish to prevent spam of gambling commands, you may set a gambling channel with the \n$SetGambleChannel\n command.\n\n\n\n\nModeration Setup\n\n\n\n\nAny user with the Administrator permission may already use any moderation commands, however, you may set a mod role aswell.\n\n\nUse the command \n$SetModRole <@ModRole>\n to set a role that can use all DEA moderation commands.\n\n\nIn order to make the mute commands work properly, you must create a Muted role and disable the \nSend Messages\n permission in all text channels.\n\n\nThen you may use the \n$SetMutedRole <@MutedRole>\n command to set this as the muted role.\n\n\nThe \n$Mute\n command acts as a 24 hour mute, if you wish to mute for a custom time, the \n$CustomMute\n command is for you!\n\n\nAll muted users will automatically be unmuted once the time is up, however you may manually unmute them earlier with the \n$Unmute\n command.\n\n\nIf you want DEA to log the use of any moderation commands in a channel, use the \n$setmodlog <#mod_log>\n command.",
+            "title": "Setup"
+        },
+        {
+            "location": "/setup/#cash-system-setup",
+            "text": "Once DEA is on your server, you need to use a few commands to get it working.   Create four seperate roles for the DEA ranking system, all being a lower role than DEA's highest role, to prevent issues.  Assign these roles with the  $SetRank  command. After this you may now use the  $Info  command and see that your roles were set in place.  If you wish to prevent spam of gambling commands, you may set a gambling channel with the  $SetGambleChannel  command.",
+            "title": "Cash System Setup"
+        },
+        {
+            "location": "/setup/#moderation-setup",
+            "text": "Any user with the Administrator permission may already use any moderation commands, however, you may set a mod role aswell.  Use the command  $SetModRole <@ModRole>  to set a role that can use all DEA moderation commands.  In order to make the mute commands work properly, you must create a Muted role and disable the  Send Messages  permission in all text channels.  Then you may use the  $SetMutedRole <@MutedRole>  command to set this as the muted role.  The  $Mute  command acts as a 24 hour mute, if you wish to mute for a custom time, the  $CustomMute  command is for you!  All muted users will automatically be unmuted once the time is up, however you may manually unmute them earlier with the  $Unmute  command.  If you want DEA to log the use of any moderation commands in a channel, use the  $setmodlog <#mod_log>  command.",
+            "title": "Moderation Setup"
+        },
+        {
+            "location": "/commands/",
+            "text": "Commands\n\n\nAll commands are catagorized by modules. Each of the following sections is a module, and to gain more information about a specific module, you may use the \n$help [Module name]\n command, or simply read below.\n\n\nThe syntax of the command usage is: \n\nOptional paramater: []\n\n\nRequired paramater: <>\n\n\nTable Of Contents\n\n\n\n\nSystem\n\n\nAdministration\n\n\nModeration\n\n\nGeneral\n\n\nGambling\n\n\nCrime\n\n\n\n\nSystem\n\n\n\n\n\n\n\n\nCommand\n\n\nDescription\n\n\nUsage\n\n\n\n\n\n\n\n\n\n\n$Information\n\n\nInformation about the DEA Cash System.\n\n\n$Information\n\n\n\n\n\n\n$Help\n\n\nAll command information.\n\n\n$Help [Command or Module]\n\n\n\n\n\n\n$Stats\n\n\nAll the statistics about DEA.\n\n\n$Stats\n\n\n\n\n\n\n\n\nAdministration\n\n\nThese commands may only be used by a user with the Administrator permission.\n\n\n\n\n\n\n\n\nCommand\n\n\nDescription\n\n\nUsage\n\n\n\n\n\n\n\n\n\n\n$SetPrefix\n\n\nSets the guild specific prefix.\n\n\n$SetPrefix <Prefix>\n\n\n\n\n\n\n$SetModRole\n\n\nSets the moderator role.\n\n\n$SetModRole <@ModRole>\n\n\n\n\n\n\n$SetMutedRole\n\n\nSets the muted role.\n\n\n$SetMutedRole <@MutedRole>\n\n\n\n\n\n\n$SetRank\n\n\nSets the rank roles for the DEA cash system.\n\n\n$SetRank <1-4> <@RankRole>\n\n\n\n\n\n\n$SetModLog\n\n\nSets the moderation log.\n\n\n$SetModLog <#ModLog>\n\n\n\n\n\n\n$SetGambleChannel\n\n\nSets the gambling channel.\n\n\n$SetGambleChannel <#GambleChannel>\n\n\n\n\n\n\n$ChangeDMSettings\n\n\nSends all sizeable messages to the DM's of the user.\n\n\n$ChangeDMSettings\n\n\n\n\n\n\n\n\nModeration\n\n\nThe commands may only be used by a user with the set mod role, or the Administrator permission.\n\n\n\n\n\n\n\n\nCommand\n\n\nDescription\n\n\nUsage\n\n\n\n\n\n\n\n\n\n\n$Ban\n\n\nBans a user from the server.\n\n\n$Ban <@User> [Reason]\n\n\n\n\n\n\n$Kick\n\n\nKicks a user from the server.\n\n\n$Kick <@User> [Reason]\n\n\n\n\n\n\n$Mute\n\n\nTemporarily mutes a user.\n\n\n$Mute <@User> [Reason]\n\n\n\n\n\n\n$CustomMute\n\n\nTemporarily mutes a user for x amount of hours.\n\n\n$CustomMute <Hours> <@User> [Reason]\n\n\n\n\n\n\n$Unmute\n\n\nUnmutes a muted user.\n\n\n$Unmute <@User> [Reason]\n\n\n\n\n\n\n$Clear\n\n\nDeletes x amount of messages.\n\n\n$Clear [Quantity of messages]\n\n\n\n\n\n\n\n\nGeneral\n\n\n\n\n\n\n\n\nCommand\n\n\nDescription\n\n\nUsage\n\n\n\n\n\n\n\n\n\n\n$Invite\n\n\nInvite DEA to your Discord Server!\n\n\n$Invite\n\n\n\n\n\n\n$Investments\n\n\nIncrease your money per message\n\n\n$Investments [investment]\n\n\n\n\n\n\n$Leaderboards\n\n\nView the richest Drug Traffickers.\n\n\n$Leaderboards\n\n\n\n\n\n\n$Donate\n\n\nSauce some cash to one of your mates.\n\n\n$Donate <@User> <Amount of cash>\n\n\n\n\n\n\n$Money\n\n\nView the wealth of anyone.\n\n\n$Money [@User]\n\n\n\n\n\n\n$Rate\n\n\nView the money/message rate of anyone.\n\n\n$Rate [@User]\n\n\n\n\n\n\n$Ranked\n\n\nView the quantity of members for each ranked role.\n\n\n$Ranked\n\n\n\n\n\n\n$Give\n\n\nInject cash into a users balance.\n\n\n$Give <@User> <Amount of cash>\n\n\n\n\n\n\n\n\nGambling\n\n\n\n\n\n\n\n\nCommand\n\n\nDescription\n\n\nUsage\n\n\n\n\n\n\n\n\n\n\n$40+\n\n\nRoll 40 or higher on a 100 sided die, win 1.5X your bet.\n\n\n$40+ <Bet>\n\n\n\n\n\n\n$50x2\n\n\nRoll 50 or higher on a 100 sided die, win 2X your bet. \nRank #4 required\n\n\n$50x2 <Bet>\n\n\n\n\n\n\n$55x2\n\n\nRoll 55 or higher on a 100 sided die, win 2X your bet.\n\n\n$55x2 <Bet>\n\n\n\n\n\n\n$75+\n\n\nRoll 75 or higher on a 100 sided die, win 3.6X your bet.\n\n\n$75+ <Bet>\n\n\n\n\n\n\n$100x90\n\n\nRoll 100 on a 100 sided die, win 90X your bet.\n\n\n$100x90 <Bet>\n\n\n\n\n\n\n\n\nCrime\n\n\n\n\n\n\n\n\nCommand and aliases\n\n\nDescription\n\n\nUsage\n\n\n\n\n\n\n\n\n\n\n$Whore\n\n\nSell your body for some quick cash.\n\n\n$Whore\n\n\n\n\n\n\n$Jump\n\n\nJump some random nigga in the hood. \nRank #1 required\n\n\n$Jump\n\n\n\n\n\n\n$Steal\n\n\nSnipe some goodies from your local stores. \nRank #2 required\n\n\n$Steal\n\n\n\n\n\n\n$Bully\n\n\nBully anyone's nickname to whatever you please. \nRank #3 required\n\n\n$Bully",
+            "title": "Commands"
+        },
+        {
+            "location": "/commands/#commands",
+            "text": "All commands are catagorized by modules. Each of the following sections is a module, and to gain more information about a specific module, you may use the  $help [Module name]  command, or simply read below.  The syntax of the command usage is:  Optional paramater: []  Required paramater: <>",
+            "title": "Commands"
+        },
+        {
+            "location": "/commands/#table-of-contents",
+            "text": "System  Administration  Moderation  General  Gambling  Crime",
+            "title": "Table Of Contents"
+        },
+        {
+            "location": "/commands/#system",
+            "text": "Command  Description  Usage      $Information  Information about the DEA Cash System.  $Information    $Help  All command information.  $Help [Command or Module]    $Stats  All the statistics about DEA.  $Stats",
+            "title": "System"
+        },
+        {
+            "location": "/commands/#administration",
+            "text": "These commands may only be used by a user with the Administrator permission.     Command  Description  Usage      $SetPrefix  Sets the guild specific prefix.  $SetPrefix <Prefix>    $SetModRole  Sets the moderator role.  $SetModRole <@ModRole>    $SetMutedRole  Sets the muted role.  $SetMutedRole <@MutedRole>    $SetRank  Sets the rank roles for the DEA cash system.  $SetRank <1-4> <@RankRole>    $SetModLog  Sets the moderation log.  $SetModLog <#ModLog>    $SetGambleChannel  Sets the gambling channel.  $SetGambleChannel <#GambleChannel>    $ChangeDMSettings  Sends all sizeable messages to the DM's of the user.  $ChangeDMSettings",
+            "title": "Administration"
+        },
+        {
+            "location": "/commands/#moderation",
+            "text": "The commands may only be used by a user with the set mod role, or the Administrator permission.     Command  Description  Usage      $Ban  Bans a user from the server.  $Ban <@User> [Reason]    $Kick  Kicks a user from the server.  $Kick <@User> [Reason]    $Mute  Temporarily mutes a user.  $Mute <@User> [Reason]    $CustomMute  Temporarily mutes a user for x amount of hours.  $CustomMute <Hours> <@User> [Reason]    $Unmute  Unmutes a muted user.  $Unmute <@User> [Reason]    $Clear  Deletes x amount of messages.  $Clear [Quantity of messages]",
+            "title": "Moderation"
+        },
+        {
+            "location": "/commands/#general",
+            "text": "Command  Description  Usage      $Invite  Invite DEA to your Discord Server!  $Invite    $Investments  Increase your money per message  $Investments [investment]    $Leaderboards  View the richest Drug Traffickers.  $Leaderboards    $Donate  Sauce some cash to one of your mates.  $Donate <@User> <Amount of cash>    $Money  View the wealth of anyone.  $Money [@User]    $Rate  View the money/message rate of anyone.  $Rate [@User]    $Ranked  View the quantity of members for each ranked role.  $Ranked    $Give  Inject cash into a users balance.  $Give <@User> <Amount of cash>",
+            "title": "General"
+        },
+        {
+            "location": "/commands/#gambling",
+            "text": "Command  Description  Usage      $40+  Roll 40 or higher on a 100 sided die, win 1.5X your bet.  $40+ <Bet>    $50x2  Roll 50 or higher on a 100 sided die, win 2X your bet.  Rank #4 required  $50x2 <Bet>    $55x2  Roll 55 or higher on a 100 sided die, win 2X your bet.  $55x2 <Bet>    $75+  Roll 75 or higher on a 100 sided die, win 3.6X your bet.  $75+ <Bet>    $100x90  Roll 100 on a 100 sided die, win 90X your bet.  $100x90 <Bet>",
+            "title": "Gambling"
+        },
+        {
+            "location": "/commands/#crime",
+            "text": "Command and aliases  Description  Usage      $Whore  Sell your body for some quick cash.  $Whore    $Jump  Jump some random nigga in the hood.  Rank #1 required  $Jump    $Steal  Snipe some goodies from your local stores.  Rank #2 required  $Steal    $Bully  Bully anyone's nickname to whatever you please.  Rank #3 required  $Bully",
+            "title": "Crime"
+        }
+    ]
+}

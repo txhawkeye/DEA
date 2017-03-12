@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Commands - DEA Discord Bot</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Commands";
+    var mkdocs_page_input_path = "commands.md";
+    var mkdocs_page_url = "/commands/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> DEA Discord Bot</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="..">Home</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../introduction/">Introduction</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../setup/">Setup</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 current">
+        <a class="current" href="./">Commands</a>
+        
+            <ul>
+            
+                <li class="toctree-l3"><a href="#commands">Commands</a></li>
+                
+                    <li><a class="toctree-l4" href="#table-of-contents">Table Of Contents</a></li>
+                
+            
+            </ul>
+        
+    </li>
+<li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">DEA Discord Bot</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Commands</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="commands">Commands</h1>
+<p>All commands are catagorized by modules. Each of the following sections is a module, and to gain more information about a specific module, you may use the <code>$help [Module name]</code> command, or simply read below.</p>
+<p>The syntax of the command usage is: 
+<code>Optional paramater: []</code>
+<code>Required paramater: &lt;&gt;</code></p>
+<h2 id="table-of-contents">Table Of Contents</h2>
+<ul>
+<li><a href="#system">System</a></li>
+<li><a href="#administration">Administration</a></li>
+<li><a href="#moderation">Moderation</a></li>
+<li><a href="#gambling">General</a></li>
+<li><a href="#gambling">Gambling</a></li>
+<li><a href="#crime">Crime</a></li>
+</ul>
+<h3 id="system">System</h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$Information</td>
+<td>Information about the DEA Cash System.</td>
+<td><code>$Information</code></td>
+</tr>
+<tr>
+<td>$Help</td>
+<td>All command information.</td>
+<td><code>$Help [Command or Module]</code></td>
+</tr>
+<tr>
+<td>$Stats</td>
+<td>All the statistics about DEA.</td>
+<td><code>$Stats</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="administration">Administration</h3>
+<p>These commands may only be used by a user with the Administrator permission.</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$SetPrefix</td>
+<td>Sets the guild specific prefix.</td>
+<td><code>$SetPrefix &lt;Prefix&gt;</code></td>
+</tr>
+<tr>
+<td>$SetModRole</td>
+<td>Sets the moderator role.</td>
+<td><code>$SetModRole &lt;@ModRole&gt;</code></td>
+</tr>
+<tr>
+<td>$SetMutedRole</td>
+<td>Sets the muted role.</td>
+<td><code>$SetMutedRole &lt;@MutedRole&gt;</code></td>
+</tr>
+<tr>
+<td>$SetRank</td>
+<td>Sets the rank roles for the DEA cash system.</td>
+<td><code>$SetRank &lt;1-4&gt; &lt;@RankRole&gt;</code></td>
+</tr>
+<tr>
+<td>$SetModLog</td>
+<td>Sets the moderation log.</td>
+<td><code>$SetModLog &lt;#ModLog&gt;</code></td>
+</tr>
+<tr>
+<td>$SetGambleChannel</td>
+<td>Sets the gambling channel.</td>
+<td><code>$SetGambleChannel &lt;#GambleChannel&gt;</code></td>
+</tr>
+<tr>
+<td>$ChangeDMSettings</td>
+<td>Sends all sizeable messages to the DM's of the user.</td>
+<td><code>$ChangeDMSettings</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="moderation">Moderation</h3>
+<p>The commands may only be used by a user with the set mod role, or the Administrator permission.</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$Ban</td>
+<td>Bans a user from the server.</td>
+<td><code>$Ban &lt;@User&gt; [Reason]</code></td>
+</tr>
+<tr>
+<td>$Kick</td>
+<td>Kicks a user from the server.</td>
+<td><code>$Kick &lt;@User&gt; [Reason]</code></td>
+</tr>
+<tr>
+<td>$Mute</td>
+<td>Temporarily mutes a user.</td>
+<td><code>$Mute &lt;@User&gt; [Reason]</code></td>
+</tr>
+<tr>
+<td>$CustomMute</td>
+<td>Temporarily mutes a user for x amount of hours.</td>
+<td><code>$CustomMute &lt;Hours&gt; &lt;@User&gt; [Reason]</code></td>
+</tr>
+<tr>
+<td>$Unmute</td>
+<td>Unmutes a muted user.</td>
+<td><code>$Unmute &lt;@User&gt; [Reason]</code></td>
+</tr>
+<tr>
+<td>$Clear</td>
+<td>Deletes x amount of messages.</td>
+<td><code>$Clear [Quantity of messages]</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="general">General</h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$Invite</td>
+<td>Invite DEA to your Discord Server!</td>
+<td><code>$Invite</code></td>
+</tr>
+<tr>
+<td>$Investments</td>
+<td>Increase your money per message</td>
+<td><code>$Investments [investment]</code></td>
+</tr>
+<tr>
+<td>$Leaderboards</td>
+<td>View the richest Drug Traffickers.</td>
+<td><code>$Leaderboards</code></td>
+</tr>
+<tr>
+<td>$Donate</td>
+<td>Sauce some cash to one of your mates.</td>
+<td><code>$Donate &lt;@User&gt; &lt;Amount of cash&gt;</code></td>
+</tr>
+<tr>
+<td>$Money</td>
+<td>View the wealth of anyone.</td>
+<td><code>$Money [@User]</code></td>
+</tr>
+<tr>
+<td>$Rate</td>
+<td>View the money/message rate of anyone.</td>
+<td><code>$Rate [@User]</code></td>
+</tr>
+<tr>
+<td>$Ranked</td>
+<td>View the quantity of members for each ranked role.</td>
+<td><code>$Ranked</code></td>
+</tr>
+<tr>
+<td>$Give</td>
+<td>Inject cash into a users balance.</td>
+<td><code>$Give &lt;@User&gt; &lt;Amount of cash&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="gambling">Gambling</h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$40+</td>
+<td>Roll 40 or higher on a 100 sided die, win 1.5X your bet.</td>
+<td><code>$40+ &lt;Bet&gt;</code></td>
+</tr>
+<tr>
+<td>$50x2</td>
+<td>Roll 50 or higher on a 100 sided die, win 2X your bet. <code>Rank #4 required</code></td>
+<td><code>$50x2 &lt;Bet&gt;</code></td>
+</tr>
+<tr>
+<td>$55x2</td>
+<td>Roll 55 or higher on a 100 sided die, win 2X your bet.</td>
+<td><code>$55x2 &lt;Bet&gt;</code></td>
+</tr>
+<tr>
+<td>$75+</td>
+<td>Roll 75 or higher on a 100 sided die, win 3.6X your bet.</td>
+<td><code>$75+ &lt;Bet&gt;</code></td>
+</tr>
+<tr>
+<td>$100x90</td>
+<td>Roll 100 on a 100 sided die, win 90X your bet.</td>
+<td><code>$100x90 &lt;Bet&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="crime">Crime</h3>
+<table>
+<thead>
+<tr>
+<th>Command and aliases</th>
+<th>Description</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$Whore</td>
+<td>Sell your body for some quick cash.</td>
+<td><code>$Whore</code></td>
+</tr>
+<tr>
+<td>$Jump</td>
+<td>Jump some random nigga in the hood. <code>Rank #1 required</code></td>
+<td><code>$Jump</code></td>
+</tr>
+<tr>
+<td>$Steal</td>
+<td>Snipe some goodies from your local stores. <code>Rank #2 required</code></td>
+<td><code>$Steal</code></td>
+</tr>
+<tr>
+<td>$Bully</td>
+<td>Bully anyone's nickname to whatever you please. <code>Rank #3 required</code></td>
+<td><code>$Bully</code></td>
+</tr>
+</tbody>
+</table>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="../setup/" class="btn btn-neutral" title="Setup"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+    
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../setup/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+    </span>
+</div>
+    <script src="../js/theme.js"></script>
+
+</body>
+</html>
