@@ -83,17 +83,9 @@ namespace DEA.Services
                     var userRepo = new UserRepository(db);
                     if (DateTime.Now.Subtract(await userRepo.GetLastMessage(userId)).TotalMilliseconds > await userRepo.GetMessageCooldown(userId))
                     {
-                        if (await userRepo.GetTemporaryMultiplier(userId) < Config.MAX_TEMP_MULTIPLIER)
-                        {
-                            await userRepo.SetLastMessage(userId, DateTime.Now);
-                            await userRepo.SetTemporaryMultiplier(userId, await userRepo.GetTemporaryMultiplier(userId) + Config.TEMP_MULTIPLIER_RATE);
-                            await userRepo.EditCash(Context, await userRepo.GetTemporaryMultiplier(userId) * await userRepo.GetInvestmentMultiplier(userId));
-                        }
-                        else
-                        {
-                            await userRepo.SetLastMessage(userId, DateTime.Now);
-                            await userRepo.EditCash(Context, await userRepo.GetTemporaryMultiplier(userId) * await userRepo.GetInvestmentMultiplier(userId));
-                        }
+                         await userRepo.SetLastMessage(userId, DateTime.Now);
+                         await userRepo.SetTemporaryMultiplier(userId, await userRepo.GetTemporaryMultiplier(userId) + Config.TEMP_MULTIPLIER_RATE);
+                         await userRepo.EditCash(Context, await userRepo.GetTemporaryMultiplier(userId) * await userRepo.GetInvestmentMultiplier(userId));
                     }
                 }
             }
