@@ -256,7 +256,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Events\UserJoined.cs" />
-    <Compile Include="Resources\Config.cs" />
     <Compile Include="Modules\Administration.cs" />
     <Compile Include="Modules\Crime.cs" />
     <Compile Include="Modules\Gambling.cs" />
@@ -265,6 +264,7 @@
     <Compile Include="Modules\System.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources\Config.cs" />
     <Compile Include="Resources\Ranks.cs" />
     <Compile Include="Events\MessageRecieved.cs" />
     <Compile Include="Services\PrettyConsole.cs" />

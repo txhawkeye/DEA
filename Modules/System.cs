@@ -81,8 +81,6 @@ Another common way of gaining money is by gambling, there are loads of different
             }
             
             List<string> messages = new List<string>();
-            int longest = 0;
-            int elements = -1;
 
             if (commandOrModule != null)
             {
@@ -106,56 +104,41 @@ Another common way of gaining money is by gambling, there are loads of different
                 }
 
                 foreach (var module in _service.Modules)
+                {
                     foreach (var cmd in module.Commands)
                     {
                         foreach (var alias in cmd.Aliases)
                             if (alias == commandOrModule.ToLower())
                             {
-                                var builder = new EmbedBuilder()
+                                var command = new EmbedBuilder()
                                 {
                                     Title = $"{prefix}{cmd.Name}",
                                     Color = new Color(0x00AE86),
                                     Description = $"**Description:** {cmd.Summary}\n"
                                 };
-                                if (cmd.Remarks != null) builder.Description += $"**Usage:** `{cmd.Remarks}`";
-                                await ReplyAsync("", embed: builder);
+                                if (cmd.Remarks != null) command.Description += $"**Usage:** `{cmd.Remarks}`";
+                                await ReplyAsync("", embed: command);
                                 return;
                             }
                     }
+                }
             }
 
-            foreach (var module in _service.Modules)
-                foreach (var cmd in module.Commands)
-                    if (cmd.Aliases.First().Length > longest) longest = cmd.Aliases.First().Length;
-            foreach (var module in _service.Modules)
+            var help = new EmbedBuilder()
             {
-                var moduleInfo = $"**{module.Name} Commands **: ```asciidoc\n";
-                foreach (var cmd in module.Commands)
-                {
-                    moduleInfo += $"{prefix}{cmd.Aliases.First()}{new String(' ', (longest + 1) - cmd.Aliases.First().Length)} :: {cmd.Summary}\n";
-                }
+                Title = "Welcome to DEA",
+                Color = new Color(0x00AE86),
+                Description = @"DEA is a multi-purpose Discord Bot mainly known for it's infamous Cash System with multiple subtleties referencing to the show Narcos, which inspired the start the creation of this masterpiece.
 
-                moduleInfo += "```\n ";
+For all information about command usage and setup on your Discord Sever, view the documentation: <https://realblazeit.github.io/DEA/>
 
-                if (elements == -1)
-                {
-                    messages.Add(moduleInfo);
-                    elements++;
-                }
-                else if (messages[elements].Length + moduleInfo.Length > 2000)
-                {
-                    messages.Add(moduleInfo);
-                    elements++;
-                } 
-                else
-                    messages[elements] += moduleInfo;
-            }
+This command may be used for view the commands for each of the following modules: System, Administration, Moderation, General, Gambling and Crime. It may also be used the view the usage of a specific command.
+
+If you have any other questions, you may join the Official DEA Discord Server: https://discord.me/Rush, a server home to infamous meme events such as a raids and insanity. Join for the dankest community a man could desire."
+            };
             
             var channel = await Context.User.CreateDMChannelAsync();
-            foreach (var message in messages)
-            {
-                await channel.SendMessageAsync(message);
-            }
+            await channel.SendMessageAsync("", embed: help);
             await ReplyAsync($"{Context.User.Mention}, you have been DMed with all the command information!");
         }
 
