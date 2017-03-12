@@ -63,7 +63,7 @@ namespace DEA.Services
                                 {
                                     case "The input text has too many parameters.":
                                     case "The input text has too few parameters.":
-                                        await msg.Channel.SendMessageAsync($"You are incorrectly using this command, usage: `{prefix}{cmd.Remarks}`");
+                                        await msg.Channel.SendMessageAsync($"You are incorrectly using this command. Usage: `{prefix}{cmd.Remarks}`");
                                         break;
                                     default:
                                         await msg.Channel.SendMessageAsync($"{Context.User.Mention}, {result.ErrorReason}");
