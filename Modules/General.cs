@@ -19,45 +19,6 @@ namespace DEA.Modules
             await ReplyAsync($"Add DEA to your Discord Sever: <https://discordapp.com/oauth2/authorize?client_id=289980605888725003&scope=bot&permissions=477195286>!");
         }
 
-        [Command("Information")]
-        [Alias("info")]
-        [Summary("Information about the DEA Cash System.")]
-        [RequireBotPermission(GuildPermission.EmbedLinks)]
-        public async Task Info(string investString = null)
-        {
-            using (var db = new DbContext())
-            {
-                var guildRepo = new GuildRepository(db);
-                var role1 = Context.Guild.GetRole(await guildRepo.GetRank1Id(Context.Guild.Id));
-                var role2 = Context.Guild.GetRole(await guildRepo.GetRank2Id(Context.Guild.Id));
-                var role3 = Context.Guild.GetRole(await guildRepo.GetRank3Id(Context.Guild.Id));
-                var role4 = Context.Guild.GetRole(await guildRepo.GetRank4Id(Context.Guild.Id));
-                string prefix = await guildRepo.GetPrefix(Context.Guild.Id);
-                if (role1 == null || role2 == null || role3 == null || role4 == null)
-                {
-                    throw new Exception($"You do not have 4 different functional roles added in with the" +
-                                        $"{prefix}SetRankRoles command, therefore the {prefix}information command will not work!");
-                }
-                var builder = new EmbedBuilder()
-                {
-                    Color = new Color(0x00AE86),
-                    Description = ($@"In order to gain money, you must send a message that is at least 7 characters in length. There is a 30 second cooldown between each message that will give you cash. However, these rates are not fixed. For every message you send, your chatting multiplier(which increases the amount of money you get per message) is increased by 0.1. This increase is capped at 10, however, it will be automatically reset every hour.
-
-To view your steadily increasing chatting multiplier, you may use the **{prefix}rate** command, and the **{prefix}money** command to see your cash grow. This command shows you every single variable taken into consideration for every message you send. If you wish to improve these variables, you may use investments. With the **{prefix}investments** command, you may pay to have *permanent* changes to your message rates. These will stack with the chatting multiplier.
-
-Another common way of gaining money is by gambling, there are loads of different gambling commands, which can all be viewed with the **{prefix}help** command. You might be wondering what is the point of all these commands. This is where ranks come in. Depending on how much money you have, you will get a certain rank. These are the current benfits of each rank, and the money required to get them: 
-
-**{Config.RANK1}$:** __{role1.Name}__ can use the **{prefix}jump** command. 
-**{Config.RANK2}$:** __{role2.Name}__ can use the **{prefix}steal** command. 
-**{Config.RANK3}$:** __{role3.Name}__ can change the nickname of ANYONE with **{prefix}bully** command. 
-**{Config.RANK4}$:** __{role4.Name}__ can use the **{prefix}50x2** AND can use the **{prefix}robbery** command.")
-                };
-                var channel = await Context.User.CreateDMChannelAsync();
-                await channel.SendMessageAsync("", embed: builder);
-                await ReplyAsync("Information about the DEA Cash System has been DMed to you!");
-            }
-        }
-
         [Command("Investments")]
         [Alias("Investements", "Investement", "Investment")]
         [Summary("Increase your money per message")]
@@ -195,8 +156,8 @@ Another common way of gaining money is by gambling, there are loads of different
         }
 
         [Command("Donate")]
-        [Remarks("Donate <@User> <Amount of cash>")]
         [Summary("Sauce some cash to one of your mates.")]
+        [Remarks("Donate <@User> <Amount of cash>")]
         public async Task Donate(IGuildUser userMentioned, float money)
         {
             using (var db = new DbContext())
@@ -204,11 +165,10 @@ Another common way of gaining money is by gambling, there are loads of different
                 if (userMentioned.Id == Context.User.Id) throw new Exception("Hey kids! Look at that retard, he is trying to give money to himself!");
                 var userRepo = new UserRepository(db);
                 if (await userRepo.GetCash(Context.User.Id) < money) throw new Exception($"You do not have enough money. Balance: {(await userRepo.GetCash(Context.User.Id)).ToString("N2")}$.");
-                if (money < await userRepo.GetCash(Context.User.Id) / 20) throw new Exception($"The lowest donation is 5% of your total cash, that is {(await userRepo.GetCash(Context.User.Id) / 20).ToString("N2")}$.");
-                if (money < 5) throw new Exception("The lowest donation is 5$.");
+                if (money < Math.Round(await userRepo.GetCash(Context.User.Id) * Config.MIN_PERCENTAGE, 2)) throw new Exception($"The lowest donation is {Config.MIN_PERCENTAGE * 100}% of your total cash, that is {(await userRepo.GetCash(Context.User.Id) * Config.MIN_PERCENTAGE).ToString("N2")}$.");
                 await userRepo.EditCash(Context, -money);
-                float deaMoney = money / 10;
-                money *= 0.9f;
+                float deaMoney = money * Config.MIN_PERCENTAGE;
+                money -= deaMoney;
                 await userRepo.EditOtherCash(Context, userMentioned.Id, +money);
                 await userRepo.EditOtherCash(Context, Context.Guild.CurrentUser.Id, +deaMoney);
                 await ReplyAsync($"Successfully donated {money.ToString("N2")}$ to {userMentioned}. DEA has taken a {deaMoney.ToString("N2")}$ cut out of this donation.");
@@ -217,8 +177,8 @@ Another common way of gaining money is by gambling, there are loads of different
 
         [Command("Money")]
         [Alias("rank", "cash", "ranking", "balance")]
-        [Remarks("Money [@User]")]
         [Summary("View the wealth of anyone.")]
+        [Remarks("Money [@User]")]
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Money(SocketUser userToView = null)
         {

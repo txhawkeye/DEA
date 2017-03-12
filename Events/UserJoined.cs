@@ -15,6 +15,8 @@ namespace DEA.Events
             _client = client;
 
             _client.UserJoined += HandleUserJoin;
+
+            _client.SetGameAsync("$help");
         }
 
         private async Task HandleUserJoin(SocketGuildUser u)

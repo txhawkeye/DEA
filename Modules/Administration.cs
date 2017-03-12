@@ -55,8 +55,8 @@ namespace DEA.Modules
             }
         }
 
-        [Command("SetRankRoles")]
-        [Alias("setrank", "setrole", "setranks", "setroles", "setrankrole")]
+        [Command("SetRank")]
+        [Alias("setrankroles", "setrole", "setranks", "setroles", "setrankrole")]
         [Summary("Sets the rank roles for the DEA cash system.")]
         [Remarks("SetRankRoles <Rank Role (1-4)> <@RankRole>")]
         public async Task SetRankRoles(int roleNumber = 0, IRole rankRole = null)
@@ -73,6 +73,9 @@ namespace DEA.Modules
                 {
                     throw new Exception("You may not set a rank role that is higher in hierarchy than DEA's highest role.");
                 }
+                if (rankRole.Id == await guildRepo.GetRank1Id(Context.Guild.Id) || rankRole.Id == await guildRepo.GetRank2Id(Context.Guild.Id) ||
+                    rankRole.Id == await guildRepo.GetRank3Id(Context.Guild.Id) || rankRole.Id == await guildRepo.GetRank4Id(Context.Guild.Id))
+                    throw new Exception("You may not set multiple ranks to the same role!");
                 switch (roleNumber)
                 {
                     case 1:

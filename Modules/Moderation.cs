@@ -66,14 +66,13 @@ namespace DEA.Modules
 
         [Command("CustomMute")]
         [RequireBotPermission(GuildPermission.ManageRoles)]
-        [Summary("Temporarily mutes a user for x amount of days.")]
-        [Remarks("CustomMute <Mute length in days> <@User> [Reason]")]
-        public async Task CustomMute(int days, IGuildUser userToMute, [Remainder] string reason = "No reason.")
+        [Summary("Temporarily mutes a user for x amount of hours.")]
+        [Remarks("CustomMute <Hours> <@User> [Reason]")]
+        public async Task CustomMute(int hours, IGuildUser userToMute, [Remainder] string reason = "No reason.")
         {
             await RankHandler.RankRequired(Context, Ranks.Moderator);
-            if (days > 7) throw new Exception("You may not mute a user for more than 7 days.");
-            if (days < 2) throw new Exception("You may not mute a user with custom mute command for less than 1 day.\n"+ 
-                                              "If you wish to mute for 1 day exactly, please use the mute command.");
+            if (hours > 168) throw new Exception("You may not mute a user for more than a week.");
+            if (hours < 1) throw new Exception("You may not mute a user for less than 1 hour.");
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
@@ -84,9 +83,9 @@ namespace DEA.Modules
                 if (await IsMod(userToMute)) throw new Exception("You cannot mute another mod!");
                 await InformSubject(Context.User, "Mute", userToMute, reason);
                 await userToMute.AddRolesAsync(mutedRole);
-                await muteRepo.AddMuteAsync(userToMute.Id, Context.Guild.Id, TimeSpan.FromDays(days), DateTime.Now);
+                await muteRepo.AddMuteAsync(userToMute.Id, Context.Guild.Id, TimeSpan.FromHours(hours), DateTime.Now);
                 await ModLog(Context, "Mute", userToMute, new Color(255, 114, 14), reason);
-                await ReplyAsync($"{Context.User.Mention} has successfully muted {userToMute.Mention} for {days} days!");
+                await ReplyAsync($"{Context.User.Mention} has successfully muted {userToMute.Mention} for {hours} hours!");
             }
         }
 

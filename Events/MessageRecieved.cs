@@ -65,6 +65,10 @@ namespace DEA.Services
                                     case "The input text has too few parameters.":
                                         await msg.Channel.SendMessageAsync($"You are incorrectly using this command. Usage: `{prefix}{cmd.Remarks}`");
                                         break;
+                                    case "Failed to parse Single":
+                                    case "Failed to parse Int32":
+                                        await msg.Channel.SendMessageAsync($"{Context.User.Mention}, Invalid number.");
+                                        break;
                                     default:
                                         await msg.Channel.SendMessageAsync($"{Context.User.Mention}, {result.ErrorReason}");
                                         break;

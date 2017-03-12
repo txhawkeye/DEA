@@ -35,7 +35,7 @@ namespace DEA.Modules
         }
 
         [Command("75+")]
-        [Summary("Roll 55 or higher on a 100 sided die, win 3.6X your bet.")]
+        [Summary("Roll 75 or higher on a 100 sided die, win 3.6X your bet.")]
         [Remarks("75+ <Bet>")]
         public async Task X3dot6(float bet)
         {
@@ -61,8 +61,9 @@ namespace DEA.Modules
                     throw new Exception($"You may only gamble in {Context.Guild.GetTextChannel(await guildRepo.GetGambleChannelId(Context.Guild.Id)).Mention}!");
                 var Cash = await userRepo.GetCash(Context.User.Id);
                 if (bet > Cash) throw new Exception($"You do not have enough money. Balance: {(await userRepo.GetCash(Context.User.Id)).ToString("N2")}$.");
-                if (bet < 5) throw new Exception("Lowest bet is 5$.");
-                if (bet < Cash / 10) throw new Exception($"The lowest bet is 10% of your total cash, that is {(Cash / 10).ToString("N2")}$.");
+                if (bet < Config.MIN_BET) throw new Exception($"Lowest bet is {Config.MIN_BET}$.");
+                if (bet < Math.Round(Cash * Config.MIN_PERCENTAGE, 2)) throw new Exception($"The lowest bet is {Config.MIN_PERCENTAGE * 100}% of your total cash, that is " +
+                                                                            $"{(Cash * Config.MIN_PERCENTAGE).ToString("N2")}$.");
                 int roll = new Random().Next(1, 101);
                 if (roll >= odds)
                 {
