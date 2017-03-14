@@ -23,7 +23,7 @@ namespace DEA.Modules
         public async Task X2BetterOdds(float bet)
         {
             await RankHandler.RankRequired(Context, Ranks.Rank4);
-            await Gamble(bet, 55, 1);
+            await Gamble(bet, 50, 1);
         }
 
         [Command("55x2")]
@@ -63,7 +63,7 @@ namespace DEA.Modules
                 if (bet > Cash) throw new Exception($"You do not have enough money. Balance: {(await userRepo.GetCash(Context.User.Id)).ToString("N2")}$.");
                 if (bet < Config.MIN_BET) throw new Exception($"Lowest bet is {Config.MIN_BET}$.");
                 if (bet < Math.Round(Cash * Config.MIN_PERCENTAGE, 2)) throw new Exception($"The lowest bet is {Config.MIN_PERCENTAGE * 100}% of your total cash, that is " +
-                                                                            $"{(Cash * Config.MIN_PERCENTAGE).ToString("N2")}$.");
+                                                                            $"{Math.Round(Cash * Config.MIN_PERCENTAGE, 2)}$.");
                 int roll = new Random().Next(1, 101);
                 if (roll >= odds)
                 {

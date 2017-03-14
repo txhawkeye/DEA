@@ -12,13 +12,6 @@ namespace DEA.Modules
 {
     public class General : ModuleBase<SocketCommandContext>
     {
-        [Command("Invite")]
-        [Summary("Invite DEA to your Discord Server!")]
-        public async Task Invite()
-        {
-            await ReplyAsync($"Add DEA to your Discord Sever: <https://discordapp.com/oauth2/authorize?client_id=289980605888725003&scope=bot&permissions=477195286>!");
-        }
-
         [Command("Investments")]
         [Alias("Investements", "Investement", "Investment")]
         [Summary("Increase your money per message")]
@@ -165,7 +158,7 @@ namespace DEA.Modules
                 if (userMentioned.Id == Context.User.Id) throw new Exception("Hey kids! Look at that retard, he is trying to give money to himself!");
                 var userRepo = new UserRepository(db);
                 if (await userRepo.GetCash(Context.User.Id) < money) throw new Exception($"You do not have enough money. Balance: {(await userRepo.GetCash(Context.User.Id)).ToString("N2")}$.");
-                if (money < Math.Round(await userRepo.GetCash(Context.User.Id) * Config.MIN_PERCENTAGE, 2)) throw new Exception($"The lowest donation is {Config.MIN_PERCENTAGE * 100}% of your total cash, that is {(await userRepo.GetCash(Context.User.Id) * Config.MIN_PERCENTAGE).ToString("N2")}$.");
+                if (money < Math.Round(await userRepo.GetCash(Context.User.Id) * Config.MIN_PERCENTAGE, 2)) throw new Exception($"The lowest donation is {Config.MIN_PERCENTAGE * 100}% of your total cash, that is {Math.Round(await userRepo.GetCash(Context.User.Id) * Config.MIN_PERCENTAGE, 2)}$.");
                 await userRepo.EditCash(Context, -money);
                 float deaMoney = money * Config.MIN_PERCENTAGE;
                 money -= deaMoney;

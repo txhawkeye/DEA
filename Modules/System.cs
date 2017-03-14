@@ -128,18 +128,27 @@ Another common way of gaining money is by gambling, there are loads of different
             {
                 Title = "Welcome to DEA",
                 Color = new Color(0x00AE86),
-                Description = @"DEA is a multi-purpose Discord Bot mainly known for it's infamous Cash System with multiple subtleties referencing to the show Narcos, which inspired the start the creation of this masterpiece.
+                Description = $@"DEA is a multi-purpose Discord Bot mainly known for it's infamous Cash System with multiple subtleties referencing to the show Narcos, which inspired the creation of this masterpiece.
 
 For all information about command usage and setup on your Discord Sever, view the documentation: <https://realblazeit.github.io/DEA/>
 
 This command may be used for view the commands for each of the following modules: System, Administration, Moderation, General, Gambling and Crime. It may also be used the view the usage of a specific command.
 
-If you have any other questions, you may join the Official DEA Discord Server: https://discord.me/Rush, a server home to infamous meme events such as a raids and insanity. Join for the dankest community a man could desire."
+In order to **add DEA to your Discord Server**, click the following link: <https://discordapp.com/oauth2/authorize?client_id={Context.Guild.CurrentUser.Id}&scope=bot&permissions=477195286> 
+
+If you have any other questions, you may join the **Official DEA Discord Server:** <https://discord.me/Rush>, a server home to infamous meme events such as a raids and insanity. Join for the dankest community a man could desire."
             };
             
             var channel = await Context.User.CreateDMChannelAsync();
             await channel.SendMessageAsync("", embed: help);
             await ReplyAsync($"{Context.User.Mention}, you have been DMed with all the command information!");
+        }
+
+        [Command("Invite")]
+        [Summary("Invite DEA to your Discord Server!")]
+        public async Task Invite()
+        {
+            await ReplyAsync($"Add DEA to your Discord Server: <https://discordapp.com/oauth2/authorize?client_id={Context.Guild.CurrentUser.Id}&scope=bot&permissions=477195286>!");
         }
 
         [Command("Stats")]
