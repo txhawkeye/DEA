@@ -17,8 +17,9 @@ namespace DEA.Events
             _client.UserBanned += HandleUserBanned;
         }
 
-        private async Task HandleUserBanned(SocketUser u, SocketGuild guild)
+        public async Task HandleUserBanned(SocketUser u, SocketGuild guild)
         {
+            if (!Config.LOG_BANS) return;
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);

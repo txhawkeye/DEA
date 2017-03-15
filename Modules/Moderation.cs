@@ -1,4 +1,5 @@
 ﻿using DEA.SQLite.Models;
+using DEA.Events;
 using DEA.SQLite.Repository;
 using Discord;
 using System;
