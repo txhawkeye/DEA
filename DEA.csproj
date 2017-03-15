@@ -255,14 +255,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\Ready.cs" />
+    <Compile Include="Events\RoleCreated.cs" />
+    <Compile Include="Events\RoleDeleted.cs" />
     <Compile Include="Events\UserBanned.cs" />
     <Compile Include="Events\UserJoined.cs" />
+    <Compile Include="Events\UserLeft.cs" />
     <Compile Include="Events\UserUnbanned.cs" />
     <Compile Include="Modules\Administration.cs" />
     <Compile Include="Modules\Crime.cs" />
     <Compile Include="Modules\Gambling.cs" />
     <Compile Include="Modules\General.cs" />
     <Compile Include="Modules\Moderation.cs" />
+    <Compile Include="Modules\Owners.cs" />
     <Compile Include="Modules\System.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

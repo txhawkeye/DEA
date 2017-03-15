@@ -69,6 +69,9 @@ namespace DEA.Services
                                     case "Failed to parse Int32":
                                         await msg.Channel.SendMessageAsync($"{Context.User.Mention}, Invalid number.");
                                         break;
+                                    case "The server responded with error 403: Forbidden":
+                                        await msg.Channel.SendMessageAsync("DEA does not have permission to do that!");
+                                        break;
                                     default:
                                         await msg.Channel.SendMessageAsync($"{Context.User.Mention}, {result.ErrorReason}");
                                         break;
@@ -80,7 +83,7 @@ namespace DEA.Services
                 else if (msg.ToString().Length >= Config.MIN_CHAR_LENGTH && !msg.ToString().StartsWith(":"))
                 {
                     var lastMsgs = await Context.Channel.GetMessagesAsync(10).Flatten();
-                    if (lastMsgs.Select(x => x.Author == Context.User).Count() < 4)
+                    if (lastMsgs.Where(x => x.Author == Context.User).Count() < 4)
                     {
                         ulong userId = Context.User.Id;
                         var userRepo = new UserRepository(db);

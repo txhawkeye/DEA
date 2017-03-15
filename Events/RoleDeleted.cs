@@ -6,44 +6,43 @@ using System.Threading.Tasks;
 
 namespace DEA.Events
 {
-    class UserUnbanned
+    class RoleDeleted
     {
         private DiscordSocketClient _client;
 
-        public UserUnbanned(DiscordSocketClient client)
+        public RoleDeleted(DiscordSocketClient client)
         {
             _client = client;
 
-            _client.UserUnbanned += HandleUserUnbanned;
+            _client.RoleDeleted += HandleRoleDeleted;
         }
 
-        private async Task HandleUserUnbanned(SocketUser u, SocketGuild guild)
+        private async Task HandleRoleDeleted(SocketRole role)
         {
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
-                if (guild.GetTextChannel(await guildRepo.GetDetailedLogsChannelId(guild.Id)) != null)
+                if (role.Guild.GetTextChannel(await guildRepo.GetDetailedLogsChannelId(role.Guild.Id)) != null)
                 {
                     try
                     {
                         EmbedFooterBuilder footer = new EmbedFooterBuilder()
                         {
                             IconUrl = "http://i.imgur.com/BQZJAqT.png",
-                            Text = u.Id.ToString()
+                            Text = role.Id.ToString()
                         };
 
                         var builder = new EmbedBuilder()
                         {
                             Color = new Color(12, 255, 129),
-                            Description = $"**Action:** Unban\n**User:** <@{u.Id}>",
+                            Description = $"**Action:** Role Deletion\n**Role:** {role.Name}",
                             Footer = footer
                         }.WithCurrentTimestamp();
 
-                        await guild.GetTextChannel(await guildRepo.GetDetailedLogsChannelId(guild.Id)).SendMessageAsync("", embed: builder);
+                        await role.Guild.GetTextChannel(await guildRepo.GetDetailedLogsChannelId(role.Guild.Id)).SendMessageAsync("", embed: builder);
                     } catch { }
                 }
             }
         }
-
     }
 }

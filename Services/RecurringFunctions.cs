@@ -69,11 +69,26 @@ namespace DEA.Services
                             var mutedRole = guild.GetRole(await guildRepo.GetMutedRoleId(muted.GuildId));
                             if (mutedRole != null && guild.GetUser(muted.UserId).Roles.Any(x => x.Id == mutedRole.Id))
                             {
-                                if (guild.CurrentUser.GuildPermissions.ManageRoles)
-                                    try
+                                try
+                                {
+                                    await guild.GetUser(muted.UserId).RemoveRolesAsync(mutedRole);
+                                    var footer = new EmbedFooterBuilder()
                                     {
-                                        await guild.GetUser(muted.UserId).RemoveRolesAsync(mutedRole);
-                                    } catch { }
+                                        IconUrl = "http://i.imgur.com/BQZJAqT.png",
+                                        Text = $"Case #{await guildRepo.GetCaseNumber(guild.Id)}"
+                                    };
+                                    var builder = new EmbedBuilder()
+                                    {
+                                        Color = new Color(12, 255, 129),
+                                        Description = $"**Action:** Automatic Unmute\n**User:** {guild.GetUser(muted.UserId)} ({guild.GetUser(muted.UserId).Id})",
+                                        Footer = footer
+                                    }.WithCurrentTimestamp();
+                                    if (guild.GetTextChannel(await guildRepo.GetModLogChannelId(guild.Id)) != null)
+                                    {
+                                        await guildRepo.IncrementCaseNumber(guild.Id);
+                                        await guild.GetTextChannel(await guildRepo.GetModLogChannelId(guild.Id)).SendMessageAsync("", embed: builder);
+                                    }
+                                } catch { }
                             }
                         }
                         await muteRepo.RemoveMuteAsync(muted.UserId, muted.GuildId);

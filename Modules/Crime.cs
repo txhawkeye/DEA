@@ -14,6 +14,7 @@ namespace DEA.Modules
 
         [Command("Whore")]
         [Summary("Sell your body for some quick cash.")]
+        [Remarks("Whore")]
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Whore()
         {
@@ -27,14 +28,14 @@ namespace DEA.Modules
                     float moneyWhored = (float)(rand.Next((int)(Config.HIGHEST_WHORE) * 100)) / 100;
                     await userRepo.SetLastWhore(Context.User.Id, DateTime.Now);
                     await userRepo.EditCash(Context, moneyWhored);
-                    await ReplyAsync($"{Context.User.Mention}, you whip it out and manage to rake in {moneyWhored.ToString("N2")}$");
+                    await ReplyAsync($"{Context.User.Mention}, you whip it out and manage to rake in {moneyWhored.ToString("C2")}");
                 }
                 else
                 {
                     var timeSpan = TimeSpan.FromMilliseconds(Config.WHORE_COOLDOWN - DateTime.Now.Subtract(await userRepo.GetLastWhore(Context.User.Id)).TotalMilliseconds);
                     var builder = new EmbedBuilder()
                     {
-                        Title = $"{await guildRepo.GetPrefix(Context.Guild.Id)}Whore cooldown for {Context.User}",
+                        Title = $"Whore cooldown for {Context.User}",
                         Description = $"{timeSpan.Hours} Hours\n{timeSpan.Minutes} Minutes\n{timeSpan.Seconds} Seconds",
                         Color = new Color(49, 62, 255)
                     };
@@ -50,6 +51,7 @@ namespace DEA.Modules
 
         [Command("Jump")]
         [Summary("Jump some random nigga in the hood.")]
+        [Remarks("Jump")]
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Jump()
         {
@@ -64,14 +66,14 @@ namespace DEA.Modules
                     float moneyJumped = (float)(rand.Next((int)(Config.HIGHEST_JUMP) * 100)) / 100;
                     await userRepo.SetLastJump(Context.User.Id, DateTime.Now);
                     await userRepo.EditCash(Context, moneyJumped);
-                    await ReplyAsync($"{Context.User.Mention}, you jump some random nigga on the streets and manage to get {moneyJumped.ToString("N2")}$");
+                    await ReplyAsync($"{Context.User.Mention}, you jump some random nigga on the streets and manage to get {moneyJumped.ToString("C2")}");
                 }
                 else
                 {
                     var timeSpan = TimeSpan.FromMilliseconds(Config.JUMP_COOLDOWN - DateTime.Now.Subtract(await userRepo.GetLastJump(Context.User.Id)).TotalMilliseconds);
                     var builder = new EmbedBuilder()
                     {
-                        Title = $"{await guildRepo.GetPrefix(Context.Guild.Id)}Jump cooldown for {Context.User}",
+                        Title = $"Jump cooldown for {Context.User}",
                         Description = $"{timeSpan.Hours} Hours\n{timeSpan.Minutes} Minutes\n{timeSpan.Seconds} Seconds",
                         Color = new Color(49, 62, 255)
                     };
@@ -88,6 +90,7 @@ namespace DEA.Modules
 
         [Command("Steal")]
         [Summary("Snipe some goodies from your local stores.")]
+        [Remarks("Steal")]
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Steal()
         {
@@ -104,14 +107,71 @@ namespace DEA.Modules
                     await userRepo.EditCash(Context, moneySteal);
                     string randomStore = Config.STORES[rand.Next(1, Config.STORES.Length) - 1];
                     await ReplyAsync($"{Context.User.Mention}, you walk in to your local {randomStore}, point a fake gun at the clerk, and manage to walk away " +
-                                     $"with {moneySteal.ToString("N2")}$");
+                                     $"with {moneySteal.ToString("C2")}");
                 }
                 else
                 {
                     var timeSpan = TimeSpan.FromMilliseconds(Config.STEAL_COOLDOWN - DateTime.Now.Subtract(await userRepo.GetLastSteal(Context.User.Id)).TotalMilliseconds);
                     var builder = new EmbedBuilder()
                     {
-                        Title = $"{await guildRepo.GetPrefix(Context.Guild.Id)}Steal cooldown for {Context.User}",
+                        Title = $"Steal cooldown for {Context.User}",
+                        Description = $"{timeSpan.Hours} Hours\n{timeSpan.Minutes} Minutes\n{timeSpan.Seconds} Seconds",
+                        Color = new Color(49, 62, 255)
+                    };
+                    if (await guildRepo.GetDM(Context.Guild.Id))
+                    {
+                        var channel = await Context.User.CreateDMChannelAsync();
+                        await channel.SendMessageAsync("", embed: builder);
+                    }
+                    else
+                        await ReplyAsync("", embed: builder);
+                }
+            }
+        }
+
+        [Command("Rob")]
+        [Summary("Lead a large scale operation on a local bank.")]
+        [Remarks("Rob <Amount of cash to spend on resources>")]
+        [RequireBotPermission(GuildPermission.EmbedLinks)]
+        public async Task Rob(float resources)
+        {
+            await RankHandler.RankRequired(Context, Ranks.Rank4);
+            using (var db = new DbContext())
+            {
+                var guildRepo = new GuildRepository(db);
+                var userRepo = new UserRepository(db);
+                if (DateTime.Now.Subtract(await userRepo.GetLastRob(Context.User.Id)).TotalMilliseconds > Config.ROB_COOLDOWN)
+                {
+                    if (await userRepo.GetCash(Context.User.Id) < resources) throw new Exception($"You do not have enough money. Current cash: {(await userRepo.GetCash(Context.User.Id)).ToString("C2")}");
+                    if (resources < Config.MIN_RESOURCES) throw new Exception($"The minimum amount of money to spend on resources for rob is {Config.MIN_RESOURCES.ToString("C2")}.");
+                    if (resources > Config.MAX_RESOURCES) throw new Exception($"The maximum amount of money to spend on resources for rob is {Config.MAX_RESOURCES.ToString("C2")}.");
+                    Random rand = new Random();
+                    float odds = (rand.Next(5000, 7500)) / 100.00f;
+                    float multiplier = 3 + ((75 - odds) / 16.6666666666f);
+                    float moneyStolen = resources * multiplier;
+                    await userRepo.SetLastRob(Context.User.Id, DateTime.Now);
+                    string randomBank = Config.BANKS[rand.Next(1, Config.BANKS.Length) - 1];
+
+                    float success = (rand.Next(10000)) / 100;
+                    if (success >= odds)
+                    {
+                        await userRepo.EditCash(Context, moneyStolen);
+                        await ReplyAsync($"{Context.User.Mention}, with a {odds.ToString("N2")}% chance of success, you successfully stole " +
+                        $"{moneyStolen.ToString("C2")} from the {randomBank}. Current balance: {(await userRepo.GetCash(Context.User.Id)).ToString("C2")}$.");
+                    }
+                    else
+                    {
+                        await userRepo.EditCash(Context, -resources);
+                        await ReplyAsync($"{Context.User.Mention}, with a {odds.ToString("N2")}% chance of success, you failed to steal " +
+                        $"{moneyStolen.ToString("C2")} from the {randomBank}. Current balance: {(await userRepo.GetCash(Context.User.Id)).ToString("C2")}.");
+                    }
+                }
+                else
+                {
+                    var timeSpan = TimeSpan.FromMilliseconds(Config.ROB_COOLDOWN - DateTime.Now.Subtract(await userRepo.GetLastRob(Context.User.Id)).TotalMilliseconds);
+                    var builder = new EmbedBuilder()
+                    {
+                        Title = $"{await guildRepo.GetPrefix(Context.Guild.Id)}Rob cooldown for {Context.User}",
                         Description = $"{timeSpan.Hours} Hours\n{timeSpan.Minutes} Minutes\n{timeSpan.Seconds} Seconds",
                         Color = new Color(49, 62, 255)
                     };

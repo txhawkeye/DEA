@@ -11,6 +11,8 @@
 
         public ulong ModLogChannelId { get; set; }
 
+        public ulong DetailedLogsChannelId { get; set; }
+
         public ulong MutedRoleId { get; set; }
 
         public uint CaseNumber { get; set; } = 1;

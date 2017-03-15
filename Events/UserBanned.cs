@@ -17,33 +17,30 @@ namespace DEA.Events
             _client.UserBanned += HandleUserBanned;
         }
 
-        public async Task HandleUserBanned(SocketUser u, SocketGuild guild)
+        private async Task HandleUserBanned(SocketUser u, SocketGuild guild)
         {
-            if (!Config.LOG_BANS) return;
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
-                if (guild.GetTextChannel(await guildRepo.GetModLogChannelId(guild.Id)) != null)
+                if (guild.GetTextChannel(await guildRepo.GetDetailedLogsChannelId(guild.Id)) != null)
                 {
                     try
                     {
                         EmbedFooterBuilder footer = new EmbedFooterBuilder()
                         {
                             IconUrl = "http://i.imgur.com/BQZJAqT.png",
-                            Text = $"Case #{await guildRepo.GetCaseNumber(guild.Id)}"
+                            Text = u.Id.ToString()
                         };
 
                         var builder = new EmbedBuilder()
                         {
                             Color = new Color(255, 0, 0),
-                            Description = $"**Action:** Manual Ban\n**User:** {u} ({u.Id})",
+                            Description = $"**Action:** Ban\n**User:** {u}",
                             Footer = footer
                         }.WithCurrentTimestamp();
 
-                        await guildRepo.IncrementCaseNumber(guild.Id);
-                        await guild.GetTextChannel(await guildRepo.GetModLogChannelId(guild.Id)).SendMessageAsync("", embed: builder);
-                    }
-                    catch { }
+                        await guild.GetTextChannel(await guildRepo.GetDetailedLogsChannelId(guild.Id)).SendMessageAsync("", embed: builder);
+                    } catch { }
                 }
             }
         }

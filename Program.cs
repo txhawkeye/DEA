@@ -19,6 +19,8 @@ namespace DEA
             PrettyConsole.NewLine("===   DEA   ===");
             PrettyConsole.NewLine();
 
+            
+
             _client = new DiscordSocketClient(new DiscordSocketConfig()
             {
                 LogLevel = LogSeverity.Info,
@@ -37,9 +39,13 @@ namespace DEA
             _handler = new MessageRecieved();
             await _handler.InitializeAsync(_client);
 
+            new Ready(_client);
             new UserJoined(_client);
-            //TODOnew UserBanned(_client);
-            //TODOnew UserUnbanned(_client);
+            new UserLeft(_client);
+            new UserBanned(_client);
+            new UserUnbanned(_client);
+            new RoleCreated(_client);
+            new RoleDeleted(_client);
 
             RecurringFunctions funcs = new RecurringFunctions(_client);
 

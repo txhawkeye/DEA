@@ -1,5 +1,4 @@
 ﻿using DEA.SQLite.Models;
-using DEA.Events;
 using DEA.SQLite.Repository;
 using Discord;
 using System;
@@ -24,7 +23,7 @@ namespace DEA.Modules
             await InformSubject(Context.User, "Ban", userToBan, reason);
             await Context.Guild.AddBanAsync(userToBan);
             await ModLog(Context, "Ban", userToBan, new Color(255, 0, 0), reason);
-            await ReplyAsync($"{Context.User.Mention} has successfully banned {userToBan.Mention}");
+            await ReplyAsync($"{Context.User.Mention} has successfully banned {userToBan.Mention}!");
         }
 
         [Command("Kick")]
@@ -39,7 +38,7 @@ namespace DEA.Modules
             await InformSubject(Context.User, "Kick", userToKick, reason);
             await userToKick.KickAsync();
             await ModLog(Context, "Kick", userToKick, new Color(255, 114, 14), reason);
-            await ReplyAsync($"{Context.User.Mention} has successfully kicked {userToKick.Mention}");
+            await ReplyAsync($"{Context.User.Mention} has successfully kicked {userToKick.Mention}!");
         }
 
         [Command("Mute")]
@@ -61,7 +60,7 @@ namespace DEA.Modules
                 await userToMute.AddRolesAsync(mutedRole);
                 await muteRepo.AddMuteAsync(userToMute.Id, Context.Guild.Id, TimeSpan.FromDays(1), DateTime.Now);
                 await ModLog(Context, "Mute", userToMute, new Color(255, 114, 14), reason);
-                await ReplyAsync($"{Context.User.Mention} has successfully muted {userToMute.Mention}");
+                await ReplyAsync($"{Context.User.Mention} has successfully muted {userToMute.Mention}!");
             }
         }
 
@@ -107,7 +106,7 @@ namespace DEA.Modules
                 await userToUnmute.RemoveRolesAsync(Context.Guild.GetRole(mutedRoleId));
                 await muteRepo.RemoveMuteAsync(userToUnmute.Id, Context.Guild.Id);
                 await ModLog(Context, "Unmute", userToUnmute, new Color(12, 255, 129), reason);
-                await ReplyAsync($"{Context.User.Mention} has successfully unmuted {userToUnmute.Mention}");
+                await ReplyAsync($"{Context.User.Mention} has successfully unmuted {userToUnmute.Mention}!");
             }
         }
 
@@ -120,7 +119,7 @@ namespace DEA.Modules
             await RankHandler.RankRequired(Context, Ranks.Moderator);
             var messages = await Context.Channel.GetMessagesAsync(count).Flatten();
             await Context.Channel.DeleteMessagesAsync(messages);
-            var tempMsg = await ReplyAsync($"Deleted **{messages.Count()}** message(s)");
+            var tempMsg = await ReplyAsync($"Deleted **{messages.Count()}** message(s)!");
             await Task.Delay(5000);
             await tempMsg.DeleteAsync();
         }

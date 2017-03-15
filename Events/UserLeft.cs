@@ -6,35 +6,19 @@ using System.Threading.Tasks;
 
 namespace DEA.Events
 {
-    class UserJoined
+    class UserLeft
     {
         private DiscordSocketClient _client;
 
-        public UserJoined(DiscordSocketClient client)
+        public UserLeft(DiscordSocketClient client)
         {
             _client = client;
 
-            _client.UserJoined += HandleUserJoin;
+            _client.UserLeft += HandleUserLeft;
         }
 
-        private async Task HandleUserJoin(SocketGuildUser u)
+        private async Task HandleUserLeft(SocketGuildUser u)
         {
-            try
-            {
-                if (u != null && u.Guild != null) await RankHandler.Handle(u.Guild, u.Id);
-                using (var db = new DbContext())
-                {
-                    var guildRepo = new GuildRepository(db);
-                    var muteRepo = new MuteRepository(db);
-                    var user = u as IGuildUser;
-                    var mutedRole = user.Guild.GetRole(await guildRepo.GetMutedRoleId(user.Guild.Id));
-                    if (await muteRepo.IsMutedAsync(user.Id, user.Guild.Id) && mutedRole != null && user != null)
-                    {
-                        await user.AddRolesAsync(mutedRole);
-                    }
-                }
-            } catch { }
-
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
@@ -50,8 +34,8 @@ namespace DEA.Events
 
                         var builder = new EmbedBuilder()
                         {
-                            Color = new Color(12, 255, 129),
-                            Description = $"**Event:** User Joined\n**User:** {u}",
+                            Color = new Color(255, 114, 14),
+                            Description = $"**Event:** User Left\n**User:** {u}",
                             Footer = footer
                         }.WithCurrentTimestamp();
 

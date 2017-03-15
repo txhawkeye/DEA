@@ -109,7 +109,20 @@ namespace DEA.Modules
                 var guildRepo = new GuildRepository(db);
                 await guildRepo.SetModLogChannelId(Context.Guild.Id, modLogChannel.Id);
                 await ReplyAsync($"You have successfully set the moderator log channel to {modLogChannel.Mention}!");
+            }
+        }
 
+        [Command("SetDetailedLogs")]
+        [Summary("Sets the moderation log.")]
+        [Remarks("SetDetailedLogs <#DetailsLogs>")]
+        public async Task SetDetailedLogsChannel(ITextChannel detailedLogsChannel)
+        {
+            using (var db = new DbContext())
+            {
+                await RankHandler.RankRequired(Context, Ranks.Administrator);
+                var guildRepo = new GuildRepository(db);
+                await guildRepo.SetDetailedLogsChannelId(Context.Guild.Id, detailedLogsChannel.Id);
+                await ReplyAsync($"You have successfully set the detailed logs channel to {detailedLogsChannel.Mention}!");
             }
         }
 
@@ -130,6 +143,7 @@ namespace DEA.Modules
 
         [Command("ChangeDMSettings")]
         [Alias("EnableDM", "DisableDM")]
+        [Remarks("ChangeDMSettings")]
         [Summary("Sends all sizeable messages to the DM's of the user.")]
         public async Task ChangeDMSettings()
         {

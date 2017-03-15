@@ -56,6 +56,13 @@ namespace DEA.SQLite.Repository
             await UpdateAsync(guild);
         }
 
+        public async Task SetDetailedLogsChannelId(ulong guildId, ulong detailedLogsChannelId)
+        {
+            var guild = await FetchGuild(guildId);
+            guild.DetailedLogsChannelId = detailedLogsChannelId;
+            await UpdateAsync(guild);
+        }
+
         public async Task SetGambleChannelId(ulong guildId, ulong gambleChannelId)
         {
             var guild = await FetchGuild(guildId);
@@ -117,6 +124,12 @@ namespace DEA.SQLite.Repository
         {
             var guild = await FetchGuild(guildId);
             return guild.ModLogChannelId;
+        }
+
+        public async Task<ulong> GetDetailedLogsChannelId(ulong guildId)
+        {
+            var guild = await FetchGuild(guildId);
+            return guild.DetailedLogsChannelId;
         }
 
         public async Task<bool> GetDM(ulong guildId)

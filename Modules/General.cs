@@ -29,7 +29,7 @@ namespace DEA.Modules
                     case "line":
                         if (Config.LINE_COST > cash)
                         {
-                            await ReplyAsync($"{Context.User.Mention}, you do not have enough money. Balance: {cash.ToString("N2")}$");
+                            await ReplyAsync($"{Context.User.Mention}, you do not have enough money. Balance: {cash.ToString("C2")}");
                             break;
                         }
                         if (await userRepo.GetMessageCooldown(Context.User.Id) == Config.LINE_COOLDOWN)
@@ -45,7 +45,7 @@ namespace DEA.Modules
                     case "lb":
                         if (Config.POUND_COST > cash)
                         {
-                            await ReplyAsync($"{Context.User.Mention}, you do not have enough money. Balance: {cash.ToString("N2")}$");
+                            await ReplyAsync($"{Context.User.Mention}, you do not have enough money. Balance: {cash.ToString("C2")}");
                             break;
                         }
                         if (await userRepo.GetInvestmentMultiplier(Context.User.Id) >= Config.POUND_MULTIPLIER)
@@ -62,7 +62,7 @@ namespace DEA.Modules
                     case "kilogram":
                         if (Config.KILO_COST > cash)
                         {
-                            await ReplyAsync($"{Context.User.Mention}, you do not have enough money. Balance: {cash.ToString("N2")}$");
+                            await ReplyAsync($"{Context.User.Mention}, you do not have enough money. Balance: {cash.ToString("C2")}");
                             break;
                         }
                         if (await userRepo.GetInvestmentMultiplier(Context.User.Id) != Config.POUND_MULTIPLIER)
@@ -106,6 +106,7 @@ namespace DEA.Modules
         [Command("Leaderboards")]
         [Alias("lb", "rankings", "highscores", "leaderboard", "highscore")]
         [Summary("View the richest Drug Traffickers.")]
+        [Remarks("Leaderboards")]
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Leaderboards()
         {
@@ -127,7 +128,7 @@ namespace DEA.Modules
                     if (Context.Guild.GetUser(user.Id) == null) continue;
                     desciption += $"{position}. <@{user.Id}>: " +
                                   //$"{new String(' ', longest - Context.Guild.GetUser(user.Id).Username.Length)}" +
-                                  $"{(await userRepo.GetCash(user.Id)).ToString("N2")}$\n";
+                                  $"{(await userRepo.GetCash(user.Id)).ToString("C2")}\n";
                     if (position >= 20) break;
                     position++;
                 }
@@ -157,14 +158,14 @@ namespace DEA.Modules
             {
                 if (userMentioned.Id == Context.User.Id) throw new Exception("Hey kids! Look at that retard, he is trying to give money to himself!");
                 var userRepo = new UserRepository(db);
-                if (await userRepo.GetCash(Context.User.Id) < money) throw new Exception($"You do not have enough money. Balance: {(await userRepo.GetCash(Context.User.Id)).ToString("N2")}$.");
-                if (money < Math.Round(await userRepo.GetCash(Context.User.Id) * Config.MIN_PERCENTAGE, 2)) throw new Exception($"The lowest donation is {Config.MIN_PERCENTAGE * 100}% of your total cash, that is {Math.Round(await userRepo.GetCash(Context.User.Id) * Config.MIN_PERCENTAGE, 2)}$.");
+                if (await userRepo.GetCash(Context.User.Id) < money) throw new Exception($"You do not have enough money. Balance: {(await userRepo.GetCash(Context.User.Id)).ToString("C2")}.");
+                if (money < Math.Round(await userRepo.GetCash(Context.User.Id) * Config.MIN_PERCENTAGE, 2)) throw new Exception($"The lowest donation is {Config.MIN_PERCENTAGE * 100}% of your total cash, that is ${Math.Round(await userRepo.GetCash(Context.User.Id) * Config.MIN_PERCENTAGE, 2)}.");
                 await userRepo.EditCash(Context, -money);
                 float deaMoney = money * Config.MIN_PERCENTAGE;
                 money -= deaMoney;
                 await userRepo.EditOtherCash(Context, userMentioned.Id, +money);
                 await userRepo.EditOtherCash(Context, Context.Guild.CurrentUser.Id, +deaMoney);
-                await ReplyAsync($"Successfully donated {money.ToString("N2")}$ to {userMentioned}. DEA has taken a {deaMoney.ToString("N2")}$ cut out of this donation.");
+                await ReplyAsync($"Successfully donated {money.ToString("C2")} to {userMentioned}. DEA has taken a {deaMoney.ToString("C2")} cut out of this donation.");
             }
         }
 
@@ -191,7 +192,7 @@ namespace DEA.Modules
                 {
                     Title = $"Ranking of {userToView}",
                     Color = new Color(0x00AE86),
-                    Description = $"Balance: {cash.ToString("N2")}$\n" +
+                    Description = $"Balance: {cash.ToString("C2")}\n" +
                                   $"Position: #{users.FindIndex(x => x.Id == userToView.Id) + 1}\n"
                 };
                 if (await guildRepo.GetDM(Context.Guild.Id))
@@ -226,7 +227,7 @@ namespace DEA.Modules
                 {
                     Color = new Color(0x00AE86),
                     Description = $"**Rate of {userToView}**\nCurrently receiving " +
-                    $"{(await userRepo.GetInvestmentMultiplier(id) * await userRepo.GetTemporaryMultiplier(id)).ToString("N2")}$ " +
+                    $"{(await userRepo.GetInvestmentMultiplier(id) * await userRepo.GetTemporaryMultiplier(id)).ToString("C2")} " +
                     $"per message sent every {await userRepo.GetMessageCooldown(id) / 1000} seconds that is at least 7 characters long.\n" +
                     $"Chatting multiplier: {(await userRepo.GetTemporaryMultiplier(id)).ToString("N2")}\nInvestment multiplier: " +
                     $"{(await userRepo.GetInvestmentMultiplier(id)).ToString("N2")}\nMessage cooldown: " +
@@ -244,6 +245,7 @@ namespace DEA.Modules
 
         [Command("Ranked")]
         [Summary("View the quantity of members for each ranked role.")]
+        [Remarks("Ranked")]
         [RequireBotPermission(GuildPermission.ManageRoles)]
         public async Task Ranked()
         {
@@ -275,20 +277,6 @@ namespace DEA.Modules
                                   $"{role1.Mention}: {count1 - count2} members"     
                 };
                 await ReplyAsync("", embed: builder);
-            }
-        }
-
-        [Command("Give")]
-        [Summary("Inject cash into a users balance.")]
-        [Remarks("Give <@User> <Amount of cash>")]
-        public async Task Give(IGuildUser userMentioned, float money)
-        {
-            await RankHandler.RankRequired(Context, Ranks.Bot_Owner);
-            using (var db = new DbContext())
-            {
-                var userRepo = new UserRepository(db);
-                await userRepo.EditOtherCash(Context, userMentioned.Id, +money);
-                await ReplyAsync($"Successfully given {money.ToString("N2")}$ to {userMentioned}.");
             }
         }
     }

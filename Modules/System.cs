@@ -29,6 +29,7 @@ namespace System.Modules
 
         [Command("Information")]
         [Alias("info")]
+        [Remarks("Information")]
         [Summary("Information about the DEA Cash System.")]
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Info(string investString = null)
@@ -49,19 +50,23 @@ namespace System.Modules
                 var builder = new EmbedBuilder()
                 {
                     Color = new Color(0x00AE86),
-                    Description = ($@"In order to gain money, you must send a message that is at least 7 characters in length. There is a 30 second cooldown between each message that will give you cash. However, these rates are not fixed. For every message you send, your chatting multiplier(which increases the amount of money you get per message) is increased by 0.1. This increase is capped at 10, however, it will be automatically reset every hour.
+                    Description = $@"In order to gain money, you must send a message that is at least 7 characters in length. There is a 30 second cooldown between each message that will give you cash. However, these rates are not fixed. For every message you send, your chatting multiplier(which increases the amount of money you get per message) is increased by 0.1. This increase is capped at 10, however, it will be automatically reset every hour.
 
 To view your steadily increasing chatting multiplier, you may use the **{prefix}rate** command, and the **{prefix}money** command to see your cash grow. This command shows you every single variable taken into consideration for every message you send. If you wish to improve these variables, you may use investments. With the **{prefix}investments** command, you may pay to have *permanent* changes to your message rates. These will stack with the chatting multiplier.
 
-Another common way of gaining money is by gambling, there are loads of different gambling commands, which can all be viewed with the **{prefix}help** command. You might be wondering what is the point of all these commands. This is where ranks come in. Depending on how much money you have, you will get a certain rank. These are the current benfits of each rank, and the money required to get them: 
-
-**{Config.RANK1}$:** __{role1.Name}__ can use the **{prefix}jump** command. 
+Another common way of gaining money is by gambling, there are loads of different gambling commands, which can all be viewed with the **{prefix}help** command. You might be wondering what is the point of all these commands. This is where ranks come in. Depending on how much money you have, you will get a certain rank. These are the current benfits of each rank, and the money required to get them:"
+                };
+                var secondBuilder = new EmbedBuilder()
+                {
+                    Color = new Color(0x00AE86),
+                    Description = $@"**{Config.RANK1}$:** __{role1.Name}__ can use the **{prefix}jump** command. 
 **{Config.RANK2}$:** __{role2.Name}__ can use the **{prefix}steal** command. 
 **{Config.RANK3}$:** __{role3.Name}__ can change the nickname of ANYONE with **{prefix}bully** command. 
-**{Config.RANK4}$:** __{role4.Name}__ can use the **{prefix}50x2** AND can use the **{prefix}robbery** command.")
+**{Config.RANK4}$:** __{role4.Name}__ can use the **{prefix}50x2** AND can use the **{prefix}robbery** command."
                 };
                 var channel = await Context.User.CreateDMChannelAsync();
                 await channel.SendMessageAsync("", embed: builder);
+                await channel.SendMessageAsync("", embed: secondBuilder);
                 await ReplyAsync($"{Context.User.Mention}, Information about the DEA Cash System has been DMed to you!");
             }
         }
@@ -145,6 +150,7 @@ If you have any other questions, you may join the **Official DEA Discord Server:
         }
 
         [Command("Invite")]
+        [Remarks("Invite")]
         [Summary("Invite DEA to your Discord Server!")]
         public async Task Invite()
         {
@@ -153,6 +159,7 @@ If you have any other questions, you may join the **Official DEA Discord Server:
 
         [Command("Stats")]
         [Alias("statistics")]
+        [Remarks("Stats")]
         [Summary("All the statistics about DEA.")]
         public async Task Info()
         {
