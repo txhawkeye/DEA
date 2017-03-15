@@ -46,7 +46,7 @@ namespace DEA.Services
 
         public void AutoUnmute()
         {
-            Timer t = new Timer(TimeSpan.FromSeconds(5).TotalMilliseconds);
+            Timer t = new Timer(TimeSpan.FromMinutes(10).TotalMilliseconds);
             t.AutoReset = true;
             t.Elapsed += new ElapsedEventHandler(OnTimedAutoUnmute);
             t.Start();
@@ -63,19 +63,60 @@ namespace DEA.Services
                 {
                     if (DateTime.Now.Subtract(DateTime.Parse(muted.MutedAt)).TotalMilliseconds > muted.MuteLength)
                     {
-                        PrettyConsole.NewLine(DateTime.Now.ToString());
-                        PrettyConsole.NewLine(DateTime.Parse(muted.MutedAt).ToString());
-                        PrettyConsole.NewLine(muted.MuteLength.ToString());
-                        await muteRepo.RemoveMuteAsync(muted.UserId, muted.GuildId);
                         var guild = _client.GetGuild(muted.GuildId);
                         if (guild != null && guild.GetUser(muted.UserId) != null && guild.GetRole(await guildRepo.GetMutedRoleId(muted.GuildId)) != null)
                         {
                             var mutedRole = guild.GetRole(await guildRepo.GetMutedRoleId(muted.GuildId));
                             if (mutedRole != null && guild.GetUser(muted.UserId).Roles.Any(x => x.Id == mutedRole.Id))
                             {
-                                await guild.GetUser(muted.UserId).RemoveRolesAsync(mutedRole);
+                                if (guild.CurrentUser.GuildPermissions.ManageRoles)
+                                    try
+                                    {
+                                        await guild.GetUser(muted.UserId).RemoveRolesAsync(mutedRole);
+                                    } catch { }
                             }
-                        }     
+                        }
+                        await muteRepo.RemoveMuteAsync(muted.UserId, muted.GuildId);
+                    }
+                }
+            }
+        }
+
+        public void BanBlacklisted()
+        {
+            Timer t = new Timer(TimeSpan.FromMinutes(30).TotalMilliseconds);
+            t.AutoReset = true;
+            t.Elapsed += new ElapsedEventHandler(OnTimedAutoUnmute);
+            t.Start();
+        }
+
+        private async void OnTimeBanBlacklisted()
+        {
+            foreach(var guild in _client.Guilds)
+            {
+                foreach (var blacklistedId in Config.BLACKLISTED_IDS)
+                {
+                    if (guild.GetUser(blacklistedId) != null)
+                    {
+                        try
+                        {
+                            await guild.AddBanAsync(guild.GetUser(blacklistedId));
+                        } catch { }
+                    }
+                }
+            }
+
+            using (var db = new DbContext())
+            {
+                var guildRepo = new GuildRepository(db);
+                foreach (var dbGuild in guildRepo.GetAll())
+                {
+                    foreach (var blacklistedId in Config.BLACKLISTED_IDS)
+                    {
+                        if (_client.GetGuild(dbGuild.Id) != null && _client.GetGuild(dbGuild.Id).OwnerId == blacklistedId)
+                        {
+                            await _client.GetGuild(dbGuild.Id).LeaveAsync();
+                        }
                     }
                 }
             }

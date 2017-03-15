@@ -38,11 +38,14 @@ namespace DEA
             await _handler.InitializeAsync(_client);
 
             new UserJoined(_client);
+            new UserBanned(_client);
+            new UserUnbanned(_client);
 
             RecurringFunctions funcs = new RecurringFunctions(_client);
 
             funcs.ResetTemporaryMultiplier();
             funcs.AutoUnmute();
+            funcs.BanBlacklisted();
 
             await Task.Delay(-1);
         }

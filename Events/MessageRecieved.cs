@@ -77,15 +77,19 @@ namespace DEA.Services
                             catch { }
                     }
                 }
-                else if (msg.ToString().Length >= Config.MIN_CHAR_LENGTH)
+                else if (msg.ToString().Length >= Config.MIN_CHAR_LENGTH && !msg.ToString().StartsWith(":"))
                 {
-                    ulong userId = Context.User.Id;
-                    var userRepo = new UserRepository(db);
-                    if (DateTime.Now.Subtract(await userRepo.GetLastMessage(userId)).TotalMilliseconds > await userRepo.GetMessageCooldown(userId))
+                    var lastMsgs = await Context.Channel.GetMessagesAsync(10).Flatten();
+                    if (lastMsgs.Select(x => x.Author == Context.User).Count() < 4)
                     {
-                         await userRepo.SetLastMessage(userId, DateTime.Now);
-                         await userRepo.SetTemporaryMultiplier(userId, await userRepo.GetTemporaryMultiplier(userId) + Config.TEMP_MULTIPLIER_RATE);
-                         await userRepo.EditCash(Context, await userRepo.GetTemporaryMultiplier(userId) * await userRepo.GetInvestmentMultiplier(userId));
+                        ulong userId = Context.User.Id;
+                        var userRepo = new UserRepository(db);
+                        if (DateTime.Now.Subtract(await userRepo.GetLastMessage(userId)).TotalMilliseconds > await userRepo.GetMessageCooldown(userId))
+                        {
+                            await userRepo.SetLastMessage(userId, DateTime.Now);
+                            await userRepo.SetTemporaryMultiplier(userId, await userRepo.GetTemporaryMultiplier(userId) + Config.TEMP_MULTIPLIER_RATE);
+                            await userRepo.EditCash(Context, await userRepo.GetTemporaryMultiplier(userId) * await userRepo.GetInvestmentMultiplier(userId));
+                        }
                     }
                 }
             }

@@ -255,7 +255,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\UserBanned.cs" />
     <Compile Include="Events\UserJoined.cs" />
+    <Compile Include="Events\UserUnbanned.cs" />
     <Compile Include="Modules\Administration.cs" />
     <Compile Include="Modules\Crime.cs" />
     <Compile Include="Modules\Gambling.cs" />

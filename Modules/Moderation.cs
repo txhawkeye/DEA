@@ -105,7 +105,7 @@ namespace DEA.Modules
                 await InformSubject(Context.User, "Unmute", userToUnmute, reason);
                 await userToUnmute.RemoveRolesAsync(Context.Guild.GetRole(mutedRoleId));
                 await muteRepo.RemoveMuteAsync(userToUnmute.Id, Context.Guild.Id);
-                await ModLog(Context, "Unmute", userToUnmute, new Color(255, 114, 14), reason);
+                await ModLog(Context, "Unmute", userToUnmute, new Color(12, 255, 129), reason);
                 await ReplyAsync($"{Context.User.Mention} has successfully unmuted {userToUnmute.Mention}");
             }
         }
@@ -117,7 +117,7 @@ namespace DEA.Modules
         public async Task CleanAsync(int count = 25)
         {
             await RankHandler.RankRequired(Context, Ranks.Moderator);
-            var messages = await Context.Channel.GetMessagesAsync(count, CacheMode.AllowDownload).Flatten();
+            var messages = await Context.Channel.GetMessagesAsync(count).Flatten();
             await Context.Channel.DeleteMessagesAsync(messages);
             var tempMsg = await ReplyAsync($"Deleted **{messages.Count()}** message(s)");
             await Task.Delay(5000);
