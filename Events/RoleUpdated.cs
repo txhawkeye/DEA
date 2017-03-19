@@ -6,41 +6,41 @@ using System.Threading.Tasks;
 
 namespace DEA.Events
 {
-    class RoleDeleted
+    class RoleUpdated
     {
         private DiscordSocketClient _client;
 
-        public RoleDeleted(DiscordSocketClient client)
+        public RoleUpdated(DiscordSocketClient client)
         {
             _client = client;
 
-            _client.RoleDeleted += HandleRoleDeleted;
+            _client.RoleUpdated += HandleRoleUpdated;
         }
 
-        private async Task HandleRoleDeleted(SocketRole role)
+        private async Task HandleRoleUpdated(SocketRole roleBefore, SocketRole roleAfter)
         {
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
-                if (role.Guild.GetTextChannel(await guildRepo.GetDetailedLogsChannelId(role.Guild.Id)) != null)
+                if (roleAfter.Guild.GetTextChannel(await guildRepo.GetDetailedLogsChannelId(roleAfter.Guild.Id)) != null)
                 {
                     try
                     {
                         EmbedFooterBuilder footer = new EmbedFooterBuilder()
                         {
                             IconUrl = "http://i.imgur.com/BQZJAqT.png",
-                            Text = $"Case #{await guildRepo.GetCaseNumber(role.Guild.Id)}"
+                            Text = $"Case #{await guildRepo.GetCaseNumber(roleAfter.Guild.Id)}"
                         };
 
                         var builder = new EmbedBuilder()
                         {
                             Color = new Color(12, 255, 129),
-                            Description = $"**Action:** Role Deletion\n**Role:** {role.Name}\n**Id:** {role.Id}",
+                            Description = $"**Action:** Role Modification\n**Role:** {roleAfter.Name}\n**Id:** {roleAfter.Id}",
                             Footer = footer
                         }.WithCurrentTimestamp();
 
-                        await role.Guild.GetTextChannel(await guildRepo.GetDetailedLogsChannelId(role.Guild.Id)).SendMessageAsync("", embed: builder);
-                        await guildRepo.IncrementCaseNumber(role.Guild.Id);
+                        await roleAfter.Guild.GetTextChannel(await guildRepo.GetDetailedLogsChannelId(roleAfter.Guild.Id)).SendMessageAsync("", embed: builder);
+                        await guildRepo.IncrementCaseNumber(roleAfter.Guild.Id);
                     } catch { }
                 }
             }

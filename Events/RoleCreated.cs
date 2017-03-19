@@ -29,17 +29,18 @@ namespace DEA.Events
                         EmbedFooterBuilder footer = new EmbedFooterBuilder()
                         {
                             IconUrl = "http://i.imgur.com/BQZJAqT.png",
-                            Text = role.Id.ToString()
+                            Text = $"Case #{await guildRepo.GetCaseNumber(role.Guild.Id)}"
                         };
 
                         var builder = new EmbedBuilder()
                         {
                             Color = new Color(12, 255, 129),
-                            Description = $"**Action:** Role Creation\n**Role:** {role.Mention}",
+                            Description = $"**Action:** Role Creation\n**Role:** {role.Name}\n**Id:** {role.Id}",
                             Footer = footer
                         }.WithCurrentTimestamp();
-
+                        
                         await role.Guild.GetTextChannel(await guildRepo.GetDetailedLogsChannelId(role.Guild.Id)).SendMessageAsync("", embed: builder);
+                        await guildRepo.IncrementCaseNumber(role.Guild.Id);
                     } catch { }
                 }
             }

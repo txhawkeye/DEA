@@ -87,10 +87,12 @@ namespace DEA.Services
                     {
                         ulong userId = Context.User.Id;
                         var userRepo = new UserRepository(db);
+                        var rate = Config.TEMP_MULTIPLIER_RATE;
+                        if (Config.SPONSOR_IDS.Any(x => x == userId)) rate = Config.SPONSOR_TEMP_MULTIPLIER_RATE;
                         if (DateTime.Now.Subtract(await userRepo.GetLastMessage(userId)).TotalMilliseconds > await userRepo.GetMessageCooldown(userId))
                         {
                             await userRepo.SetLastMessage(userId, DateTime.Now);
-                            await userRepo.SetTemporaryMultiplier(userId, await userRepo.GetTemporaryMultiplier(userId) + Config.TEMP_MULTIPLIER_RATE);
+                            await userRepo.SetTemporaryMultiplier(userId, await userRepo.GetTemporaryMultiplier(userId) + rate);
                             await userRepo.EditCash(Context, await userRepo.GetTemporaryMultiplier(userId) * await userRepo.GetInvestmentMultiplier(userId));
                         }
                     }

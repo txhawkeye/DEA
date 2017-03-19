@@ -11,6 +11,19 @@ namespace DEA.Modules
     public class Administration : ModuleBase<SocketCommandContext>
     {
 
+        [Command("RoleIDs")]
+        [Summary("Gets the ID of all roles in the guild.")]
+        [Remarks("RoleIDs")]
+        public async Task RoleIDs()
+        {
+            string message = null;
+            foreach (var role in Context.Guild.Roles)
+                message += $"{role.Name}: {role.Id}\n";
+            var channel = await Context.User.CreateDMChannelAsync();
+            await channel.SendMessageAsync(message);
+            await ReplyAsync($"{Context.User.Mention}, all Role IDs have been DMed to you!");
+        }
+
         [Command("SetPrefix")]
         [Summary("Sets the guild specific prefix.")]
         [Remarks("SetPrefix <Prefix>")]

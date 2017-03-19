@@ -29,16 +29,17 @@ namespace DEA.Events
                         EmbedFooterBuilder footer = new EmbedFooterBuilder()
                         {
                             IconUrl = "http://i.imgur.com/BQZJAqT.png",
-                            Text = u.Id.ToString()
+                            Text = $"Case #{await guildRepo.GetCaseNumber(u.Guild.Id)}"
                         };
 
                         var builder = new EmbedBuilder()
                         {
                             Color = new Color(255, 114, 14),
-                            Description = $"**Event:** User Left\n**User:** {u}",
+                            Description = $"**Event:** User Left\n**User:** {u}\n**Id:** {u.Id}",
                             Footer = footer
                         }.WithCurrentTimestamp();
 
+                        await guildRepo.IncrementCaseNumber(u.Guild.Id);
                         await u.Guild.GetTextChannel(await guildRepo.GetDetailedLogsChannelId(u.Guild.Id)).SendMessageAsync("", embed: builder);
                     }
                     catch { }

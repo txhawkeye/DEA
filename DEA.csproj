@@ -255,9 +255,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\ChannelCreated.cs" />
+    <Compile Include="Events\ChannelDestroyed.cs" />
+    <Compile Include="Events\ChannelUpdated.cs" />
     <Compile Include="Events\Ready.cs" />
     <Compile Include="Events\RoleCreated.cs" />
     <Compile Include="Events\RoleDeleted.cs" />
+    <Compile Include="Events\RoleUpdated.cs" />
     <Compile Include="Events\UserBanned.cs" />
     <Compile Include="Events\UserJoined.cs" />
     <Compile Include="Events\UserLeft.cs" />

@@ -158,6 +158,7 @@ namespace DEA.Modules
             {
                 if (userMentioned.Id == Context.User.Id) throw new Exception("Hey kids! Look at that retard, he is trying to give money to himself!");
                 var userRepo = new UserRepository(db);
+                if (money < Config.DONATE_MIN) throw new Exception($"Lowest donation is {Config.DONATE_MIN}$.");
                 if (await userRepo.GetCash(Context.User.Id) < money) throw new Exception($"You do not have enough money. Balance: {(await userRepo.GetCash(Context.User.Id)).ToString("C2")}.");
                 if (money < Math.Round(await userRepo.GetCash(Context.User.Id) * Config.MIN_PERCENTAGE, 2)) throw new Exception($"The lowest donation is {Config.MIN_PERCENTAGE * 100}% of your total cash, that is ${Math.Round(await userRepo.GetCash(Context.User.Id) * Config.MIN_PERCENTAGE, 2)}.");
                 await userRepo.EditCash(Context, -money);
@@ -259,7 +260,7 @@ namespace DEA.Modules
                 string prefix = await guildRepo.GetPrefix(Context.Guild.Id);
                 if (role1 == null || role2 == null || role3 == null || role4 == null)
                 {
-                    throw new Exception($"You do not have 4 different functional roles added in with the" +
+                    throw new Exception($"You do not have 4 different functional roles added in with the " +
                                         $"{prefix}SetRankRoles command, therefore the {prefix}ranked command will not work!");
                 }
                 var count1 = Context.Guild.Users.Count(x => x.Roles.Any(y => y.Id == role1.Id));

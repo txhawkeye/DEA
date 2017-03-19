@@ -46,6 +46,10 @@ namespace DEA
             new UserUnbanned(_client);
             new RoleCreated(_client);
             new RoleDeleted(_client);
+            new RoleUpdated(_client);
+            new ChannelCreated(_client);
+            new ChannelDestroyed(_client);
+            new ChannelUpdated(_client);
 
             RecurringFunctions funcs = new RecurringFunctions(_client);
 

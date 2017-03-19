@@ -58,13 +58,14 @@ namespace DEA.Modules
                 if (await IsMod(userToMute)) throw new Exception("You cannot mute another mod!");
                 await InformSubject(Context.User, "Mute", userToMute, reason);
                 await userToMute.AddRolesAsync(mutedRole);
-                await muteRepo.AddMuteAsync(userToMute.Id, Context.Guild.Id, TimeSpan.FromDays(1), DateTime.Now);
-                await ModLog(Context, "Mute", userToMute, new Color(255, 114, 14), reason);
+                await muteRepo.AddMuteAsync(userToMute.Id, Context.Guild.Id, Config.DEFAULT_MUTE_TIME, DateTime.Now);
+                await ModLog(Context, "Mute", userToMute, new Color(255, 114, 14), reason, $"\n**Length:** {Config.DEFAULT_MUTE_TIME.TotalHours} hours");
                 await ReplyAsync($"{Context.User.Mention} has successfully muted {userToMute.Mention}!");
             }
         }
 
         [Command("CustomMute")]
+        [Alias("CMute")]
         [RequireBotPermission(GuildPermission.ManageRoles)]
         [Summary("Temporarily mutes a user for x amount of hours.")]
         [Remarks("CustomMute <Hours> <@User> [Reason]")]
@@ -75,6 +76,8 @@ namespace DEA.Modules
             if (hours < 1) throw new Exception("You may not mute a user for less than 1 hour.");
             using (var db = new DbContext())
             {
+                string time = "hours";
+                if (hours == 1) time = "hour";
                 var guildRepo = new GuildRepository(db);
                 var mutedRole = Context.Guild.GetRole(await guildRepo.GetMutedRoleId(Context.Guild.Id));
                 if (mutedRole == null) throw new Exception($"You may not mute users if the muted role is not valid.\nPlease use the " +
@@ -84,8 +87,8 @@ namespace DEA.Modules
                 await InformSubject(Context.User, "Mute", userToMute, reason);
                 await userToMute.AddRolesAsync(mutedRole);
                 await muteRepo.AddMuteAsync(userToMute.Id, Context.Guild.Id, TimeSpan.FromHours(hours), DateTime.Now);
-                await ModLog(Context, "Mute", userToMute, new Color(255, 114, 14), reason);
-                await ReplyAsync($"{Context.User.Mention} has successfully muted {userToMute.Mention} for {hours} hours!");
+                await ModLog(Context, "Mute", userToMute, new Color(255, 114, 14), reason, $"\n**Length:** {hours} {time}");
+                await ReplyAsync($"{Context.User.Mention} has successfully muted {userToMute.Mention} for {hours} {time}!");
             }
         }
 
@@ -117,6 +120,13 @@ namespace DEA.Modules
         public async Task CleanAsync(int count = 25)
         {
             await RankHandler.RankRequired(Context, Ranks.Moderator);
+            using (var db = new DbContext())
+            {
+                var guildRepo = new GuildRepository(db);
+                if (Context.Channel.Id == await guildRepo.GetModLogChannelId(Context.Guild.Id) ||
+                    Context.Channel.Id == await guildRepo.GetDetailedLogsChannelId(Context.Guild.Id))
+                    throw new Exception("For security reasons, you may not use this command in a log channel.");
+            }
             var messages = await Context.Channel.GetMessagesAsync(count).Flatten();
             await Context.Channel.DeleteMessagesAsync(messages);
             var tempMsg = await ReplyAsync($"Deleted **{messages.Count()}** message(s)!");
@@ -139,7 +149,7 @@ namespace DEA.Modules
             }
         }
 
-        public async Task InformSubject(IUser moderator, string action, IUser subject, [Remainder] string reason)
+        public async Task InformSubject(IUser moderator, string action, IUser subject, string reason)
         {
             try
             {
@@ -148,11 +158,10 @@ namespace DEA.Modules
                     await channel.SendMessageAsync($"{moderator.Mention} has attempted to {action.ToLower()} you.");
                 else
                     await channel.SendMessageAsync($"{moderator.Mention} has attempted to {action.ToLower()} you for the following reason: \"{reason}\"");
-            }
-            catch { }
+            } catch { }
         }
 
-        public async Task ModLog(SocketCommandContext context, string action, IUser subject, Color color, [Remainder] string reason)
+        public async Task ModLog(SocketCommandContext context, string action, IUser subject, Color color, string reason, string extra = null)
         {
             if (!(context.Guild.CurrentUser as IGuildUser).GuildPermissions.EmbedLinks)
                 throw new Exception($"{context.User.Mention}, Command requires guild permission EmbedLinks");
@@ -175,14 +184,14 @@ namespace DEA.Modules
                 {
                     Author = author,
                     Color = color,
-                    Description = $"**Action:** {action}\n**User:** {subject} ({subject.Id})\n**Reason:** {reason}",
+                    Description = $"**Action:** {action}{extra}\n**User:** {subject} ({subject.Id})\n**Reason:** {reason}",
                     Footer = footer
                 }.WithCurrentTimestamp();
 
                 if (Context.Guild.GetTextChannel(await guildRepo.GetModLogChannelId(Context.Guild.Id)) != null)
                 {
-                    await guildRepo.IncrementCaseNumber(Context.Guild.Id);
                     await Context.Guild.GetTextChannel(await guildRepo.GetModLogChannelId(Context.Guild.Id)).SendMessageAsync("", embed: builder);
+                    await guildRepo.IncrementCaseNumber(Context.Guild.Id);
                 }
             }
         }

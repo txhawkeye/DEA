@@ -60,8 +60,8 @@ namespace DEA.Modules
                     && Context.Channel.Id != await guildRepo.GetGambleChannelId(Context.Guild.Id))
                     throw new Exception($"You may only gamble in {Context.Guild.GetTextChannel(await guildRepo.GetGambleChannelId(Context.Guild.Id)).Mention}!");
                 var Cash = await userRepo.GetCash(Context.User.Id);
+                if (bet < Config.BET_MIN) throw new Exception($"Lowest bet is {Config.BET_MIN}$.");
                 if (bet > Cash) throw new Exception($"You do not have enough money. Balance: {(await userRepo.GetCash(Context.User.Id)).ToString("C2")}.");
-                if (bet < Config.MIN_BET) throw new Exception($"Lowest bet is {Config.MIN_BET}$.");
                 if (bet < Math.Round(Cash * Config.MIN_PERCENTAGE, 2)) throw new Exception($"The lowest bet is {Config.MIN_PERCENTAGE * 100}% of your total cash, that is " +
                                                                             $"${Math.Round(Cash * Config.MIN_PERCENTAGE, 2)}.");
                 int roll = new Random().Next(1, 101);

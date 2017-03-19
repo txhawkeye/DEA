@@ -24,28 +24,23 @@ namespace DEA.Modules
                 var userRepo = new UserRepository(db);
                 if (DateTime.Now.Subtract(await userRepo.GetLastWhore(Context.User.Id)).TotalMilliseconds > Config.WHORE_COOLDOWN)
                 {
-                    Random rand = new Random();
-                    float moneyWhored = (float)(rand.Next((int)(Config.HIGHEST_WHORE) * 100)) / 100;
-                    await userRepo.SetLastWhore(Context.User.Id, DateTime.Now);
-                    await userRepo.EditCash(Context, moneyWhored);
-                    await ReplyAsync($"{Context.User.Mention}, you whip it out and manage to rake in {moneyWhored.ToString("C2")}");
+                    int roll = new Random().Next(1, 101);
+                    if (roll > Config.WHORE_ODDS && !Config.SPONSOR_IDS.Any(x => x == Context.User.Id))
+                    {
+                        await userRepo.SetLastWhore(Context.User.Id, DateTime.Now);
+                        await userRepo.EditCash(Context, -Config.WHORE_FINE);
+                        await ReplyAsync($"{Context.User.Mention}, what are the fucking odds that one of your main clients was a cop... You are lucky you only got a {Config.WHORE_FINE.ToString("C2")} fine.");
+                    }
+                    else
+                    {
+                        float moneyWhored = (float)(new Random().Next((int)(Config.MIN_WHORE) * 100, (int)(Config.MAX_WHORE) * 100)) / 100;
+                        await userRepo.SetLastWhore(Context.User.Id, DateTime.Now);
+                        await userRepo.EditCash(Context, moneyWhored);
+                        await ReplyAsync($"{Context.User.Mention}, you whip it out and manage to rake in {moneyWhored.ToString("C2")}");
+                    }
                 }
                 else
-                {
-                    var timeSpan = TimeSpan.FromMilliseconds(Config.WHORE_COOLDOWN - DateTime.Now.Subtract(await userRepo.GetLastWhore(Context.User.Id)).TotalMilliseconds);
-                    var builder = new EmbedBuilder()
-                    {
-                        Title = $"Whore cooldown for {Context.User}",
-                        Description = $"{timeSpan.Hours} Hours\n{timeSpan.Minutes} Minutes\n{timeSpan.Seconds} Seconds",
-                        Color = new Color(49, 62, 255)
-                    };
-                    if (await guildRepo.GetDM(Context.Guild.Id))
-                    {
-                        var channel = await Context.User.CreateDMChannelAsync();
-                        await channel.SendMessageAsync("", embed: builder);
-                    } else
-                        await ReplyAsync("", embed: builder);
-                }
+                    await Cooldown(Context, "Whore", TimeSpan.FromMilliseconds(Config.WHORE_COOLDOWN - DateTime.Now.Subtract(await userRepo.GetLastWhore(Context.User.Id)).TotalMilliseconds));
             }
         }
 
@@ -62,29 +57,23 @@ namespace DEA.Modules
                 var userRepo = new UserRepository(db);
                 if (DateTime.Now.Subtract(await userRepo.GetLastJump(Context.User.Id)).TotalMilliseconds > Config.JUMP_COOLDOWN)
                 {
-                    Random rand = new Random();
-                    float moneyJumped = (float)(rand.Next((int)(Config.HIGHEST_JUMP) * 100)) / 100;
-                    await userRepo.SetLastJump(Context.User.Id, DateTime.Now);
-                    await userRepo.EditCash(Context, moneyJumped);
-                    await ReplyAsync($"{Context.User.Mention}, you jump some random nigga on the streets and manage to get {moneyJumped.ToString("C2")}");
-                }
-                else
-                {
-                    var timeSpan = TimeSpan.FromMilliseconds(Config.JUMP_COOLDOWN - DateTime.Now.Subtract(await userRepo.GetLastJump(Context.User.Id)).TotalMilliseconds);
-                    var builder = new EmbedBuilder()
+                    int roll = new Random().Next(1, 101);
+                    if (roll > Config.JUMP_ODDS && !Config.SPONSOR_IDS.Any(x => x == Context.User.Id))
                     {
-                        Title = $"Jump cooldown for {Context.User}",
-                        Description = $"{timeSpan.Hours} Hours\n{timeSpan.Minutes} Minutes\n{timeSpan.Seconds} Seconds",
-                        Color = new Color(49, 62, 255)
-                    };
-                    if (await guildRepo.GetDM(Context.Guild.Id))
-                    {
-                        var channel = await Context.User.CreateDMChannelAsync();
-                        await channel.SendMessageAsync("", embed: builder);
+                        await userRepo.SetLastJump(Context.User.Id, DateTime.Now);
+                        await userRepo.EditCash(Context, -Config.JUMP_FINE);
+                        await ReplyAsync($"{Context.User.Mention}, turns out the nigga was a black belt, whooped your ass, and brought you in. Court's final ruling was a {Config.JUMP_FINE.ToString("C2")} fine.");
                     }
                     else
-                        await ReplyAsync("", embed: builder);
+                    {
+                        float moneyJumped = (float)(new Random().Next((int)(Config.MIN_JUMP) * 100, (int)(Config.MAX_JUMP) * 100)) / 100;
+                        await userRepo.SetLastJump(Context.User.Id, DateTime.Now);
+                        await userRepo.EditCash(Context, moneyJumped);
+                        await ReplyAsync($"{Context.User.Mention}, you jump some random nigga on the streets and manage to get {moneyJumped.ToString("C2")}");
+                    }
                 }
+                else
+                    await Cooldown(Context, "Jump", TimeSpan.FromMilliseconds(Config.JUMP_COOLDOWN - DateTime.Now.Subtract(await userRepo.GetLastJump(Context.User.Id)).TotalMilliseconds));
             }
         }
 
@@ -101,31 +90,28 @@ namespace DEA.Modules
                 var userRepo = new UserRepository(db);
                 if (DateTime.Now.Subtract(await userRepo.GetLastSteal(Context.User.Id)).TotalMilliseconds > Config.STEAL_COOLDOWN)
                 {
-                    Random rand = new Random();
-                    float moneySteal = (float)(rand.Next((int)(Config.HIGHEST_STEAL) * 100)) / 100;
-                    await userRepo.SetLastSteal(Context.User.Id, DateTime.Now);
-                    await userRepo.EditCash(Context, moneySteal);
-                    string randomStore = Config.STORES[rand.Next(1, Config.STORES.Length) - 1];
-                    await ReplyAsync($"{Context.User.Mention}, you walk in to your local {randomStore}, point a fake gun at the clerk, and manage to walk away " +
-                                     $"with {moneySteal.ToString("C2")}");
+                    int roll = new Random().Next(1, 101);
+                    if (roll > Config.STEAL_ODDS && !Config.SPONSOR_IDS.Any(x => x == Context.User.Id))
+                    {
+                        await userRepo.SetLastSteal(Context.User.Id, DateTime.Now);
+                        await userRepo.EditCash(Context, -Config.STEAL_FINE);
+                        await ReplyAsync($"{Context.User.Mention}, you were on your way out with the cash, but then some hot chick asked you if you " +
+                                         $"wanted to bust a nut. Turns out she was cop, and raped you before turning you in. Since she passed on some " +
+                                         $"nice words to the judge about you not resisting arrest, you managed to walk away with only a " +
+                                         $"{Config.STEAL_FINE.ToString("C2")} fine.");
+                    } 
+                    else
+                    {
+                        float moneySteal = (float)(new Random().Next((int)(Config.MIN_STEAL) * 100, (int)(Config.MAX_STEAL) * 100)) / 100;
+                        await userRepo.SetLastSteal(Context.User.Id, DateTime.Now);
+                        await userRepo.EditCash(Context, moneySteal);
+                        string randomStore = Config.STORES[new Random().Next(1, Config.STORES.Length) - 1];
+                        await ReplyAsync($"{Context.User.Mention}, you walk in to your local {randomStore}, point a fake gun at the clerk, and manage to walk away " +
+                                         $"with {moneySteal.ToString("C2")}");
+                    }
                 }
                 else
-                {
-                    var timeSpan = TimeSpan.FromMilliseconds(Config.STEAL_COOLDOWN - DateTime.Now.Subtract(await userRepo.GetLastSteal(Context.User.Id)).TotalMilliseconds);
-                    var builder = new EmbedBuilder()
-                    {
-                        Title = $"Steal cooldown for {Context.User}",
-                        Description = $"{timeSpan.Hours} Hours\n{timeSpan.Minutes} Minutes\n{timeSpan.Seconds} Seconds",
-                        Color = new Color(49, 62, 255)
-                    };
-                    if (await guildRepo.GetDM(Context.Guild.Id))
-                    {
-                        var channel = await Context.User.CreateDMChannelAsync();
-                        await channel.SendMessageAsync("", embed: builder);
-                    }
-                    else
-                        await ReplyAsync("", embed: builder);
-                }
+                    await Cooldown(Context, "Steal", TimeSpan.FromMilliseconds(Config.STEAL_COOLDOWN - DateTime.Now.Subtract(await userRepo.GetLastSteal(Context.User.Id)).TotalMilliseconds));
             }
         }
 
@@ -167,22 +153,7 @@ namespace DEA.Modules
                     }
                 }
                 else
-                {
-                    var timeSpan = TimeSpan.FromMilliseconds(Config.ROB_COOLDOWN - DateTime.Now.Subtract(await userRepo.GetLastRob(Context.User.Id)).TotalMilliseconds);
-                    var builder = new EmbedBuilder()
-                    {
-                        Title = $"{await guildRepo.GetPrefix(Context.Guild.Id)}Rob cooldown for {Context.User}",
-                        Description = $"{timeSpan.Hours} Hours\n{timeSpan.Minutes} Minutes\n{timeSpan.Seconds} Seconds",
-                        Color = new Color(49, 62, 255)
-                    };
-                    if (await guildRepo.GetDM(Context.Guild.Id))
-                    {
-                        var channel = await Context.User.CreateDMChannelAsync();
-                        await channel.SendMessageAsync("", embed: builder);
-                    }
-                    else
-                        await ReplyAsync("", embed: builder);
-                }
+                    await Cooldown(Context, "Rob", TimeSpan.FromMilliseconds(Config.ROB_COOLDOWN - DateTime.Now.Subtract(await userRepo.GetLastRob(Context.User.Id)).TotalMilliseconds));
             }
         }
 
@@ -202,6 +173,27 @@ namespace DEA.Modules
                     throw new Exception($"You cannot bully someone with role higher or equal to: {role3.Mention}");
                 await userToBully.ModifyAsync(x => x.Nickname = nickname);
                 await ReplyAsync($"{userToBully.Mention} just got ***BULLIED*** by {Context.User.Mention} with his new nickname: \"{nickname}\".");
+            }
+        }
+
+        private async Task Cooldown(SocketCommandContext context, string command, TimeSpan timeSpan)
+        {
+            using (var db = new DbContext())
+            {
+                var guildRepo = new GuildRepository(db);
+                var builder = new EmbedBuilder()
+                {
+                    Title = $"{command} cooldown for {context.User}",
+                    Description = $"{timeSpan.Hours} Hours\n{timeSpan.Minutes} Minutes\n{timeSpan.Seconds} Seconds",
+                    Color = new Color(49, 62, 255)
+                };
+                if (await guildRepo.GetDM(context.Guild.Id))
+                {
+                    var channel = await context.User.CreateDMChannelAsync();
+                    await channel.SendMessageAsync("", embed: builder);
+                }
+                else
+                    await context.Channel.SendMessageAsync("", embed: builder);
             }
         }
     }

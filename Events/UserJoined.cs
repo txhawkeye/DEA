@@ -45,7 +45,7 @@ namespace DEA.Events
                         EmbedFooterBuilder footer = new EmbedFooterBuilder()
                         {
                             IconUrl = "http://i.imgur.com/BQZJAqT.png",
-                            Text = u.Id.ToString()
+                            Text = $"{u.Id}"
                         };
 
                         var builder = new EmbedBuilder()
@@ -56,8 +56,7 @@ namespace DEA.Events
                         }.WithCurrentTimestamp();
 
                         await u.Guild.GetTextChannel(await guildRepo.GetDetailedLogsChannelId(u.Guild.Id)).SendMessageAsync("", embed: builder);
-                    }
-                    catch { }
+                    } catch { }
                 }
             }
         }

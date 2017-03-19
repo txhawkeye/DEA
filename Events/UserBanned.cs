@@ -29,17 +29,18 @@ namespace DEA.Events
                         EmbedFooterBuilder footer = new EmbedFooterBuilder()
                         {
                             IconUrl = "http://i.imgur.com/BQZJAqT.png",
-                            Text = u.Id.ToString()
+                            Text = $"Case #{await guildRepo.GetCaseNumber(guild.Id)}"
                         };
 
                         var builder = new EmbedBuilder()
                         {
                             Color = new Color(255, 0, 0),
-                            Description = $"**Action:** Ban\n**User:** {u}",
+                            Description = $"**Action:** Ban\n**User:** {u}\n**Id:** {u.Id}",
                             Footer = footer
                         }.WithCurrentTimestamp();
 
                         await guild.GetTextChannel(await guildRepo.GetDetailedLogsChannelId(guild.Id)).SendMessageAsync("", embed: builder);
+                        await guildRepo.IncrementCaseNumber(guild.Id);
                     } catch { }
                 }
             }
