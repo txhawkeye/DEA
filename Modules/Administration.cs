@@ -16,6 +16,7 @@ namespace DEA.Modules
         [Remarks("RoleIDs")]
         public async Task RoleIDs()
         {
+            await RankHandler.RankRequired(Context, Ranks.Administrator);
             string message = null;
             foreach (var role in Context.Guild.Roles)
                 message += $"{role.Name}: {role.Id}\n";
@@ -29,9 +30,9 @@ namespace DEA.Modules
         [Remarks("SetPrefix <Prefix>")]
         public async Task SetPrefix(string prefix)
         {
+            await RankHandler.RankRequired(Context, Ranks.Administrator);
             using (var db = new DbContext())
             {
-                await RankHandler.RankRequired(Context, Ranks.Administrator);
                 if (prefix.Length > 3) throw new Exception("The maximum character length of a prefix is 3.");
                 var guildRepo = new GuildRepository(db);
                 await guildRepo.SetPrefix(Context.Guild.Id, prefix);
@@ -44,9 +45,9 @@ namespace DEA.Modules
         [Remarks("SetModRole <@ModRole>")]
         public async Task SetModRole(IRole modRole)
         {
+            await RankHandler.RankRequired(Context, Ranks.Administrator);
             using (var db = new DbContext())
             {
-                await RankHandler.RankRequired(Context, Ranks.Administrator);
                 var guildRepo = new GuildRepository(db);
                 await guildRepo.SetModRoleId(Context.Guild.Id, modRole.Id);
                 await ReplyAsync($"You have successfully set the moderator role to {modRole.Mention}!");
@@ -59,9 +60,9 @@ namespace DEA.Modules
         [Remarks("SetMutedRole <@MutedRole>")]
         public async Task SetMutedRole(IRole mutedRole)
         {
+            await RankHandler.RankRequired(Context, Ranks.Administrator);
             using (var db = new DbContext())
             {
-                await RankHandler.RankRequired(Context, Ranks.Administrator);
                 var guildRepo = new GuildRepository(db);
                 await guildRepo.SetMutedRoleId(Context.Guild.Id, mutedRole.Id);
                 await ReplyAsync($"You have successfully set the muted role to {mutedRole.Mention}!");
@@ -74,9 +75,9 @@ namespace DEA.Modules
         [Remarks("SetRankRoles <Rank Role (1-4)> <@RankRole>")]
         public async Task SetRankRoles(int roleNumber = 0, IRole rankRole = null)
         {
+            await RankHandler.RankRequired(Context, Ranks.Administrator);
             using (var db = new DbContext())
             {
-                await RankHandler.RankRequired(Context, Ranks.Administrator);
                 var guildRepo = new GuildRepository(db);
                 if ((roleNumber != 1 && roleNumber != 2 && roleNumber != 3 && roleNumber != 4) || rankRole == null)
                     throw new Exception($"You are incorrectly using the {await guildRepo.GetPrefix(Context.Guild.Id)}SetRankRoles command.\n" +

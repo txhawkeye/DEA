@@ -129,7 +129,7 @@ namespace DEA.Modules
                     desciption += $"{position}. <@{user.Id}>: " +
                                   //$"{new String(' ', longest - Context.Guild.GetUser(user.Id).Username.Length)}" +
                                   $"{(await userRepo.GetCash(user.Id)).ToString("C2")}\n";
-                    if (position >= 20) break;
+                    if (position >= Config.LEADERBOARD_CAP) break;
                     position++;
                 }
 
@@ -166,7 +166,7 @@ namespace DEA.Modules
                 money -= deaMoney;
                 await userRepo.EditOtherCash(Context, userMentioned.Id, +money);
                 await userRepo.EditOtherCash(Context, Context.Guild.CurrentUser.Id, +deaMoney);
-                await ReplyAsync($"Successfully donated {money.ToString("C2")} to {userMentioned}. DEA has taken a {deaMoney.ToString("C2")} cut out of this donation.");
+                await ReplyAsync($"Successfully donated {money.ToString("C2")} to {userMentioned.Mention}. DEA has taken a {deaMoney.ToString("C2")} cut out of this donation.");
             }
         }
 
