@@ -142,17 +142,18 @@ namespace DEA.Modules
             if (seconds < Config.MIN_CHILL) throw new Exception("You may not chill for less than 5 seconds.");
             if (seconds > Config.MAX_CHILL) throw new Exception("You may not chill for more than one hour.");
             var channel = Context.Channel as SocketTextChannel;
-            if (channel.GetPermissionOverwrite(Context.Guild.EveryoneRole).Value.SendMessages == PermValue.Deny) throw new Exception("This chat is already chilled.");
-            await channel.AddPermissionOverwriteAsync(Context.Guild.EveryoneRole, new OverwritePermissions().Modify(PermValue.Inherit, PermValue.Inherit, PermValue.Inherit, PermValue.Inherit, PermValue.Deny));
+            var perms = channel.GetPermissionOverwrite(Context.Guild.EveryoneRole).Value;
+            if (perms.SendMessages == PermValue.Deny) throw new Exception("This chat is already chilled.");
+            await channel.AddPermissionOverwriteAsync(Context.Guild.EveryoneRole, new OverwritePermissions().Modify(perms.CreateInstantInvite, perms.ManageChannel, perms.AddReactions, perms.ReadMessages, PermValue.Deny));
             await ReplyAsync($"{Context.User.Mention}, chat just got cooled down. Won't heat up until at least {seconds} seconds have passed.");
             Timer t = new Timer(TimeSpan.FromSeconds(seconds).TotalMilliseconds);
-            t.Elapsed += async delegate { await Unchill(channel, t); };
+            t.Elapsed += async delegate { await Unchill(channel, perms, t); };
             t.Start();
         }
 
-        private async Task Unchill(ITextChannel channel, Timer timer)
+        private async Task Unchill(ITextChannel channel, OverwritePermissions permissions, Timer timer)
         {
-            await channel.AddPermissionOverwriteAsync(Context.Guild.EveryoneRole, new OverwritePermissions().Modify(PermValue.Inherit, PermValue.Inherit, PermValue.Inherit, PermValue.Inherit, PermValue.Allow));
+            await channel.AddPermissionOverwriteAsync(Context.Guild.EveryoneRole, new OverwritePermissions().Modify(permissions.CreateInstantInvite, permissions.ManageChannel, permissions.AddReactions, permissions.ReadMessages, PermValue.Allow));
             timer.Stop();
         }
 
