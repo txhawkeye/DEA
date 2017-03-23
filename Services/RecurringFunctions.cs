@@ -26,7 +26,7 @@ namespace DEA.Services
             t.Start();
         }
 
-        private async void OnTimedTempMultiplierReset(Object source, ElapsedEventArgs e)
+        private async void OnTimedTempMultiplierReset(object source, ElapsedEventArgs e)
         {
             using (var db = new DbContext())
             {
@@ -46,13 +46,13 @@ namespace DEA.Services
 
         public void AutoUnmute()
         {
-            Timer t = new Timer(TimeSpan.FromMinutes(10).TotalMilliseconds);
+            Timer t = new Timer(TimeSpan.FromMinutes(5).TotalMilliseconds);
             t.AutoReset = true;
             t.Elapsed += new ElapsedEventHandler(OnTimedAutoUnmute);
             t.Start();
         }
 
-        private async void OnTimedAutoUnmute(Object source, ElapsedEventArgs e)
+        private async void OnTimedAutoUnmute(object source, ElapsedEventArgs e)
         {
             using (var db = new DbContext())
             {
@@ -101,13 +101,13 @@ namespace DEA.Services
         {
             Timer t = new Timer(TimeSpan.FromMinutes(30).TotalMilliseconds);
             t.AutoReset = true;
-            t.Elapsed += new ElapsedEventHandler(OnTimedAutoUnmute);
+            t.Elapsed += new ElapsedEventHandler(OnTimedBanBlacklisted);
             t.Start();
         }
 
-        private async void OnTimeBanBlacklisted()
+        private async void OnTimedBanBlacklisted(object source, ElapsedEventArgs e)
         {
-            foreach(var guild in _client.Guilds)
+            foreach (var guild in _client.Guilds)
             {
                 foreach (var blacklistedId in Config.BLACKLISTED_IDS)
                 {
@@ -126,12 +126,9 @@ namespace DEA.Services
                 var guildRepo = new GuildRepository(db);
                 foreach (var dbGuild in guildRepo.GetAll())
                 {
-                    foreach (var blacklistedId in Config.BLACKLISTED_IDS)
+                    if (_client.GetGuild(dbGuild.Id) != null && Config.BLACKLISTED_IDS.Any(x => x == _client.GetGuild(dbGuild.Id).OwnerId))
                     {
-                        if (_client.GetGuild(dbGuild.Id) != null && _client.GetGuild(dbGuild.Id).OwnerId == blacklistedId)
-                        {
-                            await _client.GetGuild(dbGuild.Id).LeaveAsync();
-                        }
+                        await _client.GetGuild(dbGuild.Id).LeaveAsync();
                     }
                 }
             }

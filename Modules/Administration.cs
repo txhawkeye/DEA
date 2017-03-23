@@ -61,6 +61,8 @@ namespace DEA.Modules
         public async Task SetMutedRole(IRole mutedRole)
         {
             await RankHandler.RankRequired(Context, Ranks.Administrator);
+            if (mutedRole.Position >= Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
+                throw new Exception("You may not set a rank role that is higher in hierarchy than DEA's highest role.");
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
@@ -84,9 +86,7 @@ namespace DEA.Modules
                                          $"Follow up this command with the rank role number and the role to set it to.\n" +
                                          $"Example: **{await guildRepo.GetPrefix(Context.Guild.Id)}SetRankRoles 1 @FirstRole.**");
                 if (rankRole.Position >= Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
-                {
                     throw new Exception("You may not set a rank role that is higher in hierarchy than DEA's highest role.");
-                }
                 if (rankRole.Id == await guildRepo.GetRank1Id(Context.Guild.Id) || rankRole.Id == await guildRepo.GetRank2Id(Context.Guild.Id) ||
                     rankRole.Id == await guildRepo.GetRank3Id(Context.Guild.Id) || rankRole.Id == await guildRepo.GetRank4Id(Context.Guild.Id))
                     throw new Exception("You may not set multiple ranks to the same role!");
@@ -127,7 +127,7 @@ namespace DEA.Modules
         }
 
         [Command("SetDetailedLogs")]
-        [Summary("Sets the moderation log.")]
+        [Summary("Sets the detailed logs.")]
         [Remarks("SetDetailedLogs <#DetailsLogs>")]
         public async Task SetDetailedLogsChannel(ITextChannel detailedLogsChannel)
         {

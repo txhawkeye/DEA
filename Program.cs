@@ -19,11 +19,9 @@ namespace DEA
             PrettyConsole.NewLine("===   DEA   ===");
             PrettyConsole.NewLine();
 
-            
-
             _client = new DiscordSocketClient(new DiscordSocketConfig()
             {
-                LogLevel = LogSeverity.Info,
+                LogLevel = LogSeverity.Warning,
                 AlwaysDownloadUsers = true,
                 MessageCacheSize = 10000
             });

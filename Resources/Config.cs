@@ -14,7 +14,7 @@ public static class Config
 
     public static readonly int MIN_CHAR_LENGTH = 7, LEADERBOARD_CAP = 20, LINE_COOLDOWN = 25000, WHORE_ODDS = 90, JUMP_ODDS = 85,
 
-    STEAL_ODDS = 80;
+    STEAL_ODDS = 80, MIN_CHILL = 5, MAX_CHILL = (int) TimeSpan.FromHours(1).TotalSeconds;
 
     public static readonly float RANK1 = 1000, RANK2 = 2500, RANK3 = 10000, RANK4 = 20000, LINE_COST = 250, POUND_COST = 1000,
 
@@ -32,7 +32,7 @@ public static class Config
 
     SPONSOR_IDS = { 173240343448256513, 243707886642003968, 172611318279307264, 241100352441548813, 266406326513565697,
 
-    266604659500646410 };
+    244622383544008706 };
 
     public static readonly string[] BANKS = { "Bank of America", "Wells Fargo Bank", "JPMorgan Chase Bank", "Capital One Bank",
 

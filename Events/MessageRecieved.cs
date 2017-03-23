@@ -27,7 +27,6 @@ namespace DEA.Services
             await _service.AddModulesAsync(Assembly.GetEntryAssembly());
 
             _client.MessageReceived += HandleCommandAsync;
-            PrettyConsole.Log(LogSeverity.Info, "Commands", $"Ready, loaded {_service.Commands.Count()} commands");
         }
 
         private async Task HandleCommandAsync(SocketMessage s)
@@ -52,32 +51,32 @@ namespace DEA.Services
                 if (msg.HasStringPrefix(prefix, ref argPos) ||
                     msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
                 {
+                    PrettyConsole.Log(LogSeverity.Debug, $"Guild: {Context.Guild.Name}, User: {Context.User}", msg.Content);
                     var result = await _service.ExecuteAsync(Context, argPos);
-                    if (!result.IsSuccess)
+                    if (!result.IsSuccess && result.Error != CommandError.UnknownCommand)
                     {
-                        if (!result.IsSuccess && result.Error != CommandError.UnknownCommand)
-                            try
+                        try
+                        {
+                            var cmd = _service.Search(Context, argPos).Commands.First().Command;
+                            switch (result.ErrorReason)
                             {
-                                var cmd = _service.Search(Context, argPos).Commands.First().Command;
-                                switch (result.ErrorReason)
-                                {
-                                    case "The input text has too many parameters.":
-                                    case "The input text has too few parameters.":
-                                        await msg.Channel.SendMessageAsync($"You are incorrectly using this command. Usage: `{prefix}{cmd.Remarks}`");
-                                        break;
-                                    case "Failed to parse Single":
-                                    case "Failed to parse Int32":
-                                        await msg.Channel.SendMessageAsync($"{Context.User.Mention}, Invalid number.");
-                                        break;
-                                    case "The server responded with error 403: Forbidden":
-                                        await msg.Channel.SendMessageAsync("DEA does not have permission to do that!");
-                                        break;
-                                    default:
-                                        await msg.Channel.SendMessageAsync($"{Context.User.Mention}, {result.ErrorReason}");
-                                        break;
-                                }
+                                case "The input text has too many parameters.":
+                                case "The input text has too few parameters.":
+                                    await msg.Channel.SendMessageAsync($"{Context.User.Mention}, You are incorrectly using this command. Usage: `{prefix}{cmd.Remarks}`");
+                                    break;
+                                case "Failed to parse Single":
+                                case "Failed to parse Int32":
+                                case "Failed to parse Double":
+                                    await msg.Channel.SendMessageAsync($"{Context.User.Mention}, Invalid number.");
+                                    break;
+                                case "The server responded with error 403: Forbidden":
+                                    await msg.Channel.SendMessageAsync($"{Context.User.Mention}, DEA does not have permission to do that!");
+                                    break;
+                                default:
+                                    await msg.Channel.SendMessageAsync($"{Context.User.Mention}, {result.ErrorReason}");
+                                    break;
                             }
-                            catch { }
+                        } catch { }
                     }
                 }
                 else if (msg.ToString().Length >= Config.MIN_CHAR_LENGTH && !msg.ToString().StartsWith(":"))

@@ -5,12 +5,13 @@ using System;
 using Discord.Commands;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Timers;
+using Discord.WebSocket;
 
 namespace DEA.Modules
 {
     public class Moderation : ModuleBase<SocketCommandContext>
     {
-
         [Command("Ban")]
         [Alias("hammer")]
         [RequireBotPermission(GuildPermission.BanMembers)]
@@ -22,7 +23,7 @@ namespace DEA.Modules
             if (await IsMod(userToBan)) throw new Exception("You cannot ban another mod!");
             await InformSubject(Context.User, "Ban", userToBan, reason);
             await Context.Guild.AddBanAsync(userToBan);
-            await ModLog(Context, "Ban", userToBan, new Color(255, 0, 0), reason);
+            await ModLog("Ban", userToBan, new Color(255, 0, 0), reason);
             await ReplyAsync($"{Context.User.Mention} has successfully banned {userToBan.Mention}!");
         }
 
@@ -37,7 +38,7 @@ namespace DEA.Modules
             if (await IsMod(userToKick)) throw new Exception("You cannot kick another mod!");
             await InformSubject(Context.User, "Kick", userToKick, reason);
             await userToKick.KickAsync();
-            await ModLog(Context, "Kick", userToKick, new Color(255, 114, 14), reason);
+            await ModLog("Kick", userToKick, new Color(255, 114, 14), reason);
             await ReplyAsync($"{Context.User.Mention} has successfully kicked {userToKick.Mention}!");
         }
 
@@ -59,7 +60,7 @@ namespace DEA.Modules
                 await InformSubject(Context.User, "Mute", userToMute, reason);
                 await userToMute.AddRolesAsync(mutedRole);
                 await muteRepo.AddMuteAsync(userToMute.Id, Context.Guild.Id, Config.DEFAULT_MUTE_TIME, DateTime.Now);
-                await ModLog(Context, "Mute", userToMute, new Color(255, 114, 14), reason, $"\n**Length:** {Config.DEFAULT_MUTE_TIME.TotalHours} hours");
+                await ModLog("Mute", userToMute, new Color(255, 114, 14), reason, $"\n**Length:** {Config.DEFAULT_MUTE_TIME.TotalHours} hours");
                 await ReplyAsync($"{Context.User.Mention} has successfully muted {userToMute.Mention}!");
             }
         }
@@ -69,7 +70,7 @@ namespace DEA.Modules
         [RequireBotPermission(GuildPermission.ManageRoles)]
         [Summary("Temporarily mutes a user for x amount of hours.")]
         [Remarks("CustomMute <Hours> <@User> [Reason]")]
-        public async Task CustomMute(int hours, IGuildUser userToMute, [Remainder] string reason = "No reason.")
+        public async Task CustomMute(double hours, IGuildUser userToMute, [Remainder] string reason = "No reason.")
         {
             await RankHandler.RankRequired(Context, Ranks.Moderator);
             if (hours > 168) throw new Exception("You may not mute a user for more than a week.");
@@ -87,7 +88,7 @@ namespace DEA.Modules
                 await InformSubject(Context.User, "Mute", userToMute, reason);
                 await userToMute.AddRolesAsync(mutedRole);
                 await muteRepo.AddMuteAsync(userToMute.Id, Context.Guild.Id, TimeSpan.FromHours(hours), DateTime.Now);
-                await ModLog(Context, "Mute", userToMute, new Color(255, 114, 14), reason, $"\n**Length:** {hours} {time}");
+                await ModLog("Mute", userToMute, new Color(255, 114, 14), reason, $"\n**Length:** {hours} {time}");
                 await ReplyAsync($"{Context.User.Mention} has successfully muted {userToMute.Mention} for {hours} {time}!");
             }
         }
@@ -108,7 +109,7 @@ namespace DEA.Modules
                 await InformSubject(Context.User, "Unmute", userToUnmute, reason);
                 await userToUnmute.RemoveRolesAsync(Context.Guild.GetRole(mutedRoleId));
                 await muteRepo.RemoveMuteAsync(userToUnmute.Id, Context.Guild.Id);
-                await ModLog(Context, "Unmute", userToUnmute, new Color(12, 255, 129), reason);
+                await ModLog("Unmute", userToUnmute, new Color(12, 255, 129), reason);
                 await ReplyAsync($"{Context.User.Mention} has successfully unmuted {userToUnmute.Mention}!");
             }
         }
@@ -129,12 +130,33 @@ namespace DEA.Modules
             }
             var messages = await Context.Channel.GetMessagesAsync(count).Flatten();
             await Context.Channel.DeleteMessagesAsync(messages);
-            var tempMsg = await ReplyAsync($"Deleted **{messages.Count()}** message(s)!");
-            await Task.Delay(5000);
-            await tempMsg.DeleteAsync();
         }
 
-        public async Task<bool> IsMod(IGuildUser user)
+        [Command("Chill")]
+        [RequireBotPermission(GuildPermission.Administrator)]
+        [Summary("Prevents users from talking in a specific channel for x amount of seconds.")]
+        [Remarks("Chill [Number of seconds]")]
+        public async Task Chill(int seconds = 30)
+        {
+            await RankHandler.RankRequired(Context, Ranks.Moderator);
+            if (seconds < Config.MIN_CHILL) throw new Exception("You may not chill for less than 5 seconds.");
+            if (seconds > Config.MAX_CHILL) throw new Exception("You may not chill for more than one hour.");
+            var channel = Context.Channel as SocketTextChannel;
+            if (channel.GetPermissionOverwrite(Context.Guild.EveryoneRole).Value.SendMessages == PermValue.Deny) throw new Exception("This chat is already chilled.");
+            await channel.AddPermissionOverwriteAsync(Context.Guild.EveryoneRole, new OverwritePermissions().Modify(PermValue.Inherit, PermValue.Inherit, PermValue.Inherit, PermValue.Inherit, PermValue.Deny));
+            await ReplyAsync($"{Context.User.Mention}, chat just got cooled down. Won't heat up until at least {seconds} seconds have passed.");
+            Timer t = new Timer(TimeSpan.FromSeconds(seconds).TotalMilliseconds);
+            t.Elapsed += async delegate { await Unchill(channel, t); };
+            t.Start();
+        }
+
+        private async Task Unchill(ITextChannel channel, Timer timer)
+        {
+            await channel.AddPermissionOverwriteAsync(Context.Guild.EveryoneRole, new OverwritePermissions().Modify(PermValue.Inherit, PermValue.Inherit, PermValue.Inherit, PermValue.Inherit, PermValue.Allow));
+            timer.Stop();
+        }
+
+        private async Task<bool> IsMod(IGuildUser user)
         {
             if (user.GuildPermissions.Administrator) return true;
             using (var db = new DbContext())
@@ -149,7 +171,7 @@ namespace DEA.Modules
             }
         }
 
-        public async Task InformSubject(IUser moderator, string action, IUser subject, string reason)
+        private async Task InformSubject(IUser moderator, string action, IUser subject, string reason)
         {
             try
             {
@@ -161,10 +183,10 @@ namespace DEA.Modules
             } catch { }
         }
 
-        public async Task ModLog(SocketCommandContext context, string action, IUser subject, Color color, string reason, string extra = null)
+        private async Task ModLog(string action, IUser subject, Color color, string reason, string extra = null)
         {
-            if (!(context.Guild.CurrentUser as IGuildUser).GuildPermissions.EmbedLinks)
-                throw new Exception($"{context.User.Mention}, Command requires guild permission EmbedLinks");
+            if (!(Context.Guild.CurrentUser as IGuildUser).GuildPermissions.EmbedLinks)
+                throw new Exception($"{Context.User.Mention}, Command requires guild permission EmbedLinks");
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
@@ -176,8 +198,8 @@ namespace DEA.Modules
                 };
                 EmbedAuthorBuilder author = new EmbedAuthorBuilder()
                 {
-                    IconUrl = context.User.GetAvatarUrl(),
-                    Name = $"{context.User.Username}#{context.User.Discriminator}"
+                    IconUrl = Context.User.GetAvatarUrl(),
+                    Name = $"{Context.User.Username}#{Context.User.Discriminator}"
                 };
 
                 var builder = new EmbedBuilder()
