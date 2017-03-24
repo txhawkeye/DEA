@@ -52,16 +52,16 @@ namespace System.Modules
                     Color = new Color(0x00AE86),
                     Description = $@"In order to gain money, you must send a message that is at least {Config.MIN_CHAR_LENGTH} characters in length. There is a 30 second cooldown between each message that will give you cash. However, these rates are not fixed. For every message you send, your chatting multiplier(which increases the amount of money you get per message) is increased by {Config.TEMP_MULTIPLIER_RATE}, however, it will be automatically reset every hour.
 
-To view your steadily increasing chatting multiplier, you may use the **{prefix}rate** command, and the **{prefix}money** command to see your cash grow. This command shows you every single variable taken into consideration for every message you send. If you wish to improve these variables, you may use investments. With the **{prefix}investments** command, you may pay to have *permanent* changes to your message rates. These will stack with the chatting multiplier."};
+To view your steadily increasing chatting multiplier, you may use the `{prefix}rate` command, and the `{prefix}money` command to see your cash grow. This command shows you every single variable taken into consideration for every message you send. If you wish to improve these variables, you may use investments. With the `{prefix}investments` command, you may pay to have *permanent* changes to your message rates. These will stack with the chatting multiplier."};
                 var secondBuilder = new EmbedBuilder()
                 {
                     Color = new Color(0x00AE86),
-                    Description = $@"Another common way of gaining money is by gambling, there are loads of different gambling commands, which can all be viewed with the **{prefix}help** command. You might be wondering what is the point of all these commands. This is where ranks come in. Depending on how much money you have, you will get a certain rank. These are the current benfits of each rank, and the money required to get them:
+                    Description = $@"Another common way of gaining money is by gambling, there are loads of different gambling commands, which can all be viewed with the `{prefix}help` command. You might be wondering what is the point of all these commands. This is where ranks come in. Depending on how much money you have, you will get a certain rank. These are the current benfits of each rank, and the money required to get them:
 
-**{Config.RANK1}$:** __{role1.Name}__ can use the **{prefix}jump** command. 
-**{Config.RANK2}$:** __{role2.Name}__ can use the **{prefix}steal** command. 
-**{Config.RANK3}$:** __{role3.Name}__ can change the nickname of ANYONE with **{prefix}bully** command. 
-**{Config.RANK4}$:** __{role4.Name}__ can use the **{prefix}50x2** AND can use the **{prefix}robbery** command."
+**{Config.RANK1}$:** __{role1.Name}__ can use the `{prefix}jump` command. 
+**{Config.RANK2}$:** __{role2.Name}__ can use the `{prefix}steal` command. 
+**{Config.RANK3}$:** __{role3.Name}__ can change the nickname of ANYONE with `{prefix}bully` command. 
+**{Config.RANK4}$:** __{role4.Name}__ can use the `{prefix}50x2` AND can use the `{prefix}robbery` command."
                 };
                 var channel = await Context.User.CreateDMChannelAsync();
                 await channel.SendMessageAsync("", embed: builder);
@@ -116,7 +116,7 @@ To view your steadily increasing chatting multiplier, you may use the **{prefix}
                             {
                                 var command = new EmbedBuilder()
                                 {
-                                    Title = $"{prefix}{cmd.Name}",
+                                    Title = $"{cmd.Name}",
                                     Color = new Color(0x00AE86),
                                     Description = $"**Description:** {cmd.Summary}\n"
                                 };

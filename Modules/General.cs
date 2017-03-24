@@ -325,7 +325,7 @@ namespace DEA.Modules
                 if (role1 == null || role2 == null || role3 == null || role4 == null)
                 {
                     throw new Exception($"You do not have 4 different functional roles added in with the " +
-                                        $"{prefix}SetRankRoles command, therefore the {prefix}ranked command will not work!");
+                                        $"`{prefix}SetRankRoles` command, therefore the `{prefix}ranked` command will not work!");
                 }
                 var count1 = Context.Guild.Users.Count(x => x.Roles.Any(y => y.Id == role1.Id));
                 var count2 = Context.Guild.Users.Count(x => x.Roles.Any(y => y.Id == role2.Id));
