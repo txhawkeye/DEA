@@ -12,6 +12,23 @@ namespace DEA.Modules
 {
     public class General : ModuleBase<SocketCommandContext>
     {
+        [Command("DoubleCash")]
+        [Alias("doublexp", "x2cash")]
+        [Summary("Information on how to obtain double cash when chatting!")]
+        [Remarks("DoubleCash")]
+        public async Task DoubleCash()
+        {
+            using (var db = new DbContext())
+            {
+                var guildRepo = new GuildRepository(db);
+                await ReplyAsync($"{Context.User.Mention}, there is currently a special of DOUBLE CASH for the chatting multplier " +
+                                 $"**ONLY** in the official DEA Server: https://discord.gg/Tuptja9\n" +
+                                 $"Use the `{await guildRepo.GetPrefix(Context.Guild.Id)}info` command for more information about the DEA chatting system!\n" +
+                                 $"You may use the `{await guildRepo.GetPrefix(Context.Guild.Id)}rate` command to view your chatting multiplier!");
+            }
+        }
+
+
         [Command("Investments")]
         [Alias("Investements", "Investement", "Investment")]
         [Summary("Increase your money per message")]
@@ -84,11 +101,11 @@ namespace DEA.Modules
                         {
                             Title = "Current Available Investments:",
                             Color = new Color(0x0000FF),
-                            Description = ($"\n**Cost: {Config.LINE_COST}$** | Command: *{await guildRepo.GetPrefix(Context.Guild.Id)}investments line* | Description: " +
+                            Description = ($"\n**Cost: {Config.LINE_COST}$** | Command: `{await guildRepo.GetPrefix(Context.Guild.Id)}investments line` | Description: " +
                             $"One line of blow. Seems like nothing, yet it's enough to lower the message cooldown from 30 to 25 seconds." +
-                            $"\n**Cost: {Config.POUND_COST}$** | Command: *{await guildRepo.GetPrefix(Context.Guild.Id)}investments pound* | Description: " +
+                            $"\n**Cost: {Config.POUND_COST}$** | Command: `{await guildRepo.GetPrefix(Context.Guild.Id)}investments pound` | Description: " +
                             $"This one pound of coke will double the amount of cash you get per message\n**Cost: {Config.KILO_COST}$** | Command: " +
-                            $"*{await guildRepo.GetPrefix(Context.Guild.Id)}investments kilo* | Description: A kilo of cocaine is more than enough to " +
+                            $"`{await guildRepo.GetPrefix(Context.Guild.Id)}investments kilo` | Description: A kilo of cocaine is more than enough to " +
                             $"quadruple your cash/message.\n These investments stack with the chatting multiplier. However, they do not stack with themselves."),
                         };
                         if (await guildRepo.GetDM(Context.Guild.Id))
@@ -114,38 +131,85 @@ namespace DEA.Modules
             {
                 var guildRepo = new GuildRepository(db);
                 var userRepo = new UserRepository(db);
-                User[] users = userRepo.GetAll().ToArray();
-                User[] sorted = users.OrderByDescending(x => x.Cash).ToArray();
-                string desciption = "";
+                var users = userRepo.GetAll().OrderByDescending(x => x.Cash);
+                string message = "```asciidoc\n= The Richest Traffickers =\n";
                 int position = 1;
-                //int longest = 0;
+                int longest = 0;
 
-                //foreach (User user in sorted)
-                //    if (Context.Guild.GetUser(user.Id).Username.Length > longest) longest = Context.Guild.GetUser(user.Id).Username.Length;
-
-                foreach (User user in sorted)
+                foreach (User user in users)
                 {
                     if (Context.Guild.GetUser(user.Id) == null) continue;
-                    desciption += $"{position}. <@{user.Id}>: " +
-                                  //$"{new String(' ', longest - Context.Guild.GetUser(user.Id).Username.Length)}" +
-                                  $"{(await userRepo.GetCash(user.Id)).ToString("C2")}\n";
+                    if ($"{Context.Guild.GetUser(user.Id)}".Length > longest) longest = $"{position}. {Context.Guild.GetUser(user.Id)}".Length;
+                    if (position >= Config.LEADERBOARD_CAP) {
+                        position = 1;
+                        break;
+                    }
+                    position++;
+                }
+
+                foreach (User user in users)
+                {
+                    if (Context.Guild.GetUser(user.Id) == null) continue;
+                    message += $"{position}. {Context.Guild.GetUser(user.Id)}".PadRight(longest + 2) +
+                               $" :: {(await userRepo.GetCash(user.Id)).ToString("C2")}\n";
                     if (position >= Config.LEADERBOARD_CAP) break;
                     position++;
                 }
 
-                var builder = new EmbedBuilder()
-                {
-                    Title = "The Richest Traffickers",
-                    Color = new Color(0x00AE86),
-                    Description = desciption
-                };
                 if (await guildRepo.GetDM(Context.Guild.Id))
                 {
                     var channel = await Context.User.CreateDMChannelAsync();
-                    await channel.SendMessageAsync("", embed: builder);
+                    await channel.SendMessageAsync($"{message}```");
                 }
                 else
-                    await ReplyAsync("", embed: builder);
+                    await ReplyAsync($"{message}```");
+            }
+        }
+
+        [Command("Rates")]
+        [Alias("highestrate", "ratehighscore", "bestrate", "highestrates", "ratelb", "rateleaderboards")]
+        [Summary("View the richest Drug Traffickers.")]
+        [Remarks("Rates")]
+        [RequireBotPermission(GuildPermission.EmbedLinks)]
+        public async Task Chatters()
+        {
+            using (var db = new DbContext())
+            {
+                var guildRepo = new GuildRepository(db);
+                var userRepo = new UserRepository(db);
+                var users = userRepo.GetAll().OrderByDescending(x => x.TemporaryMultiplier);
+                string message = "```asciidoc\n= The Best Chatters =\n";
+                int position = 1;
+                int longest = 0;
+
+                foreach (User user in users)
+                {
+                    if (Context.Guild.GetUser(user.Id) == null) continue;
+                    if ($"{Context.Guild.GetUser(user.Id)}".Length > longest) longest = $"{position}. {Context.Guild.GetUser(user.Id)}".Length;
+                    if (position >= Config.LEADERBOARD_CAP)
+                    {
+                        position = 1;
+                        break;
+                    }
+                    position++;
+                }
+
+                foreach (User user in users)
+                {
+                    if (Context.Guild.GetUser(user.Id) == null) continue;
+                    message += $"{position}. {Context.Guild.GetUser(user.Id)}".PadRight(longest + 2) +
+                               $" :: {(await userRepo.GetTemporaryMultiplier(user.Id)).ToString("N2")}\n";
+                    if (position >= Config.RATELB_CAP) break;
+                    position++;
+                }
+
+                if (await guildRepo.GetDM(Context.Guild.Id))
+                {
+                    var channel = await Context.User.CreateDMChannelAsync();
+                    await channel.SendMessageAsync($"{message}```");
+                }
+                else
+                    await ReplyAsync($"{message}```");
             }
         }
 

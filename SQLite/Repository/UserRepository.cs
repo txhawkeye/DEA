@@ -4,7 +4,6 @@ using Discord;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
-using Discord.WebSocket;
 
 namespace DEA.SQLite.Repository
 {

@@ -1,5 +1,4 @@
-﻿using Discord;
-using Discord.WebSocket;
+﻿using Discord.WebSocket;
 using System.Threading.Tasks;
 
 namespace DEA.Events
@@ -17,7 +16,7 @@ namespace DEA.Events
 
         private async Task HandleReady()
         {
-            await _client.SetGameAsync("Use $help");
+            await _client.SetGameAsync("$DoubleCash for X2 money!");
         }
 
     }

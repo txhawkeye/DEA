@@ -12,11 +12,11 @@ namespace DEA.Modules
     {
 
         [Command("RoleIDs")]
+        [RequireAdmin]
         [Summary("Gets the ID of all roles in the guild.")]
         [Remarks("RoleIDs")]
         public async Task RoleIDs()
         {
-            await RankHandler.RankRequired(Context, Ranks.Administrator);
             string message = null;
             foreach (var role in Context.Guild.Roles)
                 message += $"{role.Name}: {role.Id}\n";
@@ -26,11 +26,11 @@ namespace DEA.Modules
         }
 
         [Command("SetPrefix")]
+        [RequireAdmin]
         [Summary("Sets the guild specific prefix.")]
         [Remarks("SetPrefix <Prefix>")]
         public async Task SetPrefix(string prefix)
         {
-            await RankHandler.RankRequired(Context, Ranks.Administrator);
             using (var db = new DbContext())
             {
                 if (prefix.Length > 3) throw new Exception("The maximum character length of a prefix is 3.");
@@ -41,11 +41,11 @@ namespace DEA.Modules
         }
 
         [Command("SetModRole")]
+        [RequireAdmin]
         [Summary("Sets the moderator role.")]
         [Remarks("SetModRole <@ModRole>")]
         public async Task SetModRole(IRole modRole)
         {
-            await RankHandler.RankRequired(Context, Ranks.Administrator);
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
@@ -55,12 +55,12 @@ namespace DEA.Modules
         }
 
         [Command("SetMutedRole")]
+        [RequireAdmin]
         [Alias("SetMuteRole")]
         [Summary("Sets the muted role.")]
         [Remarks("SetMutedRole <@MutedRole>")]
         public async Task SetMutedRole(IRole mutedRole)
         {
-            await RankHandler.RankRequired(Context, Ranks.Administrator);
             if (mutedRole.Position >= Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                 throw new Exception("You may not set a rank role that is higher in hierarchy than DEA's highest role.");
             using (var db = new DbContext())
@@ -72,19 +72,19 @@ namespace DEA.Modules
         }
 
         [Command("SetRank")]
+        [RequireAdmin]
         [Alias("setrankroles", "setrole", "setranks", "setroles", "setrankrole")]
         [Summary("Sets the rank roles for the DEA cash system.")]
         [Remarks("SetRankRoles <Rank Role (1-4)> <@RankRole>")]
         public async Task SetRankRoles(int roleNumber = 0, IRole rankRole = null)
         {
-            await RankHandler.RankRequired(Context, Ranks.Administrator);
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
                 if ((roleNumber != 1 && roleNumber != 2 && roleNumber != 3 && roleNumber != 4) || rankRole == null)
-                    throw new Exception($"You are incorrectly using the {await guildRepo.GetPrefix(Context.Guild.Id)}SetRankRoles command.\n" +
+                    throw new Exception($"You are incorrectly using the `{await guildRepo.GetPrefix(Context.Guild.Id)}SetRankRoles` command.\n" +
                                          $"Follow up this command with the rank role number and the role to set it to.\n" +
-                                         $"Example: **{await guildRepo.GetPrefix(Context.Guild.Id)}SetRankRoles 1 @FirstRole.**");
+                                         $"Example: `{await guildRepo.GetPrefix(Context.Guild.Id)}SetRankRoles 1 @FirstRole.`");
                 if (rankRole.Position >= Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                     throw new Exception("You may not set a rank role that is higher in hierarchy than DEA's highest role.");
                 if (rankRole.Id == await guildRepo.GetRank1Id(Context.Guild.Id) || rankRole.Id == await guildRepo.GetRank2Id(Context.Guild.Id) ||
@@ -113,13 +113,13 @@ namespace DEA.Modules
         }
 
         [Command("SetModLog")]
+        [RequireAdmin]
         [Summary("Sets the moderation log.")]
         [Remarks("SetModLog <#ModLog>")]
         public async Task SetModLogChannel(ITextChannel modLogChannel)
         {
             using (var db = new DbContext())
             {
-                await RankHandler.RankRequired(Context, Ranks.Administrator);
                 var guildRepo = new GuildRepository(db);
                 await guildRepo.SetModLogChannelId(Context.Guild.Id, modLogChannel.Id);
                 await ReplyAsync($"You have successfully set the moderator log channel to {modLogChannel.Mention}!");
@@ -127,13 +127,13 @@ namespace DEA.Modules
         }
 
         [Command("SetDetailedLogs")]
+        [RequireAdmin]
         [Summary("Sets the detailed logs.")]
         [Remarks("SetDetailedLogs <#DetailsLogs>")]
         public async Task SetDetailedLogsChannel(ITextChannel detailedLogsChannel)
         {
             using (var db = new DbContext())
             {
-                await RankHandler.RankRequired(Context, Ranks.Administrator);
                 var guildRepo = new GuildRepository(db);
                 await guildRepo.SetDetailedLogsChannelId(Context.Guild.Id, detailedLogsChannel.Id);
                 await ReplyAsync($"You have successfully set the detailed logs channel to {detailedLogsChannel.Mention}!");
@@ -141,6 +141,7 @@ namespace DEA.Modules
         }
 
         [Command("SetGambleChannel")]
+        [RequireAdmin]
         [Alias("SetGamble")]
         [Summary("Sets the gambling channel.")]
         [Remarks("SetGambleChannel <#GambleChannel>")]
@@ -148,7 +149,6 @@ namespace DEA.Modules
         {
             using (var db = new DbContext())
             {
-                await RankHandler.RankRequired(Context, Ranks.Administrator);
                 var guildRepo = new GuildRepository(db);
                 await guildRepo.SetGambleChannelId(Context.Guild.Id, gambleChannel.Id);
                 await ReplyAsync($"You have successfully set the gamble channel to {gambleChannel.Mention}!");
@@ -156,6 +156,7 @@ namespace DEA.Modules
         }
 
         [Command("ChangeDMSettings")]
+        [RequireAdmin]
         [Alias("EnableDM", "DisableDM")]
         [Remarks("ChangeDMSettings")]
         [Summary("Sends all sizeable messages to the DM's of the user.")]
@@ -163,7 +164,6 @@ namespace DEA.Modules
         {
             using (var db = new DbContext())
             {
-                await RankHandler.RankRequired(Context, Ranks.Administrator);
                 var guildRepo = new GuildRepository(db);
                 var DMSettings = await guildRepo.GetDM(Context.Guild.Id);
                 switch (DMSettings)

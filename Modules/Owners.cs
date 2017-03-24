@@ -10,12 +10,12 @@ namespace DEA.Modules
     public class Owners : ModuleBase<SocketCommandContext>
     {
         [Command("Reset")]
+        [RequireBotOwner]
         [Alias("Reset")]
         [Summary("Resets all cooldowns for a specific user.")]
         [Remarks("Reset [@User]")]
         public async Task ResetCooldowns(IGuildUser user = null)
         {
-            await RankHandler.RankRequired(Context, Ranks.Bot_Owner);
             user = user ?? Context.User as IGuildUser;
             using (var db = new DbContext())
             {
@@ -30,11 +30,11 @@ namespace DEA.Modules
         }
 
         [Command("Give")]
+        [RequireBotOwner]
         [Summary("Inject cash into a users balance.")]
         [Remarks("Give <@User> <Amount of cash>")]
         public async Task Give(IGuildUser userMentioned, float money)
         {
-            await RankHandler.RankRequired(Context, Ranks.Bot_Owner);
             using (var db = new DbContext())
             {
                 var userRepo = new UserRepository(db);

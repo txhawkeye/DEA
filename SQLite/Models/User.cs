@@ -5,8 +5,6 @@
 
         public ulong Id { get; set; }
 
-        public bool Blacklisted { get; set; } = false;
-
         public float Cash { get; set; } = 0;
 
         public string LastMessage { get; set; } = "1 / 1 / 2017 0:00:00 AM";

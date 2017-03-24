@@ -120,7 +120,7 @@ To view your steadily increasing chatting multiplier, you may use the **{prefix}
                                     Color = new Color(0x00AE86),
                                     Description = $"**Description:** {cmd.Summary}\n"
                                 };
-                                if (cmd.Remarks != null) command.Description += $"**Usage:** `{cmd.Remarks}`";
+                                if (cmd.Remarks != null) command.Description += $"**Usage:** `{prefix}{cmd.Remarks}`";
                                 await ReplyAsync("", embed: command);
                                 return;
                             }

@@ -32,8 +32,7 @@ namespace DEA.Services
         private async Task HandleCommandAsync(SocketMessage s)
         {
             var msg = s as SocketUserMessage;
-            if (msg == null)
-                return;
+            if (msg == null) return;
 
             var Context = new SocketCommandContext(_client, msg);
 
@@ -41,7 +40,7 @@ namespace DEA.Services
 
             if (!(Context.Channel is SocketTextChannel)) return;
 
-            if ((Context.Guild.CurrentUser as IGuildUser).GetPermissions(Context.Channel as SocketTextChannel).SendMessages == false) return;
+            if (!(Context.Guild.CurrentUser as IGuildUser).GetPermissions(Context.Channel as SocketTextChannel).SendMessages) return;
 
             using (var db = new DbContext())
             {
@@ -87,6 +86,7 @@ namespace DEA.Services
                         ulong userId = Context.User.Id;
                         var userRepo = new UserRepository(db);
                         var rate = Config.TEMP_MULTIPLIER_RATE;
+                        if (Context.Guild.Id == Config.DEA_SERVER_ID) rate = Config.DEA_TEMP_MULTIPLIER_RATE;
                         if (Config.SPONSOR_IDS.Any(x => x == userId)) rate = Config.SPONSOR_TEMP_MULTIPLIER_RATE;
                         if (DateTime.Now.Subtract(await userRepo.GetLastMessage(userId)).TotalMilliseconds > await userRepo.GetMessageCooldown(userId))
                         {

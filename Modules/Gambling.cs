@@ -18,11 +18,11 @@ namespace DEA.Modules
         }
 
         [Command("50x2")]
+        [RequireRank4]
         [Summary("Roll 50 or higher on a 100 sided die, win 2X your bet.")]
         [Remarks("50x2 <Bet>")]
         public async Task X2BetterOdds(float bet)
         {
-            await RankHandler.RankRequired(Context, Ranks.Rank4);
             await Gamble(bet, 50, 1);
         }
 

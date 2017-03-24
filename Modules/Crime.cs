@@ -45,12 +45,12 @@ namespace DEA.Modules
         }
 
         [Command("Jump")]
+        [RequireRank1]
         [Summary("Jump some random nigga in the hood.")]
         [Remarks("Jump")]
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Jump()
         {
-            await RankHandler.RankRequired(Context, Ranks.Rank1);
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
@@ -78,12 +78,12 @@ namespace DEA.Modules
         }
 
         [Command("Steal")]
+        [RequireRank2]
         [Summary("Snipe some goodies from your local stores.")]
         [Remarks("Steal")]
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Steal()
         {
-            await RankHandler.RankRequired(Context, Ranks.Rank2);
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
@@ -115,13 +115,32 @@ namespace DEA.Modules
             }
         }
 
+        [Command("Bully")]
+        [RequireRank3]
+        [Summary("Bully anyone's nickname to whatever you please.")]
+        [Remarks("Bully <@User> <Nickname>")]
+        [RequireBotPermission(GuildPermission.ManageNicknames)]
+        public async Task Bully(SocketGuildUser userToBully, [Remainder] string nickname)
+        {
+            if (nickname.Length > 32) throw new Exception("The length of a nickname may not be longer than 32 characters.");
+            using (var db = new DbContext())
+            {
+                var guildRepo = new GuildRepository(db);
+                var role3 = Context.Guild.GetRole(await guildRepo.GetRank3Id(Context.Guild.Id));
+                if (role3.Position <= userToBully.Roles.OrderByDescending(x => x.Position).First().Position)
+                    throw new Exception($"You cannot bully someone with role higher or equal to: {role3.Mention}");
+                await userToBully.ModifyAsync(x => x.Nickname = nickname);
+                await ReplyAsync($"{userToBully.Mention} just got ***BULLIED*** by {Context.User.Mention} with his new nickname: \"{nickname}\".");
+            }
+        }
+
         [Command("Rob")]
+        [RequireRank4]
         [Summary("Lead a large scale operation on a local bank.")]
         [Remarks("Rob <Amount of cash to spend on resources>")]
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Rob(float resources)
         {
-            await RankHandler.RankRequired(Context, Ranks.Rank4);
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
@@ -154,25 +173,6 @@ namespace DEA.Modules
                 }
                 else
                     await Cooldown(Context, "Rob", TimeSpan.FromMilliseconds(Config.ROB_COOLDOWN - DateTime.Now.Subtract(await userRepo.GetLastRob(Context.User.Id)).TotalMilliseconds));
-            }
-        }
-
-        [Command("Bully")]
-        [Summary("Bully anyone's nickname to whatever you please.")]
-        [Remarks("Bully <@User> <Nickname>")]
-        [RequireBotPermission(GuildPermission.ManageNicknames)]
-        public async Task Bully(SocketGuildUser userToBully, [Remainder] string nickname)
-        {
-            await RankHandler.RankRequired(Context, Ranks.Rank3);
-            if (nickname.Length > 32) throw new Exception("The length of a nickname can be a maximum of 32 characters.");
-            using (var db = new DbContext())
-            {
-                var guildRepo = new GuildRepository(db);
-                var role3 = Context.Guild.GetRole(await guildRepo.GetRank3Id(Context.Guild.Id));
-                if (role3.Position <= userToBully.Roles.OrderByDescending(x => x.Position).First().Position)
-                    throw new Exception($"You cannot bully someone with role higher or equal to: {role3.Mention}");
-                await userToBully.ModifyAsync(x => x.Nickname = nickname);
-                await ReplyAsync($"{userToBully.Mention} just got ***BULLIED*** by {Context.User.Mention} with his new nickname: \"{nickname}\".");
             }
         }
 

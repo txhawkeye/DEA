@@ -16,9 +16,12 @@ namespace DEA.Services
         public RecurringFunctions(DiscordSocketClient client)
         {
             _client = client;
+            ResetTemporaryMultiplier();
+            AutoUnmute();
+            BanBlacklisted();
         }
 
-        public void ResetTemporaryMultiplier()
+        private void ResetTemporaryMultiplier()
         {
             Timer t = new Timer(TimeSpan.FromHours(1).TotalMilliseconds);
             t.AutoReset = true;
@@ -44,7 +47,7 @@ namespace DEA.Services
             }
         }
 
-        public void AutoUnmute()
+        private void AutoUnmute()
         {
             Timer t = new Timer(TimeSpan.FromMinutes(5).TotalMilliseconds);
             t.AutoReset = true;
@@ -69,8 +72,11 @@ namespace DEA.Services
                             var mutedRole = guild.GetRole(await guildRepo.GetMutedRoleId(muted.GuildId));
                             if (mutedRole != null && guild.GetUser(muted.UserId).Roles.Any(x => x.Id == mutedRole.Id))
                             {
-                                try
-                                {
+                                var channel = guild.GetTextChannel(await guildRepo.GetModLogChannelId(guild.Id));
+                                if (channel != null && guild.CurrentUser.GuildPermissions.EmbedLinks && 
+                                    (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).SendMessages
+                                    && (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).EmbedLinks)
+                                { 
                                     await guild.GetUser(muted.UserId).RemoveRolesAsync(mutedRole);
                                     var footer = new EmbedFooterBuilder()
                                     {
@@ -86,9 +92,9 @@ namespace DEA.Services
                                     if (guild.GetTextChannel(await guildRepo.GetModLogChannelId(guild.Id)) != null)
                                     {
                                         await guildRepo.IncrementCaseNumber(guild.Id);
-                                        await guild.GetTextChannel(await guildRepo.GetModLogChannelId(guild.Id)).SendMessageAsync("", embed: builder);
+                                        await channel.SendMessageAsync("", embed: builder);
                                     }
-                                } catch { }
+                                }
                             }
                         }
                         await muteRepo.RemoveMuteAsync(muted.UserId, muted.GuildId);
@@ -97,9 +103,9 @@ namespace DEA.Services
             }
         }
 
-        public void BanBlacklisted()
+        private void BanBlacklisted()
         {
-            Timer t = new Timer(TimeSpan.FromMinutes(30).TotalMilliseconds);
+            Timer t = new Timer(TimeSpan.FromHours(4).TotalMilliseconds);
             t.AutoReset = true;
             t.Elapsed += new ElapsedEventHandler(OnTimedBanBlacklisted);
             t.Start();
@@ -113,10 +119,13 @@ namespace DEA.Services
                 {
                     if (guild.GetUser(blacklistedId) != null)
                     {
-                        try
+                        if (guild.CurrentUser.GuildPermissions.BanMembers && 
+                            guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position > 
+                            guild.GetUser(blacklistedId).Roles.OrderByDescending(x => x.Position).First().Position &&
+                            guild.OwnerId != guild.GetUser(blacklistedId).Id)
                         {
                             await guild.AddBanAsync(guild.GetUser(blacklistedId));
-                        } catch { }
+                        }
                     }
                 }
             }

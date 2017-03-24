@@ -21,7 +21,7 @@ namespace DEA
 
             _client = new DiscordSocketClient(new DiscordSocketConfig()
             {
-                LogLevel = LogSeverity.Warning,
+                LogLevel = LogSeverity.Error,
                 AlwaysDownloadUsers = true,
                 MessageCacheSize = 10000
             });
@@ -38,22 +38,11 @@ namespace DEA
             await _handler.InitializeAsync(_client);
 
             new Ready(_client);
-            new UserJoined(_client);
-            new UserLeft(_client);
-            new UserBanned(_client);
-            new UserUnbanned(_client);
-            new RoleCreated(_client);
-            new RoleDeleted(_client);
-            new RoleUpdated(_client);
-            new ChannelCreated(_client);
-            new ChannelDestroyed(_client);
-            new ChannelUpdated(_client);
+            new UserEvents(_client);
+            new RoleEvents(_client);
+            new ChannelEvents(_client);
 
-            RecurringFunctions funcs = new RecurringFunctions(_client);
-
-            funcs.ResetTemporaryMultiplier();
-            funcs.AutoUnmute();
-            funcs.BanBlacklisted();
+            new RecurringFunctions(_client);
 
             await Task.Delay(-1);
         }

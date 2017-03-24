@@ -68,24 +68,24 @@
       <HintPath>packages\Microsoft.Data.Sqlite.1.1.0\lib\net451\Microsoft.Data.Sqlite.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.EntityFrameworkCore, Version=1.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.EntityFrameworkCore.1.1.0\lib\net451\Microsoft.EntityFrameworkCore.dll</HintPath>
+    <Reference Include="Microsoft.EntityFrameworkCore, Version=1.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.EntityFrameworkCore.1.1.1\lib\net451\Microsoft.EntityFrameworkCore.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.EntityFrameworkCore.Relational, Version=1.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.EntityFrameworkCore.Relational.1.1.0\lib\net451\Microsoft.EntityFrameworkCore.Relational.dll</HintPath>
+    <Reference Include="Microsoft.EntityFrameworkCore.Relational, Version=1.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.EntityFrameworkCore.Relational.1.1.1\lib\net451\Microsoft.EntityFrameworkCore.Relational.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.EntityFrameworkCore.Sqlite, Version=1.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.EntityFrameworkCore.Sqlite.1.1.0\lib\net451\Microsoft.EntityFrameworkCore.Sqlite.dll</HintPath>
+    <Reference Include="Microsoft.EntityFrameworkCore.Sqlite, Version=1.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.EntityFrameworkCore.Sqlite.1.1.1\lib\net451\Microsoft.EntityFrameworkCore.Sqlite.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Extensions.Caching.Abstractions, Version=1.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Extensions.Caching.Abstractions.1.1.0\lib\netstandard1.0\Microsoft.Extensions.Caching.Abstractions.dll</HintPath>
+    <Reference Include="Microsoft.Extensions.Caching.Abstractions, Version=1.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Caching.Abstractions.1.1.1\lib\netstandard1.0\Microsoft.Extensions.Caching.Abstractions.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Extensions.Caching.Memory, Version=1.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Extensions.Caching.Memory.1.1.0\lib\net451\Microsoft.Extensions.Caching.Memory.dll</HintPath>
+    <Reference Include="Microsoft.Extensions.Caching.Memory, Version=1.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Caching.Memory.1.1.1\lib\net451\Microsoft.Extensions.Caching.Memory.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Extensions.DependencyInjection, Version=1.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
@@ -96,16 +96,16 @@
       <HintPath>packages\Microsoft.Extensions.DependencyInjection.Abstractions.1.1.0\lib\netstandard1.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Extensions.Logging, Version=1.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Extensions.Logging.1.1.0\lib\netstandard1.1\Microsoft.Extensions.Logging.dll</HintPath>
+    <Reference Include="Microsoft.Extensions.Logging, Version=1.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Logging.1.1.1\lib\netstandard1.1\Microsoft.Extensions.Logging.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=1.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Extensions.Logging.Abstractions.1.1.0\lib\netstandard1.1\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=1.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Logging.Abstractions.1.1.1\lib\netstandard1.1\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Extensions.Options, Version=1.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Extensions.Options.1.1.0\lib\netstandard1.0\Microsoft.Extensions.Options.dll</HintPath>
+    <Reference Include="Microsoft.Extensions.Options, Version=1.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Options.1.1.1\lib\netstandard1.0\Microsoft.Extensions.Options.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Extensions.Primitives, Version=1.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
@@ -116,12 +116,12 @@
       <HintPath>packages\Microsoft.Win32.Primitives.4.3.0\lib\net46\Microsoft.Win32.Primitives.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.10.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Remotion.Linq, Version=2.1.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
-      <HintPath>packages\Remotion.Linq.2.1.1\lib\net45\Remotion.Linq.dll</HintPath>
+    <Reference Include="Remotion.Linq, Version=2.2.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
+      <HintPath>packages\Remotion.Linq.2.2.0-alpha-002\lib\net45\Remotion.Linq.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -255,17 +255,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Events\ChannelCreated.cs" />
-    <Compile Include="Events\ChannelDestroyed.cs" />
-    <Compile Include="Events\ChannelUpdated.cs" />
+    <Compile Include="Events\ChannelEvents.cs" />
     <Compile Include="Events\Ready.cs" />
-    <Compile Include="Events\RoleCreated.cs" />
-    <Compile Include="Events\RoleDeleted.cs" />
-    <Compile Include="Events\RoleUpdated.cs" />
-    <Compile Include="Events\UserBanned.cs" />
-    <Compile Include="Events\UserJoined.cs" />
-    <Compile Include="Events\UserLeft.cs" />
-    <Compile Include="Events\UserUnbanned.cs" />
+    <Compile Include="Events\RoleEvents.cs" />
+    <Compile Include="Events\UserEvents.cs" />
     <Compile Include="Modules\Administration.cs" />
     <Compile Include="Modules\Crime.cs" />
     <Compile Include="Modules\Gambling.cs" />
@@ -273,20 +266,30 @@
     <Compile Include="Modules\Moderation.cs" />
     <Compile Include="Modules\Owners.cs" />
     <Compile Include="Modules\System.cs" />
+    <Compile Include="Preconditions\RequireAdmin.cs" />
+    <Compile Include="Preconditions\RequireBotOwner.cs" />
+    <Compile Include="Preconditions\RequireModerator.cs" />
+    <Compile Include="Preconditions\RequireRank1.cs" />
+    <Compile Include="Preconditions\RequireRank2.cs" />
+    <Compile Include="Preconditions\RequireRank3.cs" />
+    <Compile Include="Preconditions\RequireRank4.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\Config.cs" />
     <Compile Include="Resources\Ranks.cs" />
     <Compile Include="Events\MessageRecieved.cs" />
+    <Compile Include="Services\Logger.cs" />
     <Compile Include="Services\PrettyConsole.cs" />
     <Compile Include="Services\RankHandler.cs" />
     <Compile Include="Services\RecurringFunctions.cs" />
     <Compile Include="Services\ServiceManager.cs" />
+    <Compile Include="SQLite\Models\Gang.cs" />
     <Compile Include="SQLite\Models\Guild.cs" />
     <Compile Include="SQLite\Models\Mute.cs" />
     <Compile Include="SQLite\Models\User.cs" />
     <Compile Include="SQLite\Repository\BaseRepository.cs" />
     <Compile Include="SQLite\Repository\DatabaseContext.cs" />
+    <Compile Include="SQLite\Repository\GangRepository.cs" />
     <Compile Include="SQLite\Repository\GuildRepository.cs" />
     <Compile Include="SQLite\Repository\IRepository.cs" />
     <Compile Include="SQLite\Repository\MuteRepository.cs" />
