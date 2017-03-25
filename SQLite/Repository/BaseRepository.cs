@@ -51,9 +51,5 @@ namespace DEA.SQLite.Repository
             return _dbContext.Set<TEntity>();
         }
 
-        public TEntity GetById(ulong id)
-        {
-            return _dbContext.Set<TEntity>().Find(id);
-        }
     }
 }

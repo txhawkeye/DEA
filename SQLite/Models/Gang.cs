@@ -3,19 +3,19 @@
     public class Gang
     {
 
-        public ulong LeaderId { get; set; }
+        public ulong LeaderId { get; set; } = 0;
 
         public string Name { get; set; }
 
-        public ulong Member2Id { get; set; }
+        public ulong Member2Id { get; set; } = 0;
 
-        public ulong Member3Id { get; set; }
+        public ulong Member3Id { get; set; } = 0;
 
-        public ulong Member4Id { get; set; }
+        public ulong Member4Id { get; set; } = 0;
 
-        public ulong Member5Id { get; set; }
+        public ulong Member5Id { get; set; } = 0;
 
-        public float Funds { get; set; }
+        public float Wealth { get; set; } = 0;
 
     }
 }

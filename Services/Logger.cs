@@ -9,7 +9,7 @@ namespace DEA.Services
 {
     public static class Logger
     {
-        public static async Task ModLog(SocketCommandContext context, string action, Color color, string reason, IUser subject = null, string extra = null)
+        public static async Task ModLog(SocketCommandContext context, string action, Color color, string reason, IUser subject = null, string extra = "")
         {
             using (var db = new DbContext())
             {

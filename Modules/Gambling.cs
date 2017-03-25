@@ -56,13 +56,14 @@ namespace DEA.Modules
             {
                 var userRepo = new UserRepository(db);
                 var guildRepo = new GuildRepository(db);
+                var user = await userRepo.FetchUserAsync(Context.User.Id);
                 var guild = await guildRepo.FetchGuildAsync(Context.Guild.Id);
                 if (Context.Guild.GetTextChannel(guild.GambleChannelId) != null
                     && Context.Channel.Id != guild.GambleChannelId)
                     throw new Exception($"You may only gamble in {Context.Guild.GetTextChannel(guild.GambleChannelId).Mention}!");
                 var Cash = await userRepo.GetCashAsync(Context.User.Id);
                 if (bet < Config.BET_MIN) throw new Exception($"Lowest bet is {Config.BET_MIN}$.");
-                if (bet > Cash) throw new Exception($"You do not have enough money. Balance: {(await userRepo.GetCashAsync(Context.User.Id)).ToString("C2")}.");
+                if (bet > Cash) throw new Exception($"You do not have enough money. Balance: {user.Cash.ToString("C2")}.");
                 if (bet < Math.Round(Cash * Config.MIN_PERCENTAGE, 2)) throw new Exception($"The lowest bet is {Config.MIN_PERCENTAGE * 100}% of your total cash, that is " +
                                                                             $"${Math.Round(Cash * Config.MIN_PERCENTAGE, 2)}.");
                 int roll = new Random().Next(1, 101);
@@ -70,13 +71,13 @@ namespace DEA.Modules
                 {
                     await userRepo.EditCashAsync(Context, (bet * payoutMultiplier));
                     await ReplyAsync($"{Context.User.Mention}, you rolled: {roll}. Congratulations, you just won {(bet * payoutMultiplier).ToString("C2")}! " +
-                                     $"Balance: {(await userRepo.GetCashAsync(Context.User.Id)).ToString("C2")}.");
+                                     $"Balance: {user.Cash.ToString("C2")}.");
                 }
                 else
                 {
                     await userRepo.EditCashAsync(Context, -bet);
                     await ReplyAsync($"{Context.User.Mention}, you rolled {roll}. Unfortunately, you lost {bet.ToString("C2")}. " +
-                                     $"Balance: {(await userRepo.GetCashAsync(Context.User.Id)).ToString("C2")}.");
+                                     $"Balance: {user.Cash.ToString("C2")}.");
                 }
             }
         }

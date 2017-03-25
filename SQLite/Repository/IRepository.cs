@@ -11,6 +11,5 @@ namespace DEA.SQLite.Repository
         Task DeleteAsync(T entity);
         IQueryable<T> SearchFor(Expression<Func<T, bool>> predicate);
         IQueryable<T> GetAll();
-        T GetById(ulong id);
     }
 }

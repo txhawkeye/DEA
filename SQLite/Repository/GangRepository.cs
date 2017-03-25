@@ -1,5 +1,6 @@
 ﻿using DEA.SQLite.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Threading.Tasks;
 
 namespace DEA.SQLite.Repository
@@ -14,8 +15,25 @@ namespace DEA.SQLite.Repository
             _dbContext = dbContext;
         }
 
-        public async Task<Gang> CreateGang(ulong leaderId, string name)
+        public async Task ModifyAsync(Func<Gang, Task> function, ulong gangId)
         {
+            var gang = await FetchGangAsync(gangId);
+            await function(gang);
+            await UpdateAsync(gang);
+        }
+
+        public async Task<Gang> FetchGangAsync(ulong userId)
+        {
+            var gang = await SearchFor(c => c.LeaderId == userId || c.Member2Id == userId || c.Member3Id == userId
+                                   || c.Member4Id == userId || c.Member5Id == userId).FirstOrDefaultAsync();
+            if (gang == null) throw new Exception("This gang does not exist!");
+            return gang;
+        }
+
+        public async Task<Gang> CreateGangAsync(ulong leaderId, string name)
+        {
+            if (await GetAll().AnyAsync(x => x.Name == name)) throw new Exception($"There is already a gang by the name {name}.");
+            if (name.Length > Config.GANG_NAME_CHAR_LIMIT) throw new Exception($"The length of a gang name may not be longer than {Config.GANG_NAME_CHAR_LIMIT} characters.");
             var CreatedGang = new Gang()
             {
                 LeaderId = leaderId,
@@ -25,26 +43,53 @@ namespace DEA.SQLite.Repository
             return CreatedGang;
         }
 
-        public async Task<bool> InGang(ulong userId)
+        public async Task<Gang> DestroyGangAsync(ulong userId)
+        {
+            var gang = await FetchGangAsync(userId);
+            await DeleteAsync(gang);
+            return gang;
+        }
+
+        public async Task<bool> InGangAsync(ulong userId)
         {
             return await SearchFor(c => c.LeaderId == userId || c.Member2Id == userId || c.Member3Id == userId
                                    || c.Member4Id == userId || c.Member5Id == userId).AnyAsync();
         }
 
-        public async Task AddMember(ulong leaderId, ulong memberId)
+        public async Task<bool> IsMemberOf(ulong memberId, ulong userId)
         {
-            var gang = await FetchGang(leaderId);
-            if (gang.Member2Id == 0) gang.Member2Id = memberId;
-            else if (gang.Member3Id == 0) gang.Member3Id = memberId;
-            else if (gang.Member4Id == 0) gang.Member4Id = memberId;
-            else if (gang.Member5Id == 0) gang.Member5Id = memberId;
+            var gang = await FetchGangAsync(memberId);
+            if (gang.LeaderId == userId || gang.Member2Id == userId || gang.Member3Id == userId || gang.Member4Id == userId ||
+                gang.Member5Id == userId) return true;
+            return false;
+        }
+
+        public async Task<bool> IsFull(ulong userId)
+        {
+            var gang = await FetchGangAsync(userId);
+            if (gang.Member2Id != 0 && gang.Member3Id != 0 && gang.Member4Id != 0 && gang.Member5Id != 0) return true;
+            return false;
+        }
+
+        public async Task RemoveMemberAsync(ulong memberId)
+        {
+            var gang = await FetchGangAsync(memberId);
+            if (gang.LeaderId == memberId) gang.LeaderId = 0;
+            else if (gang.Member2Id == memberId) gang.Member2Id = 0;
+            else if (gang.Member3Id == memberId) gang.Member3Id = 0;
+            else if (gang.Member4Id == memberId) gang.Member4Id = 0;
+            else if (gang.Member5Id == memberId) gang.Member5Id = 0;
             await UpdateAsync(gang);
         }
 
-        private async Task<Gang> FetchGang(ulong userId)
+        public async Task AddMemberAsync(ulong userId, ulong newMemberId)
         {
-            return await SearchFor(c => c.LeaderId == userId || c.Member2Id == userId || c.Member3Id == userId 
-                                   || c.Member4Id == userId || c.Member5Id == userId).FirstOrDefaultAsync();
+            var gang = await FetchGangAsync(userId);
+            if (gang.Member2Id == 0) gang.Member2Id = newMemberId;
+            else if (gang.Member3Id == 0) gang.Member3Id = newMemberId;
+            else if (gang.Member4Id == 0) gang.Member4Id = newMemberId;
+            else if (gang.Member5Id == 0) gang.Member5Id = newMemberId;
+            await UpdateAsync(gang);
         }
 
     }

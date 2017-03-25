@@ -40,6 +40,7 @@ namespace DEA.Modules
             {
                 var userRepo = new UserRepository(db);
                 var guildRepo = new GuildRepository(db);
+                var gangRepo = new GangRepository(db);
                 var guild = await guildRepo.FetchGuildAsync(Context.Guild.Id);
                 var user = await userRepo.FetchUserAsync(Context.User.Id);
                 float cash = await userRepo.GetCashAsync(Context.User.Id);
@@ -285,11 +286,11 @@ namespace DEA.Modules
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Rate(IGuildUser userToView = null)
         {
+            userToView = userToView ?? Context.User as IGuildUser;
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
                 var userRepo = new UserRepository(db);
-                userToView = userToView ?? Context.User as IGuildUser;
                 var user = await userRepo.FetchUserAsync(userToView.Id);
                 var builder = new EmbedBuilder()
                 {

@@ -36,6 +36,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Discord.Addons.InteractiveCommands, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Discord.Addons.InteractiveCommands.1.2.1\lib\netstandard1.3\Discord.Addons.InteractiveCommands.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Discord.Net.Commands, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Discord.Net.Commands.1.0.0-rc-00614\lib\netstandard1.3\Discord.Net.Commands.dll</HintPath>
       <Private>True</Private>
@@ -262,13 +266,17 @@
     <Compile Include="Modules\Administration.cs" />
     <Compile Include="Modules\Crime.cs" />
     <Compile Include="Modules\Gambling.cs" />
+    <Compile Include="Modules\Gangs.cs" />
     <Compile Include="Modules\General.cs" />
     <Compile Include="Modules\Moderation.cs" />
     <Compile Include="Modules\Owners.cs" />
     <Compile Include="Modules\System.cs" />
+    <Compile Include="Preconditions\RequireGangLeader.cs" />
+    <Compile Include="Preconditions\RequireInGang.cs" />
     <Compile Include="Preconditions\RequireAdmin.cs" />
     <Compile Include="Preconditions\RequireBotOwner.cs" />
     <Compile Include="Preconditions\RequireModerator.cs" />
+    <Compile Include="Preconditions\RequireNoGang.cs" />
     <Compile Include="Preconditions\RequireRank1.cs" />
     <Compile Include="Preconditions\RequireRank2.cs" />
     <Compile Include="Preconditions\RequireRank3.cs" />
