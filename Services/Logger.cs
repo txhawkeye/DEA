@@ -14,11 +14,11 @@ namespace DEA.Services
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
-
+                var guild = await guildRepo.FetchGuildAsync(context.Guild.Id);
                 EmbedFooterBuilder footer = new EmbedFooterBuilder()
                 {
                     IconUrl = "http://i.imgur.com/BQZJAqT.png",
-                    Text = $"Case #{await guildRepo.GetCaseNumber(context.Guild.Id)}"
+                    Text = $"Case #{guild.CaseNumber}"
                 };
                 EmbedAuthorBuilder author = new EmbedAuthorBuilder()
                 {
@@ -36,10 +36,10 @@ namespace DEA.Services
                     Footer = footer
                 }.WithCurrentTimestamp();
 
-                if (context.Guild.GetTextChannel(await guildRepo.GetModLogChannelId(context.Guild.Id)) != null)
+                if (context.Guild.GetTextChannel(guild.ModLogChannelId) != null)
                 {
-                    await context.Guild.GetTextChannel(await guildRepo.GetModLogChannelId(context.Guild.Id)).SendMessageAsync("", embed: builder);
-                    await guildRepo.IncrementCaseNumber(context.Guild.Id);
+                    await context.Guild.GetTextChannel(guild.ModLogChannelId).SendMessageAsync("", embed: builder);
+                    await guildRepo.ModifyAsync(x => { x.CaseNumber++; return Task.CompletedTask; }, context.Guild.Id);
                 }
             }
         }
@@ -49,13 +49,14 @@ namespace DEA.Services
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
-                if (guild.GetTextChannel(await guildRepo.GetDetailedLogsChannelId(guild.Id)) != null)
+                var guildData = await guildRepo.FetchGuildAsync(guild.Id);
+                if (guild.GetTextChannel(guildData.DetailedLogsChannelId) != null)
                 {
-                    var channel = guild.GetTextChannel(await guildRepo.GetDetailedLogsChannelId(guild.Id));
+                    var channel = guild.GetTextChannel(guildData.DetailedLogsChannelId);
                     if (guild.CurrentUser.GuildPermissions.EmbedLinks && (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).SendMessages
                         && (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).EmbedLinks)
                     {
-                        string caseText = $"Case #{await guildRepo.GetCaseNumber(guild.Id)}";
+                        string caseText = $"Case #{guildData.CaseNumber}";
                         if (!incrementCaseNumber) caseText = id.ToString();
                         EmbedFooterBuilder footer = new EmbedFooterBuilder()
                         {
@@ -72,8 +73,8 @@ namespace DEA.Services
                             Footer = footer
                         }.WithCurrentTimestamp();
 
-                        await guild.GetTextChannel(await guildRepo.GetDetailedLogsChannelId(guild.Id)).SendMessageAsync("", embed: builder);
-                        if (incrementCaseNumber) await guildRepo.IncrementCaseNumber(guild.Id);
+                        await guild.GetTextChannel(guildData.DetailedLogsChannelId).SendMessageAsync("", embed: builder);
+                        if (incrementCaseNumber) await guildRepo.ModifyAsync(x => { x.CaseNumber++; return Task.CompletedTask; }, guild.Id);
                     }
                 }
             }

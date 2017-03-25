@@ -30,7 +30,7 @@ namespace DEA.Events
                 var guildRepo = new GuildRepository(db);
                 var muteRepo = new MuteRepository(db);
                 var user = u as IGuildUser;
-                var mutedRole = user.Guild.GetRole(await guildRepo.GetMutedRoleId(user.Guild.Id));
+                var mutedRole = user.Guild.GetRole((await guildRepo.FetchGuildAsync(user.Guild.Id)).MutedRoleId);
                 if (mutedRole != null && u.Guild.CurrentUser.GuildPermissions.ManageRoles &&
                     mutedRole.Position < u.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                 {

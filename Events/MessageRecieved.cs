@@ -46,7 +46,7 @@ namespace DEA.Services
             {
                 int argPos = 0;
                 var guildRepo = new GuildRepository(db);
-                string prefix = await guildRepo.GetPrefix(Context.Guild.Id);
+                string prefix = (await guildRepo.FetchGuildAsync(Context.Guild.Id)).Prefix;
                 if (msg.HasStringPrefix(prefix, ref argPos) ||
                     msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
                 {
@@ -85,14 +85,15 @@ namespace DEA.Services
                     {
                         ulong userId = Context.User.Id;
                         var userRepo = new UserRepository(db);
+                        var user = await userRepo.FetchUserAsync(Context.User.Id);
                         var rate = Config.TEMP_MULTIPLIER_RATE;
                         if (Context.Guild.Id == Config.DEA_SERVER_ID) rate = Config.DEA_TEMP_MULTIPLIER_RATE;
                         if (Config.SPONSOR_IDS.Any(x => x == userId)) rate = Config.SPONSOR_TEMP_MULTIPLIER_RATE;
-                        if (DateTime.Now.Subtract(await userRepo.GetLastMessage(userId)).TotalMilliseconds > await userRepo.GetMessageCooldown(userId))
+                        if (DateTime.Now.Subtract(DateTime.Parse(user.LastMessage)).TotalMilliseconds > user.MessageCooldown)
                         {
-                            await userRepo.SetLastMessage(userId, DateTime.Now);
-                            await userRepo.SetTemporaryMultiplier(userId, await userRepo.GetTemporaryMultiplier(userId) + rate);
-                            await userRepo.EditCash(Context, await userRepo.GetTemporaryMultiplier(userId) * await userRepo.GetInvestmentMultiplier(userId));
+                            await userRepo.ModifyAsync(x => { x.LastMessage = DateTime.Now.ToString(); return Task.CompletedTask; }, Context.User.Id);
+                            await userRepo.ModifyAsync(x => { x.TemporaryMultiplier = user.TemporaryMultiplier + rate; return Task.CompletedTask; }, Context.User.Id);
+                            await userRepo.EditCashAsync(Context, user.TemporaryMultiplier * user.InvestmentMultiplier);
                         }
                     }
                 }

@@ -17,13 +17,13 @@ namespace Discord.Commands
                 var guildRepo = new GuildRepository(db);
                 var userRepo = new UserRepository(db);
                 var user = await context.Guild.GetUserAsync(context.User.Id) as IGuildUser;
-                var role4Id = await guildRepo.GetRank4Id(context.Guild.Id);
-                if (context.Guild.GetRole(role4Id) == null)
+                var guild = await guildRepo.FetchGuildAsync(context.Guild.Id);
+                if (context.Guild.GetRole(guild.Rank4Id) == null)
                     return PreconditionResult.FromError($"This command may not be used if the forth rank role does not exist.\n" +
-                                                        $"Use the `{await guildRepo.GetPrefix(context.Guild.Id)}SetRankRoles` command to change that.");
-                if (user.RoleIds.All(x => x != role4Id))
-                    return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired role: {context.Guild.GetRole(role4Id).Mention}");
-                if (await userRepo.GetCash(user.Id) < Config.RANK4)
+                                                        $"Use the `{guild.Prefix}SetRankRoles` command to change that.");
+                if (user.RoleIds.All(x => x != guild.Rank4Id))
+                    return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired role: {context.Guild.GetRole(guild.Rank4Id).Mention}");
+                if (await userRepo.GetCashAsync(user.Id) < Config.RANK4)
                     return PreconditionResult.FromError("Hmmm.... It seems you did not get that rank legitimately.");
                 return PreconditionResult.FromSuccess();
             }

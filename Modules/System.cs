@@ -37,11 +37,12 @@ namespace System.Modules
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
-                var role1 = Context.Guild.GetRole(await guildRepo.GetRank1Id(Context.Guild.Id));
-                var role2 = Context.Guild.GetRole(await guildRepo.GetRank2Id(Context.Guild.Id));
-                var role3 = Context.Guild.GetRole(await guildRepo.GetRank3Id(Context.Guild.Id));
-                var role4 = Context.Guild.GetRole(await guildRepo.GetRank4Id(Context.Guild.Id));
-                string prefix = await guildRepo.GetPrefix(Context.Guild.Id);
+                var guild = await guildRepo.FetchGuildAsync(Context.Guild.Id);
+                var role1 = Context.Guild.GetRole(guild.Rank1Id);
+                var role2 = Context.Guild.GetRole(guild.Rank2Id);
+                var role3 = Context.Guild.GetRole(guild.Rank3Id);
+                var role4 = Context.Guild.GetRole(guild.Rank4Id);
+                string prefix = guild.Prefix;
                 if (role1 == null || role2 == null || role3 == null || role4 == null)
                 {
                     throw new Exception($"You do not have 4 different functional roles added in with the" +
@@ -81,7 +82,7 @@ To view your steadily increasing chatting multiplier, you may use the `{prefix}r
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
-                prefix = await guildRepo.GetPrefix(Context.Guild.Id);
+                prefix = (await guildRepo.FetchGuildAsync(Context.Guild.Id)).Prefix;
             }
             
             List<string> messages = new List<string>();

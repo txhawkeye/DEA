@@ -53,9 +53,10 @@ namespace DEA.Modules
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
-                var mutedRole = Context.Guild.GetRole(await guildRepo.GetMutedRoleId(Context.Guild.Id));
+                var guild = await guildRepo.FetchGuildAsync(Context.Guild.Id);
+                var mutedRole = Context.Guild.GetRole(guild.MutedRoleId);
                 if (mutedRole == null) throw new Exception($"You may not mute users if the muted role is not valid.\nPlease use the " +
-                                                           $"`{await guildRepo.GetPrefix(Context.Guild.Id)}SetMutedRole` command to change that.");
+                                                           $"`{guild.Prefix}SetMutedRole` command to change that.");
                 var muteRepo = new MuteRepository(db);
                 if (await IsMod(userToMute)) throw new Exception("You cannot mute another mod!");
                 await InformSubject(Context.User, "Mute", userToMute, reason);
@@ -81,9 +82,10 @@ namespace DEA.Modules
                 string time = "hours";
                 if (hours == 1) time = "hour";
                 var guildRepo = new GuildRepository(db);
-                var mutedRole = Context.Guild.GetRole(await guildRepo.GetMutedRoleId(Context.Guild.Id));
+                var guild = await guildRepo.FetchGuildAsync(Context.Guild.Id);
+                var mutedRole = Context.Guild.GetRole(guild.MutedRoleId);
                 if (mutedRole == null) throw new Exception($"You may not mute users if the muted role is not valid.\nPlease use the " +
-                                                           $"{guildRepo.GetPrefix(Context.Guild.Id)}SetMutedRole command to change that.");
+                                                           $"{guild.Prefix}SetMutedRole command to change that.");
                 var muteRepo = new MuteRepository(db);
                 if (await IsMod(userToMute)) throw new Exception("You cannot mute another mod!");
                 await InformSubject(Context.User, "Mute", userToMute, reason);
@@ -104,7 +106,7 @@ namespace DEA.Modules
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
-                var mutedRoleId = await guildRepo.GetMutedRoleId(Context.Guild.Id);
+                var mutedRoleId = (await guildRepo.FetchGuildAsync(Context.Guild.Id)).MutedRoleId;
                 if (userToUnmute.RoleIds.All(x => x != mutedRoleId)) throw new Exception("You cannot unmute a user who isn't muted.");
                 var muteRepo = new MuteRepository(db);
                 await InformSubject(Context.User, "Unmute", userToUnmute, reason);
@@ -127,8 +129,8 @@ namespace DEA.Modules
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
-                if (Context.Channel.Id == await guildRepo.GetModLogChannelId(Context.Guild.Id) ||
-                    Context.Channel.Id == await guildRepo.GetDetailedLogsChannelId(Context.Guild.Id))
+                var guild = await guildRepo.FetchGuildAsync(Context.Guild.Id);
+                if (Context.Channel.Id == guild.ModLogChannelId || Context.Channel.Id == guild.DetailedLogsChannelId)
                     throw new Exception("For security reasons, you may not use this command in a log channel.");
             }
             var messages = await Context.Channel.GetMessagesAsync(count).Flatten();
@@ -168,7 +170,7 @@ namespace DEA.Modules
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
-                var modRoleId = await guildRepo.GetModRoleId(user.GuildId);
+                var modRoleId = (await guildRepo.FetchGuildAsync(Context.Guild.Id)).ModRoleId;
                 if (user.Guild.GetRole(modRoleId) != null)
                 {
                     if (user.RoleIds.Any(x => x == modRoleId)) return true;

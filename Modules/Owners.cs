@@ -20,11 +20,15 @@ namespace DEA.Modules
             using (var db = new DbContext())
             {
                 var userRepo = new UserRepository(db);
-                await userRepo.SetLastWhore(user.Id, DateTime.Today.AddDays(-1));
-                await userRepo.SetLastSteal(user.Id, DateTime.Today.AddDays(-1));
-                await userRepo.SetLastRob(user.Id, DateTime.Today.AddDays(-1));
-                await userRepo.SetLastJump(user.Id, DateTime.Today.AddDays(-1));
-                await userRepo.SetLastMessage(user.Id, DateTime.Today.AddDays(-1));
+                var time = DateTime.Today.AddDays(-5).ToString();
+                await userRepo.ModifyAsync(x => {
+                    x.LastWhore = time;
+                    x.LastJump = time;
+                    x.LastSteal = time;
+                    x.LastRob = time;
+                    x.LastMessage = time;
+                    return Task.CompletedTask;
+                    }, Context.User.Id);
                 await ReplyAsync($"Successfully reset all of {user.Mention} cooldowns.");
             }
         }
@@ -38,7 +42,7 @@ namespace DEA.Modules
             using (var db = new DbContext())
             {
                 var userRepo = new UserRepository(db);
-                await userRepo.EditOtherCash(Context, userMentioned.Id, +money);
+                await userRepo.EditOtherCashAsync(Context, userMentioned.Id, +money);
                 await ReplyAsync($"Successfully given {money.ToString("C2")} to {userMentioned}.");
             }
         }

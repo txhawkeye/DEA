@@ -35,7 +35,7 @@ namespace DEA.Modules
             {
                 if (prefix.Length > 3) throw new Exception("The maximum character length of a prefix is 3.");
                 var guildRepo = new GuildRepository(db);
-                await guildRepo.SetPrefix(Context.Guild.Id, prefix);
+                await guildRepo.ModifyAsync(x => { x.Prefix = prefix; return Task.CompletedTask; }, Context.Guild.Id);
                 await ReplyAsync($"You have successfully set the prefix to {prefix}!");
             }
         }
@@ -49,7 +49,7 @@ namespace DEA.Modules
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
-                await guildRepo.SetModRoleId(Context.Guild.Id, modRole.Id);
+                await guildRepo.ModifyAsync(x => { x.ModRoleId = modRole.Id; return Task.CompletedTask; }, Context.Guild.Id);
                 await ReplyAsync($"You have successfully set the moderator role to {modRole.Mention}!");
             }
         }
@@ -66,7 +66,7 @@ namespace DEA.Modules
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
-                await guildRepo.SetMutedRoleId(Context.Guild.Id, mutedRole.Id);
+                await guildRepo.ModifyAsync(x => { x.MutedRoleId = mutedRole.Id; return Task.CompletedTask; }, Context.Guild.Id);
                 await ReplyAsync($"You have successfully set the muted role to {mutedRole.Mention}!");
             }
         }
@@ -81,31 +81,31 @@ namespace DEA.Modules
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
+                var guild = await guildRepo.FetchGuildAsync(Context.Guild.Id);
                 if ((roleNumber != 1 && roleNumber != 2 && roleNumber != 3 && roleNumber != 4) || rankRole == null)
-                    throw new Exception($"You are incorrectly using the `{await guildRepo.GetPrefix(Context.Guild.Id)}SetRankRoles` command.\n" +
+                    throw new Exception($"You are incorrectly using the `{guild.Prefix}SetRankRoles` command.\n" +
                                          $"Follow up this command with the rank role number and the role to set it to.\n" +
-                                         $"Example: `{await guildRepo.GetPrefix(Context.Guild.Id)}SetRankRoles 1 @FirstRole.`");
+                                         $"Example: `{guild.Prefix}SetRankRoles 1 @FirstRole.`");
                 if (rankRole.Position >= Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                     throw new Exception("You may not set a rank role that is higher in hierarchy than DEA's highest role.");
-                if (rankRole.Id == await guildRepo.GetRank1Id(Context.Guild.Id) || rankRole.Id == await guildRepo.GetRank2Id(Context.Guild.Id) ||
-                    rankRole.Id == await guildRepo.GetRank3Id(Context.Guild.Id) || rankRole.Id == await guildRepo.GetRank4Id(Context.Guild.Id))
+                if (rankRole.Id == guild.Rank1Id || rankRole.Id == guild.Rank2Id || rankRole.Id == guild.Rank3Id || rankRole.Id == guild.Rank4Id)
                     throw new Exception("You may not set multiple ranks to the same role!");
                 switch (roleNumber)
                 {
                     case 1:
-                        await guildRepo.SetRank1Id(Context.Guild.Id, rankRole.Id);
+                        await guildRepo.ModifyAsync(x => { x.Rank1Id = rankRole.Id; return Task.CompletedTask; }, Context.Guild.Id);
                         await ReplyAsync($"You have successfully set the first rank role to {rankRole.Mention}!");
                         break;
                     case 2:
-                        await guildRepo.SetRank2Id(Context.Guild.Id, rankRole.Id);
+                        await guildRepo.ModifyAsync(x => { x.Rank2Id = rankRole.Id; return Task.CompletedTask; }, Context.Guild.Id);
                         await ReplyAsync($"You have successfully set the second rank role to {rankRole.Mention}!");
                         break;
                     case 3:
-                        await guildRepo.SetRank3Id(Context.Guild.Id, rankRole.Id);
+                        await guildRepo.ModifyAsync(x => { x.Rank3Id = rankRole.Id; return Task.CompletedTask; }, Context.Guild.Id);
                         await ReplyAsync($"You have successfully set the third rank role to {rankRole.Mention}!");
                         break;
                     case 4:
-                        await guildRepo.SetRank4Id(Context.Guild.Id, rankRole.Id);
+                        await guildRepo.ModifyAsync(x => { x.Rank4Id = rankRole.Id; return Task.CompletedTask; }, Context.Guild.Id);
                         await ReplyAsync($"You have successfully set the fourth rank role to {rankRole.Mention}!");
                         break;
                 }
@@ -121,7 +121,7 @@ namespace DEA.Modules
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
-                await guildRepo.SetModLogChannelId(Context.Guild.Id, modLogChannel.Id);
+                await guildRepo.ModifyAsync(x => { x.ModLogChannelId = modLogChannel.Id; return Task.CompletedTask; }, Context.Guild.Id);
                 await ReplyAsync($"You have successfully set the moderator log channel to {modLogChannel.Mention}!");
             }
         }
@@ -135,7 +135,7 @@ namespace DEA.Modules
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
-                await guildRepo.SetDetailedLogsChannelId(Context.Guild.Id, detailedLogsChannel.Id);
+                await guildRepo.ModifyAsync(x => { x.DetailedLogsChannelId = detailedLogsChannel.Id; return Task.CompletedTask; }, Context.Guild.Id);
                 await ReplyAsync($"You have successfully set the detailed logs channel to {detailedLogsChannel.Mention}!");
             }
         }
@@ -150,7 +150,7 @@ namespace DEA.Modules
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
-                await guildRepo.SetGambleChannelId(Context.Guild.Id, gambleChannel.Id);
+                await guildRepo.ModifyAsync(x => { x.GambleChannelId = gambleChannel.Id; return Task.CompletedTask; }, Context.Guild.Id);
                 await ReplyAsync($"You have successfully set the gamble channel to {gambleChannel.Mention}!");
             } 
         }
@@ -165,15 +165,15 @@ namespace DEA.Modules
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
-                var DMSettings = await guildRepo.GetDM(Context.Guild.Id);
+                var DMSettings = (await guildRepo.FetchGuildAsync(Context.Guild.Id)).DM;
                 switch (DMSettings)
                 {
                     case true:
-                        await guildRepo.SetDM(Context.Guild.Id, false);
+                        await guildRepo.ModifyAsync(x => { x.DM = false; return Task.CompletedTask; }, Context.Guild.Id);
                         await ReplyAsync($"You have successfully disabled DM messages!");
                         break;
                     case false:
-                        await guildRepo.SetDM(Context.Guild.Id, true);
+                        await guildRepo.ModifyAsync(x => { x.DM = true; return Task.CompletedTask; }, Context.Guild.Id);
                         await ReplyAsync($"You have successfully enabled DM messages!");
                         break;
                     default:

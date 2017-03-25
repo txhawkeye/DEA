@@ -17,13 +17,13 @@ namespace Discord.Commands
                 var userRepo = new UserRepository(db);
                 var user = await context.Guild.GetUserAsync(context.User.Id) as IGuildUser;
                 if (user.GuildPermissions.Administrator) return PreconditionResult.FromSuccess();
-                var moderatorRoleId = await guildRepo.GetModRoleId(context.Guild.Id);
-                if (context.Guild.GetRole(moderatorRoleId) == null)
+                var guild = await guildRepo.FetchGuildAsync(context.Guild.Id);
+                if (context.Guild.GetRole(guild.ModRoleId) == null)
                     return PreconditionResult.FromError($"This command may not be used if the moderator role does not exist.\n" +
-                                                        $"Use the `{await guildRepo.GetPrefix(context.Guild.Id)}SetModRole` command to change that.");
-                if (user.RoleIds.All(x => x != moderatorRoleId))
+                                                        $"Use the `{guild.Prefix}SetModRole` command to change that.");
+                if (user.RoleIds.All(x => x != guild.ModRoleId))
                     return PreconditionResult.FromError($"You do not have the permission to use this command.\n" +
-                                                        $"Required role: {context.Guild.GetRole(moderatorRoleId).Mention}");
+                                                        $"Required role: {context.Guild.GetRole(guild.ModRoleId).Mention}");
                 return PreconditionResult.FromSuccess();
             }
         }

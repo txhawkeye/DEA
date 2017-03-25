@@ -5,6 +5,7 @@ using DEA.SQLite.Repository;
 using DEA.SQLite.Models;
 using System.Linq;
 using Discord;
+using System.Threading.Tasks;
 
 namespace DEA.Services
 {
@@ -67,12 +68,13 @@ namespace DEA.Services
                     if (DateTime.Now.Subtract(DateTime.Parse(muted.MutedAt)).TotalMilliseconds > muted.MuteLength)
                     {
                         var guild = _client.GetGuild(muted.GuildId);
-                        if (guild != null && guild.GetUser(muted.UserId) != null && guild.GetRole(await guildRepo.GetMutedRoleId(muted.GuildId)) != null)
+                        if (guild != null && guild.GetUser(muted.UserId) != null)
                         {
-                            var mutedRole = guild.GetRole(await guildRepo.GetMutedRoleId(muted.GuildId));
+                            var guildData = await guildRepo.FetchGuildAsync(guild.Id);
+                            var mutedRole = guild.GetRole(guildData.MutedRoleId);
                             if (mutedRole != null && guild.GetUser(muted.UserId).Roles.Any(x => x.Id == mutedRole.Id))
                             {
-                                var channel = guild.GetTextChannel(await guildRepo.GetModLogChannelId(guild.Id));
+                                var channel = guild.GetTextChannel(guildData.ModLogChannelId);
                                 if (channel != null && guild.CurrentUser.GuildPermissions.EmbedLinks && 
                                     (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).SendMessages
                                     && (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).EmbedLinks)
@@ -81,7 +83,7 @@ namespace DEA.Services
                                     var footer = new EmbedFooterBuilder()
                                     {
                                         IconUrl = "http://i.imgur.com/BQZJAqT.png",
-                                        Text = $"Case #{await guildRepo.GetCaseNumber(guild.Id)}"
+                                        Text = $"Case #{guildData.CaseNumber}"
                                     };
                                     var builder = new EmbedBuilder()
                                     {
@@ -89,11 +91,8 @@ namespace DEA.Services
                                         Description = $"**Action:** Automatic Unmute\n**User:** {guild.GetUser(muted.UserId)} ({guild.GetUser(muted.UserId).Id})",
                                         Footer = footer
                                     }.WithCurrentTimestamp();
-                                    if (guild.GetTextChannel(await guildRepo.GetModLogChannelId(guild.Id)) != null)
-                                    {
-                                        await guildRepo.IncrementCaseNumber(guild.Id);
-                                        await channel.SendMessageAsync("", embed: builder);
-                                    }
+                                    await guildRepo.ModifyAsync(x => { x.CaseNumber++; return Task.CompletedTask; }, guild.Id);
+                                    await channel.SendMessageAsync("", embed: builder);
                                 }
                             }
                         }

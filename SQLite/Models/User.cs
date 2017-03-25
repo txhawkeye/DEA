@@ -17,8 +17,6 @@
 
         public string LastRob { get; set; } = "1 / 1 / 2017 0:00:00 AM";
 
-        public string LastReset { get; set; } = "1 / 1 / 2017 0:00:00 AM";
-
         public float TemporaryMultiplier { get; set; } = 1;
 
         public float InvestmentMultiplier { get; set; } = 1;

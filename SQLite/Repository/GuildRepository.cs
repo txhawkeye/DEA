@@ -1,5 +1,6 @@
 ﻿using DEA.SQLite.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Threading.Tasks;
 
 namespace DEA.SQLite.Repository
@@ -14,158 +15,16 @@ namespace DEA.SQLite.Repository
             _dbContext = dbContext;
         }
 
-        public async Task SetPrefix(ulong guildId, string prefix)
+        public async Task ModifyAsync(Func<Guild, Task> function, ulong guildId)
         {
             var guild = await FetchGuild(guildId);
-            guild.Prefix = prefix;
+            await function(guild);
             await UpdateAsync(guild);
         }
 
-        public async Task IncrementCaseNumber(ulong guildId)
+        public async Task<Guild> FetchGuildAsync(ulong guildId)
         {
-            var guild = await FetchGuild(guildId);
-            guild.CaseNumber++;
-            await UpdateAsync(guild);
-        }
-
-        public async Task SetDM(ulong guildId, bool isDM)
-        {
-            var guild = await FetchGuild(guildId);
-            guild.DM = isDM;
-            await UpdateAsync(guild);
-        }
-
-        public async Task SetModRoleId(ulong guildId, ulong modRoleId)
-        {
-            var guild = await FetchGuild(guildId);
-            guild.ModRoleId = modRoleId;
-            await UpdateAsync(guild);
-        }
-
-        public async Task SetMutedRoleId(ulong guildId, ulong mutedRoleId)
-        {
-            var guild = await FetchGuild(guildId);
-            guild.MutedRoleId = mutedRoleId;
-            await UpdateAsync(guild);
-        }
-
-        public async Task SetModLogChannelId(ulong guildId, ulong modLogChannelId)
-        {
-            var guild = await FetchGuild(guildId);
-            guild.ModLogChannelId = modLogChannelId;
-            await UpdateAsync(guild);
-        }
-
-        public async Task SetDetailedLogsChannelId(ulong guildId, ulong detailedLogsChannelId)
-        {
-            var guild = await FetchGuild(guildId);
-            guild.DetailedLogsChannelId = detailedLogsChannelId;
-            await UpdateAsync(guild);
-        }
-
-        public async Task SetGambleChannelId(ulong guildId, ulong gambleChannelId)
-        {
-            var guild = await FetchGuild(guildId);
-            guild.GambleChannelId = gambleChannelId;
-            await UpdateAsync(guild);
-        }
-
-        public async Task SetRank1Id(ulong guildId, ulong rank1Id)
-        {
-            var guild = await FetchGuild(guildId);
-            guild.Rank1Id = rank1Id;
-            await UpdateAsync(guild);
-        }
-        public async Task SetRank2Id(ulong guildId, ulong rank2Id)
-        {
-            var guild = await FetchGuild(guildId);
-            guild.Rank2Id = rank2Id;
-            await UpdateAsync(guild);
-        }
-        public async Task SetRank3Id(ulong guildId, ulong rank3Id)
-        {
-            var guild = await FetchGuild(guildId);
-            guild.Rank3Id = rank3Id;
-            await UpdateAsync(guild);
-        }
-
-        public async Task SetRank4Id(ulong guildId, ulong rank4Id)
-        {
-            var guild = await FetchGuild(guildId);
-            guild.Rank4Id = rank4Id;
-            await UpdateAsync(guild);
-        }
-
-        public async Task<string> GetPrefix(ulong guildId)
-        {
-            var guild = await FetchGuild(guildId);
-            return guild.Prefix;
-        }
-
-        public async Task<uint> GetCaseNumber(ulong guildId)
-        {
-            var guild = await FetchGuild(guildId);
-            return guild.CaseNumber;
-        }
-
-        public async Task<ulong> GetModRoleId(ulong guildId)
-        {
-            var guild = await FetchGuild(guildId);
-            return guild.ModRoleId;
-        }
-
-        public async Task<ulong> GetMutedRoleId(ulong guildId)
-        {
-            var guild = await FetchGuild(guildId);
-            return guild.MutedRoleId;
-        }
-
-        public async Task<ulong> GetModLogChannelId(ulong guildId)
-        {
-            var guild = await FetchGuild(guildId);
-            return guild.ModLogChannelId;
-        }
-
-        public async Task<ulong> GetDetailedLogsChannelId(ulong guildId)
-        {
-            var guild = await FetchGuild(guildId);
-            return guild.DetailedLogsChannelId;
-        }
-
-        public async Task<bool> GetDM(ulong guildId)
-        {
-            var guild = await FetchGuild(guildId);
-            return guild.DM;
-        }
-
-        public async Task<ulong> GetGambleChannelId(ulong guildId)
-        {
-            var guild = await FetchGuild(guildId);
-            return guild.GambleChannelId;
-        }
-
-        public async Task<ulong> GetRank1Id(ulong guildId)
-        {
-            var guild = await FetchGuild(guildId);
-            return guild.Rank1Id;
-        }
-
-        public async Task<ulong> GetRank2Id(ulong guildId)
-        {
-            var guild = await FetchGuild(guildId);
-            return guild.Rank2Id;
-        }
-
-        public async Task<ulong> GetRank3Id(ulong guildId)
-        {
-            var guild = await FetchGuild(guildId);
-            return guild.Rank3Id;
-        }
-
-        public async Task<ulong> GetRank4Id(ulong guildId)
-        {
-            var guild = await FetchGuild(guildId);
-            return guild.Rank4Id;
+            return await FetchGuild(guildId);
         }
 
         private async Task<Guild> FetchGuild(ulong guildId)

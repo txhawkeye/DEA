@@ -19,13 +19,14 @@ namespace DEA
             {
                 var guildRepo = new GuildRepository(db);
                 var userRepo = new UserRepository(db);
-                float cash = await userRepo.GetCash(userId);
+                float cash = await userRepo.GetCashAsync(userId);
                 var user = await guild.GetUserAsync(userId); //FETCHES THE USER
                 var currentUser = await guild.GetCurrentUserAsync() as SocketGuildUser; //FETCHES THE BOT'S USER
-                var role1 = guild.GetRole(await guildRepo.GetRank1Id(guild.Id)); //FETCHES ALL RANK ROLES
-                var role2 = guild.GetRole(await guildRepo.GetRank2Id(guild.Id));
-                var role3 = guild.GetRole(await guildRepo.GetRank3Id(guild.Id));
-                var role4 = guild.GetRole(await guildRepo.GetRank4Id(guild.Id));
+                var guildData = await guildRepo.FetchGuildAsync(guild.Id); //FETCHES THE GUILD DATA
+                var role1 = guild.GetRole(guildData.Rank1Id); //FETCHES ALL RANK ROLES
+                var role2 = guild.GetRole(guildData.Rank2Id);
+                var role3 = guild.GetRole(guildData.Rank3Id);
+                var role4 = guild.GetRole(guildData.Rank4Id);
                 var sponsorRole = guild.GetRole(Config.SPONSORED_ROLE_ID);
                 List<IRole> rolesToAdd = new List<IRole>();
                 List<IRole> rolesToRemove = new List<IRole>();
