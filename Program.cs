@@ -30,7 +30,7 @@ namespace DEA
                 => Task.Run(()
                 => PrettyConsole.Log(l.Severity, l.Source, l.Exception?.ToString() ?? l.Message));
 
-            await _client.LoginAsync(TokenType.Bot, Config.TOKEN);
+            await _client.LoginAsync(TokenType.Bot, Token.TOKEN);
             
             await _client.StartAsync();
 

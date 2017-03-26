@@ -58,28 +58,24 @@ namespace DEA.Services
                     var result = await _service.ExecuteAsync(Context, argPos, _map);
                     if (!result.IsSuccess && result.Error != CommandError.UnknownCommand)
                     {
-                        try
+                        var cmd = _service.Search(Context, argPos).Commands.First().Command;
+                        if (result.ErrorReason.Length == 0) return;
+                        switch (result.Error)
                         {
-                            var cmd = _service.Search(Context, argPos).Commands.First().Command;
-                            switch (result.ErrorReason)
-                            {
-                                case "The input text has too many parameters.":
-                                case "The input text has too few parameters.":
-                                    await msg.Channel.SendMessageAsync($"{Context.User.Mention}, You are incorrectly using this command. Usage: `{prefix}{cmd.Remarks}`");
+                            case CommandError.BadArgCount:
+                                await msg.Channel.SendMessageAsync($"{Context.User.Mention}, You are incorrectly using this command. Usage: `{prefix}{cmd.Remarks}`");
+                                break;
+                            case CommandError.ParseFailed:
+                                await msg.Channel.SendMessageAsync($"{Context.User.Mention}, Invalid number.");
+                                break;
+                            case CommandError.ObjectNotFound:
+                                PrettyConsole.Log(LogSeverity.Error, $"User: {Context.User.Id}", $"Error reason: {result.ErrorReason}: {result.Error.Value}");
+                                await Context.Channel.SendMessageAsync("Object not found error. Please report this with the context to John, and include a screenshot.");
                                     break;
-                                case "Failed to parse Single":
-                                case "Failed to parse Int32":
-                                case "Failed to parse Double":
-                                    await msg.Channel.SendMessageAsync($"{Context.User.Mention}, Invalid number.");
-                                    break;
-                                case "The server responded with error 403: Forbidden":
-                                    await msg.Channel.SendMessageAsync($"{Context.User.Mention}, DEA does not have permission to do that!");
-                                    break;
-                                default:
-                                    await msg.Channel.SendMessageAsync($"{Context.User.Mention}, {result.ErrorReason}");
-                                    break;
-                            }
-                        } catch { }
+                            default:
+                                await msg.Channel.SendMessageAsync($"{Context.User.Mention}, {result.ErrorReason}");
+                                break;
+                        }
                     }
                 }
                 else if (msg.ToString().Length >= Config.MIN_CHAR_LENGTH && !msg.ToString().StartsWith(":"))
@@ -87,17 +83,20 @@ namespace DEA.Services
                     var lastMsgs = await Context.Channel.GetMessagesAsync(10).Flatten();
                     if (lastMsgs.Where(x => x.Author == Context.User).Count() < 4)
                     {
-                        ulong userId = Context.User.Id;
                         var userRepo = new UserRepository(db);
                         var user = await userRepo.FetchUserAsync(Context.User.Id);
                         var rate = Config.TEMP_MULTIPLIER_RATE;
-                        if (Context.Guild.Id == Config.DEA_SERVER_ID) rate = Config.DEA_TEMP_MULTIPLIER_RATE;
-                        if (Config.SPONSOR_IDS.Any(x => x == userId)) rate = Config.SPONSOR_TEMP_MULTIPLIER_RATE;
+                        if (Context.Guild.Id == Config.RUSH_SERVER_ID) rate = Config.RUSH_TEMP_MULTIPLIER_RATE;
+                        if (Config.SPONSOR_IDS.Any(x => x == Context.User.Id)) rate = Config.SPONSOR_TEMP_MULTIPLIER_RATE;
                         if (DateTime.Now.Subtract(DateTime.Parse(user.LastMessage)).TotalMilliseconds > user.MessageCooldown)
                         {
-                            await userRepo.ModifyAsync(x => { x.LastMessage = DateTime.Now.ToString(); return Task.CompletedTask; }, Context.User.Id);
-                            await userRepo.ModifyAsync(x => { x.TemporaryMultiplier = user.TemporaryMultiplier + rate; return Task.CompletedTask; }, Context.User.Id);
-                            await userRepo.EditCashAsync(Context, user.TemporaryMultiplier * user.InvestmentMultiplier);
+                            await userRepo.ModifyAsync(x => {
+                                x.Cash += user.TemporaryMultiplier * user.InvestmentMultiplier;
+                                x.TemporaryMultiplier = user.TemporaryMultiplier + rate;
+                                x.LastMessage = DateTime.Now.ToString();
+                                return Task.CompletedTask;
+                            }, Context.User.Id);
+                            await RankHandler.Handle(Context.Guild, Context.User.Id);
                         }
                     }
                 }

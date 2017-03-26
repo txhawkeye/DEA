@@ -211,7 +211,7 @@ namespace DEA.Modules
                 if (!(await gangRepo.IsMemberOf(Context.User.Id, Context.Guild.Id, user.Id))) throw new Exception("This user is not a member of your gang!");
                 var gang = await gangRepo.FetchGangAsync(Context.User.Id, Context.Guild.Id);
                 await gangRepo.RemoveMemberAsync(user.Id, Context.Guild.Id);
-                await ReplyAsync($"{Context.User.Mention}, You have successfully kicked {user} from ${gang.Name}");
+                await ReplyAsync($"{Context.User.Mention}, You have successfully kicked {user} from {gang.Name}");
                 var channel = await user.CreateDMChannelAsync();
                 await channel.SendMessageAsync($"You have been kicked from {gang.Name}.");
             }
@@ -227,7 +227,7 @@ namespace DEA.Modules
             {
                 var gangRepo = new GangRepository(db);
                 var gang = await gangRepo.DestroyGangAsync(Context.User.Id, Context.Guild.Id);
-                await ReplyAsync($"{Context.User.Mention}, You have successfully destroyed ${gang.Name}.");
+                await ReplyAsync($"{Context.User.Mention}, You have successfully destroyed {gang.Name}.");
             }
         }
 
@@ -294,6 +294,7 @@ namespace DEA.Modules
 
         [Command("Withdraw")]
         [RequireInGang]
+        [RequireCooldown]
         [Summary("Withdraw cash from your gang's funds.")]
         [Remarks("Withdraw <Cash>")]
         public async Task Withdraw(float cash)
@@ -304,20 +305,15 @@ namespace DEA.Modules
                 var gangRepo = new GangRepository(db);
                 var gang = await gangRepo.FetchGangAsync(Context.User.Id, Context.Guild.Id);
                 var user = await userRepo.FetchUserAsync(Context.User.Id);
-                if (DateTime.Now.Subtract(DateTime.Parse(user.LastWithdraw)).TotalMilliseconds > Config.WITHDRAW_COOLDOWN)
-                {
-                    if (cash < Config.MIN_WITHDRAW) throw new Exception($"The minimum withdrawal is {Config.MIN_WITHDRAW.ToString("C2")}.");
-                    if (cash > gang.Wealth * Config.WITHDRAW_CAP)
-                        throw new Exception($"You may only withdraw {Config.WITHDRAW_CAP.ToString("P")} of your gang's wealth, " +
-                                            $"that is {(gang.Wealth * Config.WITHDRAW_CAP).ToString("C2")}.");
-                    await userRepo.ModifyAsync(x => { x.LastWithdraw = DateTime.Now.ToString(); return Task.CompletedTask; }, Context.User.Id);
-                    await gangRepo.ModifyAsync(x => { x.Wealth -= cash; return Task.CompletedTask; }, Context.User.Id, Context.Guild.Id);
-                    await userRepo.EditCashAsync(Context, +cash);
-                    await ReplyAsync($"{Context.User.Mention}, You have successfully withdrawn {cash.ToString("C2")}. " +
-                                     $"{gang.Name}'s Wealth: {gang.Wealth.ToString("C2")}");
-                }
-                else
-                    await Logger.Cooldown(Context, "Withdraw", TimeSpan.FromMilliseconds(Config.WITHDRAW_COOLDOWN - DateTime.Now.Subtract(DateTime.Parse(user.LastWithdraw)).TotalMilliseconds));
+                if (cash < Config.MIN_WITHDRAW) throw new Exception($"The minimum withdrawal is {Config.MIN_WITHDRAW.ToString("C2")}.");
+                if (cash > gang.Wealth * Config.WITHDRAW_CAP)
+                    throw new Exception($"You may only withdraw {Config.WITHDRAW_CAP.ToString("P")} of your gang's wealth, " +
+                                        $"that is {(gang.Wealth * Config.WITHDRAW_CAP).ToString("C2")}.");
+                await userRepo.ModifyAsync(x => { x.LastWithdraw = DateTime.Now.ToString(); return Task.CompletedTask; }, Context.User.Id);
+                await gangRepo.ModifyAsync(x => { x.Wealth -= cash; return Task.CompletedTask; }, Context.User.Id, Context.Guild.Id);
+                await userRepo.EditCashAsync(Context, +cash);
+                await ReplyAsync($"{Context.User.Mention}, You have successfully withdrawn {cash.ToString("C2")}. " +
+                                 $"{gang.Name}'s Wealth: {gang.Wealth.ToString("C2")}");
             }
         }
 

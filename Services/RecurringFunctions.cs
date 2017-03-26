@@ -53,7 +53,7 @@ namespace DEA.Services
         {
             Timer t = new Timer(TimeSpan.FromHours(1).TotalMilliseconds);
             t.AutoReset = true;
-            t.Elapsed += new ElapsedEventHandler(OnTimedTempMultiplierReset);
+            t.Elapsed += new ElapsedEventHandler(OnTimedApplyInterest);
             t.Start();
         }
 
