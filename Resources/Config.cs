@@ -16,7 +16,7 @@ public static class Config
 
     STEAL_ODDS = 80, MIN_CHILL = 5, MAX_CHILL = (int)TimeSpan.FromHours(1).TotalSeconds, MIN_CLEAR = 2, MAX_CLEAR = 1000, GANG_NAME_CHAR_LIMIT = 24,
 
-    GANGSLB_CAP = 20;
+    GANGSLB_CAP = 20, MIN_ROB_ODDS = 50, MAX_ROB_ODDS = 75;
 
     public static readonly float RANK1 = 1000, RANK2 = 2500, RANK3 = 10000, RANK4 = 20000, LINE_COST = 250, POUND_COST = 1000,
 

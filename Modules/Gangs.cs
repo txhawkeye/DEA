@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using DEA.SQLite.Repository;
 using Microsoft.EntityFrameworkCore;
 using Discord.WebSocket;
-using DEA.Services;
 using System.Linq;
 using DEA.SQLite.Models;
 

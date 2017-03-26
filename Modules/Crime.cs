@@ -139,20 +139,20 @@ namespace DEA.Modules
                 if (resources < Config.MIN_RESOURCES) throw new Exception($"The minimum amount of money to spend on resources for rob is {Config.MIN_RESOURCES.ToString("C2")}.");
                 if (resources > Config.MAX_RESOURCES) throw new Exception($"The maximum amount of money to spend on resources for rob is {Config.MAX_RESOURCES.ToString("C2")}.");
                 Random rand = new Random();
-                float succesRate = (rand.Next(50, 75)) / 150;
-                float moneyStolen = resources / succesRate;
+                float succesRate = rand.Next(Config.MIN_ROB_ODDS * 100, Config.MAX_ROB_ODDS * 100) / 10000f;
+                float moneyStolen = resources / (succesRate / 1.50f);
                 await userRepo.ModifyAsync(x => { x.LastRob = DateTime.Now.ToString(); return Task.CompletedTask; }, Context.User.Id);
                 string randomBank = Config.BANKS[rand.Next(0, Config.BANKS.Length) - 1];
-                if (rand.Next(100) / 150  >= succesRate)
+                if (rand.Next(10000) / 10000f  >= succesRate)
                 {
                     await userRepo.EditCashAsync(Context, moneyStolen);
-                    await ReplyAsync($"{Context.User.Mention}, with a {succesRate.ToString("N2")}% chance of success, you successfully stole " +
+                    await ReplyAsync($"{Context.User.Mention}, with a {succesRate.ToString("P")} chance of success, you successfully stole " +
                     $"{moneyStolen.ToString("C2")} from the {randomBank}. Balance: {(await userRepo.FetchUserAsync(Context.User.Id)).Cash.ToString("C2")}$.");
                 }
                 else
                 {
                     await userRepo.EditCashAsync(Context, -resources);
-                    await ReplyAsync($"{Context.User.Mention}, with a {succesRate.ToString("N2")}% chance of success, you failed to steal " +
+                    await ReplyAsync($"{Context.User.Mention}, with a {succesRate.ToString("P")} chance of success, you failed to steal " +
                     $"{moneyStolen.ToString("C2")} from the {randomBank}, losing all resources in the process. Balance: {(await userRepo.FetchUserAsync(Context.User.Id)).Cash.ToString("C2")}.");
                 }
             }

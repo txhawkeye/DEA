@@ -68,10 +68,6 @@ namespace DEA.Services
                             case CommandError.ParseFailed:
                                 await msg.Channel.SendMessageAsync($"{Context.User.Mention}, Invalid number.");
                                 break;
-                            case CommandError.ObjectNotFound:
-                                PrettyConsole.Log(LogSeverity.Error, $"User: {Context.User.Id}", $"Error reason: {result.ErrorReason}: {result.Error.Value}");
-                                await Context.Channel.SendMessageAsync("Object not found error. Please report this with the context to John, and include a screenshot.");
-                                    break;
                             default:
                                 await msg.Channel.SendMessageAsync($"{Context.User.Mention}, {result.ErrorReason}");
                                 break;
