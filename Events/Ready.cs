@@ -16,7 +16,7 @@ namespace DEA.Events
 
         private async Task HandleReady()
         {
-            await _client.SetGameAsync("$DoubleCash for X2 money!");
+            await _client.SetGameAsync("USE $help");
         }
 
     }

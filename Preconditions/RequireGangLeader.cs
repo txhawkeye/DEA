@@ -13,9 +13,9 @@ namespace Discord.Commands
             using (var db = new DbContext())
             {
                 var gangRepo = new GangRepository(db);
-                if (!await gangRepo.InGangAsync(context.User.Id)) return PreconditionResult.FromError("You must be in a gang to use this command.");
-                if ((await gangRepo.FetchGangAsync(context.User.Id)).LeaderId != context.User.Id)
-                    return PreconditionResult.FromError("Only the leader of a gang to use this command.");
+                if (!await gangRepo.InGangAsync(context.User.Id, context.Guild.Id)) return PreconditionResult.FromError("You must be in a gang to use this command.");
+                if ((await gangRepo.FetchGangAsync(context.User.Id, context.Guild.Id)).LeaderId != context.User.Id)
+                    return PreconditionResult.FromError("Only the leader of a gang may use this command.");
             }
             return PreconditionResult.FromSuccess();
         }

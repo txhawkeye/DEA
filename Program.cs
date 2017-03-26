@@ -3,6 +3,7 @@ using Discord.WebSocket;
 using DEA.Services;
 using DEA.Events;
 using System.Threading.Tasks;
+using Discord.Commands;
 
 namespace DEA
 {
@@ -12,7 +13,6 @@ namespace DEA
             => new Program().Start().GetAwaiter().GetResult();
 
         private DiscordSocketClient _client;
-        private MessageRecieved _handler;
 
         public async Task Start()
         {
@@ -34,8 +34,10 @@ namespace DEA
             
             await _client.StartAsync();
 
-            _handler = new MessageRecieved();
-            await _handler.InitializeAsync(_client);
+            var map = new DependencyMap();
+            ConfigureServices(map);
+
+            await new MessageRecieved().InitializeAsync(_client, map);
 
             new Ready(_client);
             new UserEvents(_client);
@@ -45,6 +47,11 @@ namespace DEA
             new RecurringFunctions(_client);
 
             await Task.Delay(-1);
+        }
+
+        public void ConfigureServices(IDependencyMap map)
+        {
+            map.Add(_client);
         }
     }
 }

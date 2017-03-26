@@ -100,7 +100,7 @@ To view your steadily increasing chatting multiplier, you may use the `{prefix}r
                         var moduleInfo = $"**{module.Name} Commands **: ```asciidoc\n";
                         foreach (var cmd in module.Commands)
                         {
-                            moduleInfo += $"{prefix}{cmd.Aliases.First()}{new String(' ', (longestInModule + 1) - cmd.Aliases.First().Length)} :: {cmd.Summary}\n";
+                            moduleInfo += $"{prefix}{cmd.Aliases.First()}{new string(' ', (longestInModule + 1) - cmd.Aliases.First().Length)} :: {cmd.Summary}\n";
                         }
                         moduleInfo += "```";
                         await ReplyAsync(moduleInfo);

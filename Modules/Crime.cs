@@ -6,6 +6,7 @@ using DEA.SQLite.Models;
 using DEA.SQLite.Repository;
 using Discord.WebSocket;
 using System.Linq;
+using DEA.Services;
 
 namespace DEA.Modules
 {
@@ -41,7 +42,7 @@ namespace DEA.Modules
                     await userRepo.ModifyAsync(x => { x.LastWhore = DateTime.Now.ToString(); return Task.CompletedTask; }, Context.User.Id);
                 }
                 else
-                    await Cooldown(Context, "Whore", TimeSpan.FromMilliseconds(Config.WHORE_COOLDOWN - DateTime.Now.Subtract(DateTime.Parse(user.LastWhore)).TotalMilliseconds));
+                    await Logger.Cooldown(Context, "Whore", TimeSpan.FromMilliseconds(Config.WHORE_COOLDOWN - DateTime.Now.Subtract(DateTime.Parse(user.LastWhore)).TotalMilliseconds));
             }
         }
 
@@ -75,7 +76,7 @@ namespace DEA.Modules
                     await userRepo.ModifyAsync(x => { x.LastJump = DateTime.Now.ToString(); return Task.CompletedTask; }, Context.User.Id);
                 }
                 else
-                    await Cooldown(Context, "Jump", TimeSpan.FromMilliseconds(Config.JUMP_COOLDOWN - DateTime.Now.Subtract(DateTime.Parse(user.LastJump)).TotalMilliseconds));
+                    await Logger.Cooldown(Context, "Jump", TimeSpan.FromMilliseconds(Config.JUMP_COOLDOWN - DateTime.Now.Subtract(DateTime.Parse(user.LastJump)).TotalMilliseconds));
             }
         }
 
@@ -113,7 +114,7 @@ namespace DEA.Modules
                     await userRepo.ModifyAsync(x => { x.LastSteal = DateTime.Now.ToString(); return Task.CompletedTask; }, Context.User.Id);
                 }
                 else
-                    await Cooldown(Context, "Steal", TimeSpan.FromMilliseconds(Config.STEAL_COOLDOWN - DateTime.Now.Subtract(DateTime.Parse(user.LastSteal)).TotalMilliseconds));
+                    await Logger.Cooldown(Context, "Steal", TimeSpan.FromMilliseconds(Config.STEAL_COOLDOWN - DateTime.Now.Subtract(DateTime.Parse(user.LastSteal)).TotalMilliseconds));
             }
         }
 
@@ -175,28 +176,7 @@ namespace DEA.Modules
                     }
                 }
                 else
-                    await Cooldown(Context, "Rob", TimeSpan.FromMilliseconds(Config.ROB_COOLDOWN - DateTime.Now.Subtract(DateTime.Parse(user.LastRob)).TotalMilliseconds));
-            }
-        }
-
-        private async Task Cooldown(SocketCommandContext context, string command, TimeSpan timeSpan)
-        {
-            using (var db = new DbContext())
-            {
-                var guildRepo = new GuildRepository(db);
-                var builder = new EmbedBuilder()
-                {
-                    Title = $"{command} cooldown for {context.User}",
-                    Description = $"{timeSpan.Hours} Hours\n{timeSpan.Minutes} Minutes\n{timeSpan.Seconds} Seconds",
-                    Color = new Color(49, 62, 255)
-                };
-                if ((await guildRepo.FetchGuildAsync(context.Guild.Id)).DM)
-                {
-                    var channel = await context.User.CreateDMChannelAsync();
-                    await channel.SendMessageAsync("", embed: builder);
-                }
-                else
-                    await context.Channel.SendMessageAsync("", embed: builder);
+                    await Logger.Cooldown(Context, "Rob", TimeSpan.FromMilliseconds(Config.ROB_COOLDOWN - DateTime.Now.Subtract(DateTime.Parse(user.LastRob)).TotalMilliseconds));
             }
         }
     }

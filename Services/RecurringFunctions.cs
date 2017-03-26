@@ -20,6 +20,7 @@ namespace DEA.Services
             ResetTemporaryMultiplier();
             AutoUnmute();
             BanBlacklisted();
+            ApplyInterestRate();
         }
 
         private void ResetTemporaryMultiplier()
@@ -43,6 +44,30 @@ namespace DEA.Services
                         user.TemporaryMultiplier = 1;
                         db.Set<User>().Update(user);
                     }
+                }
+                await db.SaveChangesAsync();
+            }
+        }
+
+        private void ApplyInterestRate()
+        {
+            Timer t = new Timer(TimeSpan.FromHours(1).TotalMilliseconds);
+            t.AutoReset = true;
+            t.Elapsed += new ElapsedEventHandler(OnTimedTempMultiplierReset);
+            t.Start();
+        }
+
+        private async void OnTimedApplyInterest(object source, ElapsedEventArgs e)
+        {
+            using (var db = new DbContext())
+            {
+                var gangRepo = new GangRepository(db);
+                Gang[] gangs = gangRepo.GetAll().ToArray();
+                foreach (var gang in gangs)
+                {
+                    var InterestRate = 0.025f + ((gang.Wealth / 100) * .000075f);
+                    if (InterestRate > 0.1) InterestRate = 0.1f;
+                    gang.Wealth *= 1 + InterestRate;
                 }
                 await db.SaveChangesAsync();
             }

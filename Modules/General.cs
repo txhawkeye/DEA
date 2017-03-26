@@ -12,23 +12,6 @@ namespace DEA.Modules
 {
     public class General : ModuleBase<SocketCommandContext>
     {
-        [Command("DoubleCash")]
-        [Alias("doublexp", "x2cash")]
-        [Summary("Information on how to obtain double cash when chatting!")]
-        [Remarks("DoubleCash")]
-        public async Task DoubleCash()
-        {
-            using (var db = new DbContext())
-            {
-                var guildRepo = new GuildRepository(db);
-                var prefix = (await guildRepo.FetchGuildAsync(Context.Guild.Id)).Prefix;
-                await ReplyAsync($"{Context.User.Mention}, there is currently a special of DOUBLE CASH for the chatting multplier " +
-                                 $"**ONLY** in the official DEA Server: https://discord.gg/Tuptja9\n" +
-                                 $"Use the `{prefix}info` command for more information about the DEA chatting system!\n" +
-                                 $"You may use the `{prefix}rate` command to view your chatting multiplier!");
-            }
-        }
-
         [Command("Investments")]
         [Alias("Investements", "Investement", "Investment")]
         [Summary("Increase your money per message")]
@@ -217,6 +200,7 @@ namespace DEA.Modules
         }
 
         [Command("Donate")]
+        [Alias("Sauce")]
         [Summary("Sauce some cash to one of your mates.")]
         [Remarks("Donate <@User> <Amount of cash>")]
         public async Task Donate(IGuildUser userMentioned, float money)

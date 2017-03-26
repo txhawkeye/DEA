@@ -3,6 +3,7 @@ using DEA.SQLite.Repository;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using System;
 using System.Threading.Tasks;
 
 namespace DEA.Services
@@ -77,6 +78,27 @@ namespace DEA.Services
                         if (incrementCaseNumber) await guildRepo.ModifyAsync(x => { x.CaseNumber++; return Task.CompletedTask; }, guild.Id);
                     }
                 }
+            }
+        }
+
+        public static async Task Cooldown(SocketCommandContext context, string command, TimeSpan timeSpan)
+        {
+            using (var db = new DbContext())
+            {
+                var guildRepo = new GuildRepository(db);
+                var builder = new EmbedBuilder()
+                {
+                    Title = $"{command} cooldown for {context.User}",
+                    Description = $"{timeSpan.Hours} Hours\n{timeSpan.Minutes} Minutes\n{timeSpan.Seconds} Seconds",
+                    Color = new Color(49, 62, 255)
+                };
+                if ((await guildRepo.FetchGuildAsync(context.Guild.Id)).DM)
+                {
+                    var channel = await context.User.CreateDMChannelAsync();
+                    await channel.SendMessageAsync("", embed: builder);
+                }
+                else
+                    await context.Channel.SendMessageAsync("", embed: builder);
             }
         }
     }

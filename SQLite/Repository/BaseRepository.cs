@@ -17,16 +17,8 @@ namespace DEA.SQLite.Repository
 
         public async Task InsertAsync(TEntity entity)
         {
-            try
-            {
-                await _dbContext.Set<TEntity>().AddAsync(entity);
-                await _dbContext.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
+             await _dbContext.Set<TEntity>().AddAsync(entity);
+             await _dbContext.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(TEntity entity)

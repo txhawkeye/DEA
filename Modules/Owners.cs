@@ -27,6 +27,7 @@ namespace DEA.Modules
                     x.LastSteal = time;
                     x.LastRob = time;
                     x.LastMessage = time;
+                    x.LastWithdraw = time;
                     return Task.CompletedTask;
                     }, Context.User.Id);
                 await ReplyAsync($"Successfully reset all of {user.Mention} cooldowns.");

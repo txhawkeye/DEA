@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using DEA.SQLite.Repository;
+using Discord.Addons.InteractiveCommands;
 
 namespace DEA.Services
 {
@@ -14,8 +15,9 @@ namespace DEA.Services
     {
         private DiscordSocketClient _client;
         private CommandService _service;
+        private IDependencyMap _map;
 
-        public async Task InitializeAsync(DiscordSocketClient c)
+        public async Task InitializeAsync(DiscordSocketClient c, IDependencyMap map)
         {
             _client = c;
             _service = new CommandService(new CommandServiceConfig()
@@ -25,6 +27,8 @@ namespace DEA.Services
             });
 
             await _service.AddModulesAsync(Assembly.GetEntryAssembly());
+            _map = map;
+            _map.Add(new InteractiveService(_client));
 
             _client.MessageReceived += HandleCommandAsync;
         }
@@ -51,7 +55,7 @@ namespace DEA.Services
                     msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
                 {
                     PrettyConsole.Log(LogSeverity.Debug, $"Guild: {Context.Guild.Name}, User: {Context.User}", msg.Content);
-                    var result = await _service.ExecuteAsync(Context, argPos);
+                    var result = await _service.ExecuteAsync(Context, argPos, _map);
                     if (!result.IsSuccess && result.Error != CommandError.UnknownCommand)
                     {
                         try
