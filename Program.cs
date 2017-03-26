@@ -4,6 +4,7 @@ using DEA.Services;
 using DEA.Events;
 using System.Threading.Tasks;
 using Discord.Commands;
+using DEA.SQLite.Models;
 
 namespace DEA
 {
@@ -18,6 +19,11 @@ namespace DEA
         {
             PrettyConsole.NewLine("===   DEA   ===");
             PrettyConsole.NewLine();
+
+            using (var db = new DbContext())
+            {
+                db.Database.EnsureCreated();
+            }
 
             _client = new DiscordSocketClient(new DiscordSocketConfig()
             {
@@ -43,7 +49,6 @@ namespace DEA
             new UserEvents(_client);
             new RoleEvents(_client);
             new ChannelEvents(_client);
-
             new RecurringFunctions(_client);
 
             await Task.Delay(-1);

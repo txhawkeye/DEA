@@ -126,7 +126,7 @@ namespace DEA.Modules
                 {
                     if (Context.Guild.GetUser(user.Id) == null) continue;
                     if ($"{Context.Guild.GetUser(user.Id)}".Length > longest) longest = $"{position}. {Context.Guild.GetUser(user.Id)}".Length;
-                    if (position >= Config.LEADERBOARD_CAP) {
+                    if (position >= Config.LEADERBOARD_CAP || users.Last().Id == user.Id) {
                         position = 1;
                         break;
                     }
@@ -172,7 +172,7 @@ namespace DEA.Modules
                 {
                     if (Context.Guild.GetUser(user.Id) == null) continue;
                     if ($"{Context.Guild.GetUser(user.Id)}".Length > longest) longest = $"{position}. {Context.Guild.GetUser(user.Id)}".Length;
-                    if (position >= Config.LEADERBOARD_CAP)
+                    if (position >= Config.RATELB_CAP || users.Last().Id == user.Id)
                     {
                         position = 1;
                         break;

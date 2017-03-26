@@ -35,7 +35,7 @@ namespace DEA.Events
                     mutedRole.Position < u.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                 {
                     await RankHandler.Handle(u.Guild, u.Id);
-                    if (await muteRepo.IsMutedAsync(user.Id, user.Guild.Id) && mutedRole != null && user != null) await user.AddRolesAsync(mutedRole);
+                    if (await muteRepo.IsMutedAsync(user.Id, user.Guild.Id) && mutedRole != null && user != null) await user.AddRoleAsync(mutedRole);
                 }
 
                 if (Config.BLACKLISTED_IDS.Any(x => x == u.Id))

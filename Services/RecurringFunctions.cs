@@ -104,7 +104,7 @@ namespace DEA.Services
                                     (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).SendMessages
                                     && (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).EmbedLinks)
                                 { 
-                                    await guild.GetUser(muted.UserId).RemoveRolesAsync(mutedRole);
+                                    await guild.GetUser(muted.UserId).RemoveRoleAsync(mutedRole);
                                     var footer = new EmbedFooterBuilder()
                                     {
                                         IconUrl = "http://i.imgur.com/BQZJAqT.png",
