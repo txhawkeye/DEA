@@ -24,3 +24,13 @@ As with any application, there will be occasional issues appearing here and ther
 
 All commits to this repository fixing issues are highly welcome and even encouraged. As this bot continues to progress with more command and features, issues are bound to arise, and we are counting on *you*, the community, to help us solve them. Thank you.
 
+# Contributing
+
+To run the bot, you must give it a bot account. You can get a bot account from https://discordapp.com/developers/applications/me/create and after adding a developer application, create a bot user
+
+`Token.cs` (This is gitignored, your bot token will not accidentally be committed)
+
+    public static class Token
+    {
+        public static readonly string TOKEN = "token here",
+    }
