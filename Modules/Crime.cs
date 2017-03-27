@@ -96,7 +96,7 @@ namespace DEA.Modules
                 {
                     float moneySteal = (float)(new Random().Next((int)(Config.MIN_STEAL) * 100, (int)(Config.MAX_STEAL) * 100)) / 100;
                     await userRepo.EditCashAsync(Context, moneySteal);
-                    string randomStore = Config.STORES[new Random().Next(0, Config.STORES.Length) - 1];
+                    string randomStore = Config.STORES[new Random().Next(1, Config.STORES.Length) - 1];
                     await ReplyAsync($"{Context.User.Mention}, you walk in to your local {randomStore}, point a fake gun at the clerk, and manage to walk away " +
                                      $"with {moneySteal.ToString("C2")}. Balance: {user.Cash.ToString("C2")}");
                 }
@@ -142,7 +142,7 @@ namespace DEA.Modules
                 float succesRate = rand.Next(Config.MIN_ROB_ODDS * 100, Config.MAX_ROB_ODDS * 100) / 10000f;
                 float moneyStolen = resources / (succesRate / 1.50f);
                 await userRepo.ModifyAsync(x => { x.LastRob = DateTime.Now.ToString(); return Task.CompletedTask; }, Context.User.Id);
-                string randomBank = Config.BANKS[rand.Next(0, Config.BANKS.Length) - 1];
+                string randomBank = Config.BANKS[rand.Next(1, Config.BANKS.Length) - 1];
                 if (rand.Next(10000) / 10000f  >= succesRate)
                 {
                     await userRepo.EditCashAsync(Context, moneyStolen);

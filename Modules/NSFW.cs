@@ -61,6 +61,8 @@ namespace DEA.Modules
         [Remarks("SetNSFWRole <@NSFWRole>")]
         public async Task SetNSFWRole(IRole nsfwRole)
         {
+            if (nsfwRole.Position >= Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
+                throw new Exception("You may not set a rank role that is higher in hierarchy than DEA's highest role.");
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
@@ -79,7 +81,7 @@ namespace DEA.Modules
         [Alias("EnableNSFW", "DisableNSFW")]
         [Summary("Enables/disables the user's ability to use NSFW commands.")]
         [RequireBotPermission(GuildPermission.ManageRoles)]
-        [Remarks("SetNSFWChannel")]
+        [Remarks("NSFW")]
         public async Task JoinNSFW()
         {
             using (var db = new DbContext())
