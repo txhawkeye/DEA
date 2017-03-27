@@ -34,3 +34,7 @@ To run the bot, you must give it a bot account. You can get a bot account from h
     {
         public static readonly string TOKEN = "token here",
     }
+
+## Adding your development bot to your server
+
+https://discordapp.com/oauth2/authorize?client_id=PUT_YOUR_CLIENTID_HERE&scope=bot&permissions=477195286
