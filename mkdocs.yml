@@ -1,4 +1,5 @@
 site_name: DEA Discord Bot
+repo_url: https://github.com/RealBlazeIt/DEA
 pages:
     - Home: index.md
     - Introduction: introduction.md

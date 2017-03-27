@@ -88,9 +88,7 @@ namespace DEA.Modules
         [Summary("Gives you all the info about any gang.")]
         [Remarks("Gang [Gang name]")]
         public async Task Gang([Remainder] string gangName = null)
-        {
-            await Context.Guild.DownloadUsersAsync();
-            
+        {        
             using (var db = new SQLite.Models.DbContext())
             {
                 var gangRepo = new GangRepository(db);
@@ -134,7 +132,6 @@ namespace DEA.Modules
         [Remarks("Gangs")]
         public async Task Ganglb()
         {
-            await Context.Guild.DownloadUsersAsync();
             using (var db = new SQLite.Models.DbContext())
             {
                 var guildRepo = new GuildRepository(db);
@@ -146,23 +143,20 @@ namespace DEA.Modules
 
                 foreach (var gang in gangs)
                 {
-                    if (Context.Guild.GetUser(gang.LeaderId) == null) continue;
+                    if (Context.Guild.Id != gang.GuildId) continue;
                     if (gang.Name.Length > longest) longest = $"{position}. {gang.Name}".Length;
-                    if (position >= Config.GANGSLB_CAP || gangs.Last().Id == gang.Id)
-                    {
-                        position = 1;
-                        break;
-                    }
+                    if (position >= Config.GANGSLB_CAP || gangs.Last().Id == gang.Id) break;
                     position++;
                 }
 
+                int positionInMessage = 1;
                 foreach (var gang in gangs)
                 {
-                    if (Context.Guild.GetUser(gang.LeaderId) == null) continue;
-                    message += $"{position}. {gang.Name}".PadRight(longest + 2) +
+                    if (Context.Guild.Id != gang.GuildId) continue;
+                    message += $"{positionInMessage}. {gang.Name}".PadRight(longest + 2) +
                                $" :: {gang.Wealth.ToString("C2")}\n";
-                    if (position >= Config.GANGSLB_CAP) break;
-                    position++;
+                    if (positionInMessage >= Config.GANGSLB_CAP) break;
+                    positionInMessage++;
                 }
 
                 if ((await guildRepo.FetchGuildAsync(Context.Guild.Id)).DM)

@@ -269,6 +269,7 @@
     <Compile Include="Modules\Gangs.cs" />
     <Compile Include="Modules\General.cs" />
     <Compile Include="Modules\Moderation.cs" />
+    <Compile Include="Modules\NSFW.cs" />
     <Compile Include="Modules\Owners.cs" />
     <Compile Include="Modules\System.cs" />
     <Compile Include="Preconditions\RequireCooldown.cs" />
@@ -278,6 +279,7 @@
     <Compile Include="Preconditions\RequireBotOwner.cs" />
     <Compile Include="Preconditions\RequireModerator.cs" />
     <Compile Include="Preconditions\RequireNoGang.cs" />
+    <Compile Include="Preconditions\RequireNSFW.cs" />
     <Compile Include="Preconditions\RequireRank1.cs" />
     <Compile Include="Preconditions\RequireRank2.cs" />
     <Compile Include="Preconditions\RequireRank3.cs" />

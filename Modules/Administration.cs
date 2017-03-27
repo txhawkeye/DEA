@@ -36,7 +36,7 @@ namespace DEA.Modules
                 if (prefix.Length > 3) throw new Exception("The maximum character length of a prefix is 3.");
                 var guildRepo = new GuildRepository(db);
                 await guildRepo.ModifyAsync(x => { x.Prefix = prefix; return Task.CompletedTask; }, Context.Guild.Id);
-                await ReplyAsync($"You have successfully set the prefix to {prefix}!");
+                await ReplyAsync($"{Context.User.Mention}, You have successfully set the prefix to {prefix}!");
             }
         }
 
@@ -50,7 +50,7 @@ namespace DEA.Modules
             {
                 var guildRepo = new GuildRepository(db);
                 await guildRepo.ModifyAsync(x => { x.ModRoleId = modRole.Id; return Task.CompletedTask; }, Context.Guild.Id);
-                await ReplyAsync($"You have successfully set the moderator role to {modRole.Mention}!");
+                await ReplyAsync($"{Context.User.Mention}, You have successfully set the moderator role to {modRole.Mention}!");
             }
         }
 
@@ -67,7 +67,7 @@ namespace DEA.Modules
             {
                 var guildRepo = new GuildRepository(db);
                 await guildRepo.ModifyAsync(x => { x.MutedRoleId = mutedRole.Id; return Task.CompletedTask; }, Context.Guild.Id);
-                await ReplyAsync($"You have successfully set the muted role to {mutedRole.Mention}!");
+                await ReplyAsync($"{Context.User.Mention}, You have successfully set the muted role to {mutedRole.Mention}!");
             }
         }
 
@@ -122,7 +122,7 @@ namespace DEA.Modules
             {
                 var guildRepo = new GuildRepository(db);
                 await guildRepo.ModifyAsync(x => { x.ModLogChannelId = modLogChannel.Id; return Task.CompletedTask; }, Context.Guild.Id);
-                await ReplyAsync($"You have successfully set the moderator log channel to {modLogChannel.Mention}!");
+                await ReplyAsync($"{Context.User.Mention}, You have successfully set the moderator log channel to {modLogChannel.Mention}!");
             }
         }
 
@@ -136,7 +136,7 @@ namespace DEA.Modules
             {
                 var guildRepo = new GuildRepository(db);
                 await guildRepo.ModifyAsync(x => { x.DetailedLogsChannelId = detailedLogsChannel.Id; return Task.CompletedTask; }, Context.Guild.Id);
-                await ReplyAsync($"You have successfully set the detailed logs channel to {detailedLogsChannel.Mention}!");
+                await ReplyAsync($"{Context.User.Mention}, You have successfully set the detailed logs channel to {detailedLogsChannel.Mention}!");
             }
         }
 
@@ -151,7 +151,7 @@ namespace DEA.Modules
             {
                 var guildRepo = new GuildRepository(db);
                 await guildRepo.ModifyAsync(x => { x.GambleChannelId = gambleChannel.Id; return Task.CompletedTask; }, Context.Guild.Id);
-                await ReplyAsync($"You have successfully set the gamble channel to {gambleChannel.Mention}!");
+                await ReplyAsync($"{Context.User.Mention}, You have successfully set the gamble channel to {gambleChannel.Mention}!");
             } 
         }
 
@@ -165,19 +165,16 @@ namespace DEA.Modules
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
-                var DMSettings = (await guildRepo.FetchGuildAsync(Context.Guild.Id)).DM;
-                switch (DMSettings)
+                switch ((await guildRepo.FetchGuildAsync(Context.Guild.Id)).DM)
                 {
                     case true:
                         await guildRepo.ModifyAsync(x => { x.DM = false; return Task.CompletedTask; }, Context.Guild.Id);
-                        await ReplyAsync($"You have successfully disabled DM messages!");
+                        await ReplyAsync($"{Context.User.Mention}, You have successfully disabled DM messages!");
                         break;
                     case false:
                         await guildRepo.ModifyAsync(x => { x.DM = true; return Task.CompletedTask; }, Context.Guild.Id);
-                        await ReplyAsync($"You have successfully enabled DM messages!");
+                        await ReplyAsync($"{Context.User.Mention}, You have successfully enabled DM messages!");
                         break;
-                    default:
-                        throw new Exception("Something went wrong.");
                 }
             } 
         }
